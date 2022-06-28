@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package ru.asolovyov.j2meui.common;
+package ru.asolovyov.tummyui;
 
 /**
  *
