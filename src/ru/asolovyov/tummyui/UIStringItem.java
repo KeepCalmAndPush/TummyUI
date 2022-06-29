@@ -5,17 +5,20 @@
 
 package ru.asolovyov.tummyui;
 
+import javax.microedition.lcdui.Item;
 import javax.microedition.lcdui.StringItem;
 import ru.asolovyov.combime.bindings.StringBinding;
+import ru.asolovyov.combime.common.S;
 import ru.asolovyov.combime.common.Sink;
 
 /**
  *
  * @author Администратор
  */
-public class UIStringItem extends StringItem {
+public class UIStringItem extends StringItem implements UIItem {
     private StringBinding labelBinding;
     private StringBinding textBinding;
+    private UIForm form;
 
     public UIStringItem(String label, String text) {
         super(label, text);
@@ -31,19 +34,13 @@ public class UIStringItem extends StringItem {
         this.subscribeToBindings();
     }
 
-    public String getText() {
-        return this.textBinding.getString();
-    }
-
     public void setText(String text) {
+        super.setText(text);
         this.textBinding.setString(text);
     }
 
-    public String getLabel() {
-        return this.labelBinding.getString();
-    }
-
     public void setLabel(String text) {
+        super.setLabel(text);
         this.labelBinding.setString(text);
     }
 
@@ -51,7 +48,7 @@ public class UIStringItem extends StringItem {
         this.labelBinding.getPublisher().sink(new Sink() {
             protected void onValue(Object value) {
                 String string = (String)value;
-                if (string.equals(getLabel())) {
+                if (string.equals(UIStringItem.this.getLabel())) {
                     return;
                 }
                 UIStringItem.this.setLabel(string);
@@ -61,11 +58,35 @@ public class UIStringItem extends StringItem {
         this.textBinding.getPublisher().sink(new Sink() {
             protected void onValue(Object value) {
                 String string = (String)value;
-                if (string.equals(getText())) {
+                S.println(string + " vs " + UIStringItem.this.getText());
+                if (string.equals(UIStringItem.this.getText())) {
                     return;
                 }
                 UIStringItem.this.setText(string);
             }
         });
+    }
+
+    public void setForm(UIForm form) {
+        this.form = form;
+    }
+
+    public void itemStateChanged(Item item) {
+//        S.println("1");
+        if (item != this) {
+            return;
+        }
+
+//        S.println("2");
+        if (false == this.labelBinding.getString().equals(this.getLabel())) {
+//            S.println("3");
+            this.labelBinding.setString(this.getLabel());
+        }
+
+//        S.println("4");
+        if (false == this.textBinding.getString().equals(this.getText())) {
+//            S.println("5");
+            this.textBinding.setString(this.getText());
+        }
     }
 }

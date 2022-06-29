@@ -5,6 +5,7 @@
 
 package ru.asolovyov.tummyui;
 
+import javax.microedition.lcdui.Item;
 import javax.microedition.lcdui.TextField;
 import ru.asolovyov.combime.bindings.StringBinding;
 import ru.asolovyov.combime.common.S;
@@ -14,9 +15,10 @@ import ru.asolovyov.combime.common.Sink;
  *
  * @author Администратор
  */
-public class UITextField extends TextField {
+public class UITextField extends TextField implements UIItem {
     private StringBinding labelBinding;
     private StringBinding stringBinding;
+    private UIForm form;
 
     public UITextField(String label, String text, int maxSize, int constraints) {
         super(label, text, maxSize, constraints);
@@ -29,17 +31,8 @@ public class UITextField extends TextField {
         this.subscribeToBindings();
     }
 
-    public String getString() {
-        return this.stringBinding.getString();
-    }
-
     public void setString(String text) {
-        S.println("SET STRING " + text);
         this.stringBinding.setString(text);
-    }
-
-    public String getLabel() {
-        return this.labelBinding.getString();
     }
 
     public void setLabel(String text) {
@@ -66,5 +59,35 @@ public class UITextField extends TextField {
                 UITextField.this.setString(string);
             }
         });
+    }
+
+    public void setForm(UIForm form) {
+        this.form = form;
+    }
+
+    public String getCurrentString() {
+        char[] ch = new char[this.size()];
+        this.getChars(ch);
+        return new String(ch);
+    }
+
+    public void itemStateChanged(Item item) {
+        S.println("1");
+        if (item != this) {
+            return;
+        }
+
+        S.println("2");
+        if (false == this.labelBinding.getString().equals(this.getLabel())) {
+            S.println("3");
+            this.labelBinding.setString(this.getLabel());
+        }
+
+        S.println("4");
+        String currentString = getCurrentString();
+        if (false == this.stringBinding.getString().equals(currentString)) {
+            S.println("5");
+            this.stringBinding.setString(currentString);
+        }
     }
 }

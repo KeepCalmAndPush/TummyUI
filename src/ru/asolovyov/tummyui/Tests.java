@@ -20,22 +20,21 @@ import ru.asolovyov.combime.common.S;
 public class Tests extends MIDlet {
 
     private Display display;
-    private Form form = new Form("TummyUI");
+    private Form form = new UIForm("TummyUI");
 
-    private StringBinding label = new StringBinding("Label");
-    private StringBinding text = new StringBinding("Text");
+    private StringBinding labelBinding = new StringBinding("Label");
+    private StringBinding textBinding = new StringBinding("Text");
     
     public void startApp() {
         display = Display.getDisplay(this);
         display.setCurrent(form);
-        form.append(new UIStringItem(label, text));
-        form.append(new UITextField(label, text));
-        form.setItemStateListener(new ItemStateListener() {
-
-            public void itemStateChanged(Item item) {
-                S.println("KEK!");
-            }
-        });
+        form.append(new UIStringItem(labelBinding, textBinding));
+        form.append(new UITextField(labelBinding, textBinding));
+//        form.setItemStateListener(new ItemStateListener() {
+//            public void itemStateChanged(Item item) {
+//                S.println("KEK!");
+//            }
+//        });
     }
 
     public void pauseApp() {

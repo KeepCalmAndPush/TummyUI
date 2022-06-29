@@ -5,10 +5,12 @@
 
 package ru.asolovyov.tummyui;
 
+import javax.microedition.lcdui.ItemStateListener;
+
 /**
  *
  * @author Администратор
  */
-public class UIItem {// extends Item {
-
+public interface UIItem extends ItemStateListener {
+    public void setForm(UIForm form);
 }
