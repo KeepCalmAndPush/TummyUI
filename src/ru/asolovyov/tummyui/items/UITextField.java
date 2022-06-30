@@ -3,10 +3,11 @@
  * and open the template in the editor.
  */
 
-package ru.asolovyov.tummyui;
+package ru.asolovyov.tummyui.items;
 
 import javax.microedition.lcdui.Item;
 import javax.microedition.lcdui.TextField;
+import ru.asolovyov.combime.bindings.BoolBinding;
 import ru.asolovyov.combime.bindings.StringBinding;
 import ru.asolovyov.combime.common.S;
 import ru.asolovyov.combime.common.Sink;
@@ -92,10 +93,28 @@ public class UITextField extends TextField implements UIItem {
     }
 
     public UIItem[] getUIItems() {
+//        if (!isVisible) {
+//            return new UIItem[]{};
+//        }
         return new UIItem[]{ this };
     }
 
     public Item[] getPlainItems() {
+        if (!isVisible) {
+            return new Item[]{};
+        }
         return new Item[] { this };
+    }
+
+    private boolean isVisible = true;
+    public UITextField setVisible(BoolBinding binding) {
+        binding.getPublisher().sink(new Sink() {
+            protected void onValue(Object value) {
+                isVisible = ((Boolean)value).booleanValue();
+                if (form == null) { return; }
+                form.layoutChanged(UITextField.this);
+            }
+        });
+        return this;
     }
 }

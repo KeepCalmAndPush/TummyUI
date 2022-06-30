@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package ru.asolovyov.tummyui;
+package ru.asolovyov.tummyui.utils;
 
 import java.util.Vector;
 

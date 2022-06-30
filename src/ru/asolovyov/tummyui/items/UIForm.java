@@ -3,8 +3,9 @@
  * and open the template in the editor.
  */
 
-package ru.asolovyov.tummyui;
+package ru.asolovyov.tummyui.items;
 
+import ru.asolovyov.tummyui.utils.List;
 import java.util.Hashtable;
 import java.util.Vector;
 import javax.microedition.lcdui.Form;
@@ -106,6 +107,8 @@ public class UIForm extends Form implements ItemStateListener {
     public void append(UIItem uiItem) {
         uiItem.setForm(this);
         this.items.ui.addElement(uiItem);
+
+        //рекурсивно проставить форм для всех вложенных юиитемов
         
         Item[] plainItems = uiItem.getPlainItems();
         this.items.map.put(uiItem, plainItems);

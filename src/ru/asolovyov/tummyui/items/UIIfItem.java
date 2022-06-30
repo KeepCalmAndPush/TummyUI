@@ -3,10 +3,9 @@
  * and open the template in the editor.
  */
 
-package ru.asolovyov.tummyui;
+package ru.asolovyov.tummyui.items;
 
 import java.util.Vector;
-import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Item;
 import ru.asolovyov.combime.bindings.BoolBinding;
 import ru.asolovyov.combime.common.Sink;
@@ -40,6 +39,10 @@ public class UIIfItem implements UIItem {
     }
 
     public UIItem[] getUIItems() {
+//        if (!isVisible) {
+//            return new UIItem[]{};
+//        }
+
         if (conditionBinding.getBool()) {
             return ifItems;
         }
@@ -47,6 +50,10 @@ public class UIIfItem implements UIItem {
     }
 
     public Item[] getPlainItems() {
+        if (!isVisible) {
+            return new Item[]{};
+        }
+        
         Vector result = new Vector();
         UIItem[] uiItems = this.getUIItems();
         for (int i = 0; i < uiItems.length; i++) {
@@ -63,4 +70,16 @@ public class UIIfItem implements UIItem {
     }
 
     public void itemStateChanged(Item item) {}
+
+    private boolean isVisible = true;
+    public UIIfItem setVisible(BoolBinding binding) {
+        binding.getPublisher().sink(new Sink() {
+            protected void onValue(Object value) {
+                isVisible = ((Boolean)value).booleanValue();
+                if (form == null) { return; }
+                form.layoutChanged(UIIfItem.this);
+            }
+        });
+        return this;
+    }
 }
