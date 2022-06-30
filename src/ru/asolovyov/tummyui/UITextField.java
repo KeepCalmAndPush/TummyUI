@@ -90,4 +90,12 @@ public class UITextField extends TextField implements UIItem {
             this.stringBinding.setString(currentString);
         }
     }
+
+    public UIItem[] getUIItems() {
+        return new UIItem[]{ this };
+    }
+
+    public Item[] getPlainItems() {
+        return new Item[] { this };
+    }
 }

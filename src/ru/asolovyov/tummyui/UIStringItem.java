@@ -89,4 +89,12 @@ public class UIStringItem extends StringItem implements UIItem {
             this.textBinding.setString(this.getText());
         }
     }
+
+    public UIItem[] getUIItems() {
+        return new UIItem[]{ this };
+    }
+
+    public Item[] getPlainItems() {
+        return new Item[] { this };
+    }
 }

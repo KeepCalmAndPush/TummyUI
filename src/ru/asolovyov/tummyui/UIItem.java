@@ -5,6 +5,7 @@
 
 package ru.asolovyov.tummyui;
 
+import javax.microedition.lcdui.Item;
 import javax.microedition.lcdui.ItemStateListener;
 
 /**
@@ -13,4 +14,6 @@ import javax.microedition.lcdui.ItemStateListener;
  */
 public interface UIItem extends ItemStateListener {
     public void setForm(UIForm form);
+    public UIItem[] getUIItems();
+    public Item[] getPlainItems();
 }
