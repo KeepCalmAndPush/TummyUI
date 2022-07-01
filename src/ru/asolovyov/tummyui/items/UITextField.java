@@ -11,6 +11,7 @@ import ru.asolovyov.combime.bindings.BoolBinding;
 import ru.asolovyov.combime.bindings.StringBinding;
 import ru.asolovyov.combime.common.S;
 import ru.asolovyov.combime.common.Sink;
+import ru.asolovyov.combime.operators.filtering.RemoveDuplicates;
 
 /**
  *
@@ -23,6 +24,10 @@ public class UITextField extends TextField implements UIItem {
 
     public UITextField(String label, String text, int maxSize, int constraints) {
         super(label, text, maxSize, constraints);
+    }
+
+    public UITextField(String label, String text) {
+        super(label, text, 255, UITextField.ANY);
     }
 
     public UITextField(StringBinding labelBinding, StringBinding textBinding) {
@@ -41,22 +46,16 @@ public class UITextField extends TextField implements UIItem {
     }
 
     private void subscribeToBindings() {
-        this.labelBinding.getPublisher().sink(new Sink() {
+        this.labelBinding.getPublisher().removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
-                String string = (String)value;
-                if (string.equals(getLabel())) {
-                    return;
-                }
+                String string = (String) value;
                 UITextField.this.setLabel(string);
             }
         });
 
-        this.stringBinding.getPublisher().sink(new Sink() {
+        this.stringBinding.getPublisher().removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
                 String string = (String)value;
-                if (string.equals(getString())) {
-                    return;
-                }
                 UITextField.this.setString(string);
             }
         });
@@ -73,29 +72,21 @@ public class UITextField extends TextField implements UIItem {
     }
 
     public void itemStateChanged(Item item) {
-        S.println("1");
         if (item != this) {
             return;
         }
 
-        S.println("2");
         if (false == this.labelBinding.getString().equals(this.getLabel())) {
-            S.println("3");
             this.labelBinding.setString(this.getLabel());
         }
 
-        S.println("4");
         String currentString = getCurrentString();
         if (false == this.stringBinding.getString().equals(currentString)) {
-            S.println("5");
             this.stringBinding.setString(currentString);
         }
     }
 
     public UIItem[] getUIItems() {
-//        if (!isVisible) {
-//            return new UIItem[]{};
-//        }
         return new UIItem[]{ this };
     }
 

@@ -4,7 +4,6 @@
  */
 package ru.asolovyov.tummyui.items;
 
-import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Item;
 import ru.asolovyov.combime.bindings.BoolBinding;
 import ru.asolovyov.combime.common.Sink;

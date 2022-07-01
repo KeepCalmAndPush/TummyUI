@@ -11,7 +11,6 @@ import java.util.Vector;
 import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Item;
 import javax.microedition.lcdui.ItemStateListener;
-import ru.asolovyov.combime.common.S;
 
 /**
  *
@@ -87,12 +86,16 @@ public class UIForm extends Form implements ItemStateListener {
     public UIForm(String title, Item[] items) {
         super(title, items);
         this.items = new Items(items);
-        this.setItemsAsStateListeners(items);
         super.setItemStateListener(this);
     }
 
     public UIForm(String title, UIItem[] items) {
-        this(title, (new Items(items)).plainArray());
+        this(title, new Item[]{});
+        for (int i = 0; i < items.length; i++) {
+            UIItem uiItem = items[i];
+            this.appendUI(uiItem);
+        }
+        this.setItemsAsStateListeners(new List(items));
     }
 
     public int append(Item item) {
@@ -100,22 +103,20 @@ public class UIForm extends Form implements ItemStateListener {
         UIItem uiItem = new UIPlainItemWrapper(item);
         this.items.ui.addElement(uiItem);
         this.items.map.put(uiItem, uiItem.getPlainItems());
-        this.setItemsAsStateListeners(this.items.plainArray());
+        this.addItemToItemStateListeners(uiItem);
         return result;
     }
 
-    public void append(UIItem uiItem) {
+    public void appendUI(UIItem uiItem) {
         uiItem.setForm(this);
         this.items.ui.addElement(uiItem);
-
-        //рекурсивно проставить форм для всех вложенных юиитемов
         
         Item[] plainItems = uiItem.getPlainItems();
         this.items.map.put(uiItem, plainItems);
         for (int i = 0; i < plainItems.length; i++) {
             super.append(plainItems[i]);
         }
-        this.setItemsAsStateListeners(this.items.plainArray());
+        this.addItemToItemStateListeners(uiItem);
     }
 
     public void addItemStateListener(ItemStateListener listener) {
@@ -158,29 +159,23 @@ public class UIForm extends Form implements ItemStateListener {
         }
 
         this.items.map.put(uiItem, newItems);
-        this.setItemsAsStateListeners(uiItem.getPlainItems());
+        this.setItemsAsStateListeners(this.items.ui);
     }
 
-    private void setItemsAsStateListeners(Item[] items) {
-        Item[] plains = items;
-        for (int i = 0; i < plains.length; i++) {
-            Item item = plains[i];
+    private void setItemsAsStateListeners(List items) {
+        for (int i = 0; i < items.size(); i++) {
+            UIItem item = (UIItem) items.elementAt(i);
             this.itemStateListeners.removeElement(item);
         }
 
-        for (int i = 0; i < items.length; i++) {
-            Item item = items[i];
+        for (int i = 0; i < items.size(); i++) {
+            UIItem item = (UIItem) items.elementAt(i);
             this.addItemToItemStateListeners(item);
         }
     }
 
-    private void addItemToItemStateListeners(Item item) {
-        try {
-            UIItem uiItem = (UIItem) item;
-            this.addItemStateListener(uiItem);
-            uiItem.setForm(this);
-        } catch (Exception e) {
-            S.println(e);
-        }
+    private void addItemToItemStateListeners(UIItem item) {
+        this.addItemStateListener(item);
+        item.setForm(this);
     }
 }

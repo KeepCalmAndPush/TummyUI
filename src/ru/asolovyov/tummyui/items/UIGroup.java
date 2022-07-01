@@ -14,54 +14,31 @@ import ru.asolovyov.combime.common.Sink;
  *
  * @author Администратор
  */
-public class UIIfItem implements UIItem {
-    private UIForm form;
-    private BoolBinding conditionBinding;
-    private UIItem[] ifItems = {};
-    private UIItem[] elseItems = {};
+public class UIGroup implements UIItem {
+    protected UIForm form;
+    protected UIItem[] uiItems = {};
 
-    public UIIfItem(BoolBinding condition, UIGroup ifGroup, UIGroup elseGroup) {
-        this(condition, ifGroup.uiItems, elseGroup.uiItems);
-    }
-
-    public UIIfItem(BoolBinding condition, UIItem[] ifItems, UIItem[] elseItems) {
+    public UIGroup(UIItem[] uiItems) {
         super();
-        this.conditionBinding = condition;
-        this.ifItems = ifItems;
-        this.elseItems = elseItems;
-
-        this.conditionBinding.getPublisher().sink(new Sink() {
-            protected void onValue(Object value) {
-                if (form == null) { return; }
-                form.layoutChanged(UIIfItem.this);
-            }
-        });
+        this.uiItems = uiItems;
     }
 
     public void setForm(UIForm form) {
         this.form = form;
-        for (int i = 0; i < ifItems.length; i++) {
-            UIItem item = ifItems[i];
-            item.setForm(form);
-        }
-        for (int i = 0; i < elseItems.length; i++) {
-            UIItem item = ifItems[i];
+        for (int i = 0; i < uiItems.length; i++) {
+            UIItem item = uiItems[i];
             item.setForm(form);
         }
     }
 
     public UIItem[] getUIItems() {
-        if (conditionBinding.getBool()) {
-            return ifItems;
-        }
-        return elseItems;
+        return uiItems;
     }
 
     public Item[] getPlainItems() {
         if (!isVisible) {
             return new Item[]{};
         }
-        
         Vector result = new Vector();
         UIItem[] uiItems = this.getUIItems();
         for (int i = 0; i < uiItems.length; i++) {
@@ -80,12 +57,13 @@ public class UIIfItem implements UIItem {
     public void itemStateChanged(Item item) {}
 
     private boolean isVisible = true;
-    public UIIfItem setVisible(BoolBinding binding) {
+    public UIItem setVisible(BoolBinding binding) {
+        final UIItem self = this;
         binding.getPublisher().sink(new Sink() {
             protected void onValue(Object value) {
                 isVisible = ((Boolean)value).booleanValue();
                 if (form == null) { return; }
-                form.layoutChanged(UIIfItem.this);
+                form.layoutChanged(self);
             }
         });
         return this;
