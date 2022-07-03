@@ -93,11 +93,20 @@ public class UIStringItem extends StringItem implements UIItem {
     public UIStringItem setVisible(BoolBinding binding) {
         binding.getPublisher().sink(new Sink() {
             protected void onValue(Object value) {
-                isVisible = ((Boolean)value).booleanValue();
-                if (form == null) { return; }
-                form.layoutChanged(UIStringItem.this);
+                boolean visible = ((Boolean)value).booleanValue();
+                if (form == null) {
+                    isVisible = visible;
+                    return;
+                }
+                form.willChangeLayout(UIStringItem.this);
+                isVisible = visible;
+                form.didChangeLayout(UIStringItem.this);
             }
         });
         return this;
     }
+
+    private UIItem parent;
+    public UIItem getParent() { return parent; }
+    public void setParent(UIItem parent) { this.parent = parent; }
 }

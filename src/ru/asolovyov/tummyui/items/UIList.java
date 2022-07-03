@@ -28,19 +28,27 @@ public class UIList extends UIGroup {
         this.dataSource = dataSource;
         this.dataSource.getPublisher().sink(new Sink() {
             protected void onValue(Object value) {
-                Object[] array = (Object[])value;
+                if (form != null) {
+                    form.willChangeLayout(UIList.this);
+                }
+                
+                Object[] viewModels = (Object[])value;
 
-                UIItem[] newItems = new UIItem[array.length];
-                for (int i = 0; i < array.length; i++) {
-                    Object object = array[i];
-                    newItems[i] = itemFactory.itemFor(object);
+                UIItem[] newItems = new UIItem[viewModels.length];
+                for (int i = 0; i < viewModels.length; i++) {
+                    Object viewModel = viewModels[i];
+                    newItems[i] = itemFactory.itemFor(viewModel);
                 }
 
                 uiItems = newItems;
-                setForm(form);
-
-                if (form == null) { return; }
-                form.layoutChanged(UIList.this);
+                for (int i = 0; i < uiItems.length; i++) {
+                    uiItems[i].setParent(UIList.this);
+                }
+               
+                if (form != null) {
+                    form.didChangeLayout(UIList.this);
+                    setForm(form);
+                }
             }
         });
     }

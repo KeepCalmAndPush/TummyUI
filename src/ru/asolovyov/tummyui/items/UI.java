@@ -97,16 +97,8 @@ public class UI {
         return new UIGroup(new UIItem[]{i1, i2, i3, i4, i5, i6, i7});
     }
 
-    public static UIGroup Group(UIItem i1, UIItem i2, UIItem i3, UIItem i4, UIItem i5, UIItem i6, UIItem i7, UIItem i8) {
-        return new UIGroup(new UIItem[]{i1, i2, i3, i4, i5, i6, i7, i8});
-    }
-
-    public static UIGroup Group(UIItem i1, UIItem i2, UIItem i3, UIItem i4, UIItem i5, UIItem i6, UIItem i7, UIItem i8, UIItem i9) {
-        return new UIGroup(new UIItem[]{i1, i2, i3, i4, i5, i6, i7, i8, i9});
-    }
-
-    public static UIGroup Group(UIItem i1, UIItem i2, UIItem i3, UIItem i4, UIItem i5, UIItem i6, UIItem i7, UIItem i8, UIItem i9, UIItem i10) {
-        return new UIGroup(new UIItem[]{i1, i2, i3, i4, i5, i6, i7, i8, i9, i10});
+    public static UIForm Form(String title) {
+        return new UIForm(title, new UIItem[]{});
     }
 
     public static UIForm Form(String title, UIItem i1) {
@@ -135,17 +127,5 @@ public class UI {
 
     public static UIForm Form(String title, UIItem i1, UIItem i2, UIItem i3, UIItem i4, UIItem i5, UIItem i6, UIItem i7) {
         return new UIForm(title, new UIItem[]{i1, i2, i3, i4, i5, i6, i7});
-    }
-
-    public static UIForm Form(String title, UIItem i1, UIItem i2, UIItem i3, UIItem i4, UIItem i5, UIItem i6, UIItem i7, UIItem i8) {
-        return new UIForm(title, new UIItem[]{i1, i2, i3, i4, i5, i6, i7, i8});
-    }
-
-    public static UIForm Form(String title, UIItem i1, UIItem i2, UIItem i3, UIItem i4, UIItem i5, UIItem i6, UIItem i7, UIItem i8, UIItem i9) {
-        return new UIForm(title, new UIItem[]{i1, i2, i3, i4, i5, i6, i7, i8, i9});
-    }
-
-    public static UIForm Form(String title, UIItem i1, UIItem i2, UIItem i3, UIItem i4, UIItem i5, UIItem i6, UIItem i7, UIItem i8, UIItem i9, UIItem i10) {
-        return new UIForm(title, new UIItem[]{i1, i2, i3, i4, i5, i6, i7, i8, i9, i10});
     }
 }

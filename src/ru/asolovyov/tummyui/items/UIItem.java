@@ -14,6 +14,10 @@ import javax.microedition.lcdui.ItemStateListener;
  */
 public interface UIItem extends ItemStateListener {
     public void setForm(UIForm form);
+
+    public UIItem getParent();
+    public void setParent(UIItem parent);
+    
     public UIItem[] getUIItems();
     public Item[] getPlainItems();
 }

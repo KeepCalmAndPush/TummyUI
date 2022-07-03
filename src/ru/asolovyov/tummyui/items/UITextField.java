@@ -98,14 +98,23 @@ public class UITextField extends TextField implements UIItem {
     }
 
     private boolean isVisible = true;
-    public UITextField setVisible(BoolBinding binding) {
+    public UITextField isVisible(BoolBinding binding) {
         binding.getPublisher().sink(new Sink() {
             protected void onValue(Object value) {
-                isVisible = ((Boolean)value).booleanValue();
-                if (form == null) { return; }
-                form.layoutChanged(UITextField.this);
+                boolean visible = ((Boolean)value).booleanValue();
+                if (form == null) {
+                    isVisible = visible;
+                    return;
+                }
+                form.willChangeLayout(UITextField.this);
+                isVisible = visible;
+                form.didChangeLayout(UITextField.this);
             }
         });
         return this;
     }
+
+    private UIItem parent;
+    public UIItem getParent() { return parent; }
+    public void setParent(UIItem parent) { this.parent = parent; }
 }

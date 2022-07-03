@@ -5,8 +5,7 @@
 
 package ru.asolovyov.tummyui.items;
 
-import java.util.Vector;
-import javax.microedition.lcdui.Item;
+
 import ru.asolovyov.combime.bindings.BoolBinding;
 import ru.asolovyov.combime.common.Sink;
 
@@ -14,8 +13,8 @@ import ru.asolovyov.combime.common.Sink;
  *
  * @author Администратор
  */
-public class UIIfItem implements UIItem {
-    private UIForm form;
+public class UIIfItem extends UIBasicItem {
+    private boolean condition = false;
     private BoolBinding conditionBinding;
     private UIItem[] ifItems = {};
     private UIItem[] elseItems = {};
@@ -29,11 +28,17 @@ public class UIIfItem implements UIItem {
         this.conditionBinding = condition;
         this.ifItems = ifItems;
         this.elseItems = elseItems;
+        this.condition = condition.getBool();
+
+        for (int i = 0; i < this.ifItems.length; i++) { (this.ifItems[i]).setParent(this); }
+        for (int i = 0; i < this.elseItems.length; i++) { (this.elseItems[i]).setParent(this); }
 
         this.conditionBinding.getPublisher().sink(new Sink() {
             protected void onValue(Object value) {
                 if (form == null) { return; }
-                form.layoutChanged(UIIfItem.this);
+                form.willChangeLayout(UIIfItem.this);
+                UIIfItem.this.condition = ((Boolean)value).booleanValue();
+                form.didChangeLayout(UIIfItem.this);
             }
         });
     }
@@ -45,49 +50,15 @@ public class UIIfItem implements UIItem {
             item.setForm(form);
         }
         for (int i = 0; i < elseItems.length; i++) {
-            UIItem item = ifItems[i];
+            UIItem item = elseItems[i];
             item.setForm(form);
         }
     }
 
     public UIItem[] getUIItems() {
-        if (conditionBinding.getBool()) {
+        if (this.condition) {
             return ifItems;
         }
         return elseItems;
-    }
-
-    public Item[] getPlainItems() {
-        if (!isVisible) {
-            return new Item[]{};
-        }
-        
-        Vector result = new Vector();
-        UIItem[] uiItems = this.getUIItems();
-        for (int i = 0; i < uiItems.length; i++) {
-            UIItem uiItem = uiItems[i];
-            Item[] children = uiItem.getPlainItems();
-            for (int c = 0; c < children.length; c++) {
-                Item child = children[c];
-                result.addElement(child);
-            }
-        }
-        Item[] items = new Item[result.size()];
-        result.copyInto(items);
-        return items;
-    }
-
-    public void itemStateChanged(Item item) {}
-
-    private boolean isVisible = true;
-    public UIIfItem setVisible(BoolBinding binding) {
-        binding.getPublisher().sink(new Sink() {
-            protected void onValue(Object value) {
-                isVisible = ((Boolean)value).booleanValue();
-                if (form == null) { return; }
-                form.layoutChanged(UIIfItem.this);
-            }
-        });
-        return this;
     }
 }
