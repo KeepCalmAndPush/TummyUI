@@ -58,7 +58,7 @@ public class UIGroup extends UIBasicItem {
                     isVisible = visible;
                     return;
                 }
-                form.willChangeLayout(self);
+                
                 isVisible = visible;
                 form.didChangeLayout(self);
             }

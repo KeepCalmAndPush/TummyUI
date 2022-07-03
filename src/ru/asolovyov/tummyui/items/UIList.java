@@ -28,9 +28,6 @@ public class UIList extends UIGroup {
         this.dataSource = dataSource;
         this.dataSource.getPublisher().sink(new Sink() {
             protected void onValue(Object value) {
-                if (form != null) {
-                    form.willChangeLayout(UIList.this);
-                }
                 
                 Object[] viewModels = (Object[])value;
 

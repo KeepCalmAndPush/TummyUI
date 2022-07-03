@@ -41,6 +41,10 @@ public class UI {
         return new IfFactory(condition);
     }
 
+    public static UICommand Command(String label, UICommand.Handler handler) {
+        return new UICommand(label, handler);
+    }
+
     public static UIList List(ArrayBinding dataSource, final UIList.ItemFactory itemFactory) {
         return new UIList(dataSource, itemFactory);
     }
@@ -102,7 +106,16 @@ public class UI {
     }
 
     public static UIForm Form(String title, UIItem i1) {
-        return new UIForm(title, new UIItem[]{i1});
+        UIForm form = new UIForm(title, new UIItem[]{});
+        form.appendUI(i1);
+        return form;
+    }
+
+    public static UIForm Form(UIMIDlet midlet, String title, UIItem i1) {
+        UIForm form = new UIForm(title, new UIItem[]{});
+        form.setMidlet(midlet);
+        form.appendUI(i1);
+        return form;
     }
 
     public static UIForm Form(String title, UIItem i1, UIItem i2) {

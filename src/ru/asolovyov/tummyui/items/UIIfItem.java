@@ -36,7 +36,7 @@ public class UIIfItem extends UIBasicItem {
         this.conditionBinding.getPublisher().sink(new Sink() {
             protected void onValue(Object value) {
                 if (form == null) { return; }
-                form.willChangeLayout(UIIfItem.this);
+                
                 UIIfItem.this.condition = ((Boolean)value).booleanValue();
                 form.didChangeLayout(UIIfItem.this);
             }

@@ -9,9 +9,7 @@ import javax.microedition.lcdui.Item;
 import javax.microedition.lcdui.TextField;
 import ru.asolovyov.combime.bindings.BoolBinding;
 import ru.asolovyov.combime.bindings.StringBinding;
-import ru.asolovyov.combime.common.S;
 import ru.asolovyov.combime.common.Sink;
-import ru.asolovyov.combime.operators.filtering.RemoveDuplicates;
 
 /**
  *
@@ -106,7 +104,7 @@ public class UITextField extends TextField implements UIItem {
                     isVisible = visible;
                     return;
                 }
-                form.willChangeLayout(UITextField.this);
+                
                 isVisible = visible;
                 form.didChangeLayout(UITextField.this);
             }
@@ -117,4 +115,14 @@ public class UITextField extends TextField implements UIItem {
     private UIItem parent;
     public UIItem getParent() { return parent; }
     public void setParent(UIItem parent) { this.parent = parent; }
+
+    public UITextField onPause(UIMIDlet.PauseHandler handler) {
+        this.form.getMidlet().addPauseHandler(handler);
+        return this;
+    }
+
+    public UITextField onDestroy(UIMIDlet.DestroyHandler handler) {
+        this.form.getMidlet().addDestroyHandler(handler);
+        return this;
+    }
 }

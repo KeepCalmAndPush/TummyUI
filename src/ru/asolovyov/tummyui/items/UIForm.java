@@ -5,10 +5,10 @@
 
 package ru.asolovyov.tummyui.items;
 
-import java.util.Enumeration;
+import javax.microedition.lcdui.Displayable;
 import ru.asolovyov.tummyui.utils.List;
-import java.util.Hashtable;
-import java.util.Vector;
+import javax.microedition.lcdui.Command;
+import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Item;
 import javax.microedition.lcdui.ItemStateListener;
@@ -17,11 +17,14 @@ import javax.microedition.lcdui.ItemStateListener;
  *
  * @author Администратор
  */
-public class UIForm extends Form implements ItemStateListener {
+public class UIForm extends Form implements ItemStateListener, CommandListener {
     private List uiItems = new List();
+    private List uiCommands = new List();
 
-    private Vector itemStateListeners = new Vector();
-    private ItemStateListener externalItemStateListener;
+    private List itemStateListeners = new List();
+    private List commandListeners = new List();
+
+    private UIMIDlet midlet;
     
     public UIForm(String title) {
        this(title, new Item[] {});
@@ -30,6 +33,7 @@ public class UIForm extends Form implements ItemStateListener {
     public UIForm(String title, Item[] items) {
         super(title, items);
         super.setItemStateListener(this);
+        super.setCommandListener(this);
     }
 
     public UIForm(String title, UIItem[] items) {
@@ -61,10 +65,7 @@ public class UIForm extends Form implements ItemStateListener {
     }
 
     public void setItemStateListener(ItemStateListener listener) {
-        if (this.externalItemStateListener != null) {
-            this.itemStateListeners.removeElement(this.externalItemStateListener);
-        }
-        this.externalItemStateListener = listener;
+        if (listener == this) { return; }
         this.itemStateListeners.removeElement(listener);
         this.itemStateListeners.addElement(listener);
     }
@@ -74,9 +75,6 @@ public class UIForm extends Form implements ItemStateListener {
             ItemStateListener listener = (ItemStateListener)this.itemStateListeners.elementAt(i);
             listener.itemStateChanged(item);
         }
-    }
-
-    public void willChangeLayout(UIItem uiItem) {
     }
 
     public void didChangeLayout(UIItem uiItem) {
@@ -97,4 +95,70 @@ public class UIForm extends Form implements ItemStateListener {
             this.delete(i);
         }
     }
+
+
+
+    public void addCommand(Command cmd) {
+        final Command command = cmd;
+        UICommand.Handler handler = new UICommand.Handler() {
+            public void handle() {
+                for (int i = 0; i < commandListeners.size(); i++) {
+                    CommandListener listener = (CommandListener) commandListeners.elementAt(i);
+                    listener.commandAction(command, UIForm.this);
+                }
+            }
+        };
+        
+        UICommand uiCommand = new UICommand(
+                cmd.getLabel(),
+                cmd.getCommandType(),
+                cmd.getPriority(),
+                handler);
+        
+        this.command(uiCommand);
+    }
+
+    public UIForm command(UICommand cmd) {
+        super.addCommand(cmd);
+        cmd.setForm(this);
+        this.uiCommands.addElement(cmd);
+        return this;
+    }
+    
+    public void setCommandListener(CommandListener listener) {
+        if (listener == this) { return; }
+        this.commandListeners.removeElement(listener);
+        this.commandListeners.addElement(listener);
+    }
+
+    public void commandAction(Command c, Displayable d) {
+        for (int i = 0; i < this.commandListeners.size(); i++) {
+            CommandListener listener = (CommandListener) this.commandListeners.elementAt(i);
+            listener.commandAction(c, d);
+        }
+
+        UICommand command = (UICommand)c;
+        for (int i = 0; i < this.uiCommands.size(); i++) {
+            if (command == this.uiCommands.elementAt(i)) {
+                command.handle();
+                return;
+            }
+        }
+    }
+
+    public void commandVisibilityChanged(UICommand command) {
+        for (int i = 0; i < uiCommands.size(); i++) {
+            this.removeCommand((UICommand) uiCommands.elementAt(i));
+        }
+
+        for (int i = 0; i < uiCommands.size(); i++) {
+            UICommand uiCommand = (UICommand) uiCommands.elementAt(i);
+            if (uiCommand.isVisible()) {
+                super.addCommand(uiCommand);
+            }
+        }
+    }
+    
+    public UIMIDlet getMidlet() { return this.midlet; }
+    public void setMidlet(UIMIDlet midlet) { this.midlet = midlet; }
 }

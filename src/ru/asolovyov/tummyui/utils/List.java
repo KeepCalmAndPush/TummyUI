@@ -12,6 +12,10 @@ import java.util.Vector;
  * @author Администратор
  */
 public class List extends Vector {
+    public static abstract class Enumerator {
+        public abstract void onElement(Object element);
+    }
+
     public List(Object[] array) {
         super();
 
@@ -59,5 +63,12 @@ public class List extends Vector {
     public void replaceRange(int start, int length, Object[] replacement) {
         this.deleteRange(start, length);
         this.insertArrayAt(start, replacement);
+    }
+
+    public void forEach(Enumerator e) {
+        for (int i = 0; i < this.size(); i++) {
+            Object object = this.elementAt(i);
+            e.onElement(object);
+        }
     }
 }

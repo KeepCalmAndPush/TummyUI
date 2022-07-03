@@ -62,6 +62,8 @@ public class UIStringItem extends StringItem implements UIItem {
 
     public void setForm(UIForm form) {
         this.form = form;
+        if (this.pauseHandler != null) { this.form.getMidlet().addPauseHandler(this.pauseHandler); }
+        if (this.destroyHandler != null) { this.form.getMidlet().addDestroyHandler(this.destroyHandler); }
     }
 
     public void itemStateChanged(Item item) {
@@ -90,7 +92,7 @@ public class UIStringItem extends StringItem implements UIItem {
     }
 
     private boolean isVisible = true;
-    public UIStringItem setVisible(BoolBinding binding) {
+    public UIStringItem visible(BoolBinding binding) {
         binding.getPublisher().sink(new Sink() {
             protected void onValue(Object value) {
                 boolean visible = ((Boolean)value).booleanValue();
@@ -98,7 +100,7 @@ public class UIStringItem extends StringItem implements UIItem {
                     isVisible = visible;
                     return;
                 }
-                form.willChangeLayout(UIStringItem.this);
+                
                 isVisible = visible;
                 form.didChangeLayout(UIStringItem.this);
             }
@@ -109,4 +111,22 @@ public class UIStringItem extends StringItem implements UIItem {
     private UIItem parent;
     public UIItem getParent() { return parent; }
     public void setParent(UIItem parent) { this.parent = parent; }
+
+    private UIMIDlet.PauseHandler pauseHandler;
+    public UIStringItem onPause(UIMIDlet.PauseHandler handler) {
+        this.pauseHandler = handler;
+        if (this.form != null) {
+            this.form.getMidlet().addPauseHandler(handler);
+        }
+        return this;
+    }
+
+    private UIMIDlet.DestroyHandler destroyHandler;
+    public UIStringItem onDestroy(UIMIDlet.DestroyHandler handler) {
+        this.destroyHandler = handler;
+        if (this.form != null) {
+            this.form.getMidlet().addDestroyHandler(handler);
+        }
+        return this;
+    }
 }

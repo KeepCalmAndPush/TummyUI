@@ -13,7 +13,7 @@ import ru.asolovyov.combime.common.Sink;
  *
  * @author Администратор
  */
-public class UIBasicItem implements UIItem {
+public abstract class UIBasicItem implements UIItem {
     protected UIForm form;
     protected UIItem parent;
 
@@ -53,7 +53,7 @@ public class UIBasicItem implements UIItem {
                     isVisible = visible;
                     return;
                 }
-                form.willChangeLayout(self);
+                
                 isVisible = visible;
                 form.didChangeLayout(self);
             }
@@ -73,5 +73,26 @@ public class UIBasicItem implements UIItem {
             if (item == this) { continue; }
             item.setForm(form);
         }
+        
+        if (this.pauseHandler != null) { this.form.getMidlet().addPauseHandler(this.pauseHandler); }
+        if (this.destroyHandler != null) { this.form.getMidlet().addDestroyHandler(this.destroyHandler); }
+    }
+
+    private UIMIDlet.PauseHandler pauseHandler;
+    public UIBasicItem onPause(UIMIDlet.PauseHandler handler) {
+        this.pauseHandler = handler;
+        if (this.form != null) {
+            this.form.getMidlet().addPauseHandler(handler);
+        }
+        return this;
+    }
+
+    private UIMIDlet.DestroyHandler destroyHandler;
+    public UIBasicItem onDestroy(UIMIDlet.DestroyHandler handler) {
+        this.destroyHandler = handler;
+        if (this.form != null) {
+            this.form.getMidlet().addDestroyHandler(handler);
+        }
+        return this;
     }
 }
