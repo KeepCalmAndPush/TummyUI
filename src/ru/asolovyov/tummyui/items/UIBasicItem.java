@@ -73,26 +73,61 @@ public abstract class UIBasicItem implements UIItem {
             if (item == this) { continue; }
             item.setForm(form);
         }
-        
-        if (this.pauseHandler != null) { this.form.getMidlet().addPauseHandler(this.pauseHandler); }
-        if (this.destroyHandler != null) { this.form.getMidlet().addDestroyHandler(this.destroyHandler); }
+        this.subscribeOnStartIfPossible();
+        this.subscribeOnPauseIfPossible();
+        this.subscribeOnDestroyIfPossible();
     }
 
     private UIMIDlet.PauseHandler pauseHandler;
     public UIBasicItem onPause(UIMIDlet.PauseHandler handler) {
         this.pauseHandler = handler;
-        if (this.form != null) {
-            this.form.getMidlet().addPauseHandler(handler);
-        }
+        subscribeOnPauseIfPossible();
         return this;
+    }
+
+    private void subscribeOnPauseIfPossible() {
+        if (this.form != null && this.form.getMidlet() != null) {
+            this.form.getMidlet().getPauseEventPublisher().sink(new Sink() {
+                protected void onValue(Object value) {
+                    pauseHandler.handle();
+                }
+            });
+        }
     }
 
     private UIMIDlet.DestroyHandler destroyHandler;
     public UIBasicItem onDestroy(UIMIDlet.DestroyHandler handler) {
         this.destroyHandler = handler;
-        if (this.form != null) {
-            this.form.getMidlet().addDestroyHandler(handler);
-        }
+        this.subscribeOnDestroyIfPossible();
         return this;
+    }
+
+    private void subscribeOnDestroyIfPossible() {
+        if (this.form != null && this.form.getMidlet() != null) {
+            this.form.getMidlet().getDestroyEventPublisher().sink(new Sink() {
+                protected void onValue(Object value) {
+                    boolean unconditional = ((Boolean)value).booleanValue();
+                    destroyHandler.handle(unconditional);
+                }
+            });
+        }
+    }
+
+    private UIMIDlet.StartHandler startHandler;
+    public UIBasicItem onStart(UIMIDlet.StartHandler handler) {
+        this.startHandler = handler;
+        this.subscribeOnStartIfPossible();
+        return this;
+    }
+
+    private void subscribeOnStartIfPossible() {
+        if (this.form != null && this.form.getMidlet() != null) {
+            this.form.getMidlet().getDestroyEventPublisher().sink(new Sink() {
+                protected void onValue(Object value) {
+                    boolean isResume = ((Boolean)value).booleanValue();
+                    startHandler.handle(isResume);
+                }
+            });
+        }
     }
 }

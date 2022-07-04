@@ -53,19 +53,28 @@ public class UI {
         return new UIPlainItemWrapper(item);
     }
 
-    public static UIStringItem StringItem(String labelBinding, String textBinding) {
-        return new UIStringItem(labelBinding, textBinding);
+    public static UIStringItem StringItem(String label, String text) {
+        return new UIStringItem(label, text);
     }
 
-    public static UITextField TextField(String labelBinding, String textBinding) {
-        return new UITextField(labelBinding, textBinding);
+    public static UITextField TextField(String label, String text) {
+        return new UITextField(label, text);
+    }
+
+    public static UIStringItem StringItem(StringBinding textBinding) {
+        textBinding = textBinding == null ? new StringBinding("") : textBinding;
+        return new UIStringItem(null, textBinding);
     }
 
     public static UIStringItem StringItem(StringBinding labelBinding, StringBinding textBinding) {
+        labelBinding = labelBinding == null ? new StringBinding("") : labelBinding;
+        textBinding = textBinding == null ? new StringBinding("") : textBinding;
         return new UIStringItem(labelBinding, textBinding);
     }
 
     public static UITextField TextField(StringBinding labelBinding, StringBinding textBinding) {
+        labelBinding = labelBinding == null ? new StringBinding("") : labelBinding;
+        textBinding = textBinding == null ? new StringBinding("") : textBinding;
         return new UITextField(labelBinding, textBinding);
     }
 
@@ -106,16 +115,7 @@ public class UI {
     }
 
     public static UIForm Form(String title, UIItem i1) {
-        UIForm form = new UIForm(title, new UIItem[]{});
-        form.appendUI(i1);
-        return form;
-    }
-
-    public static UIForm Form(UIMIDlet midlet, String title, UIItem i1) {
-        UIForm form = new UIForm(title, new UIItem[]{});
-        form.setMidlet(midlet);
-        form.appendUI(i1);
-        return form;
+        return new UIForm(title, new UIItem[]{i1});
     }
 
     public static UIForm Form(String title, UIItem i1, UIItem i2) {

@@ -21,15 +21,23 @@ public class UITextField extends TextField implements UIItem {
     private UIForm form;
 
     public UITextField(String label, String text, int maxSize, int constraints) {
-        super(label, text, maxSize, constraints);
+       this(new StringBinding(label == null ? "" : label),
+            new StringBinding(text == null ? "" : text),
+            maxSize,
+            constraints);
     }
 
     public UITextField(String label, String text) {
-        super(label, text, 255, UITextField.ANY);
+        this(label, text, 255, UITextField.ANY);
     }
 
     public UITextField(StringBinding labelBinding, StringBinding textBinding) {
-        super(labelBinding.getString(), textBinding.getString(), 255, UITextField.ANY);
+        this(labelBinding, textBinding, 255, UITextField.ANY);
+    }
+
+    public UITextField(StringBinding labelBinding, StringBinding textBinding, int maxSize, int constraints) {
+        super(labelBinding.getString(), textBinding.getString(), maxSize, constraints);
+        
         this.labelBinding = labelBinding;
         this.stringBinding = textBinding;
         this.subscribeToBindings();
@@ -61,6 +69,10 @@ public class UITextField extends TextField implements UIItem {
 
     public void setForm(UIForm form) {
         this.form = form;
+        
+        this.subscribeOnStartIfPossible();
+        this.subscribeOnPauseIfPossible();
+        this.subscribeOnDestroyIfPossible();
     }
 
     public String getCurrentString() {
@@ -116,13 +128,56 @@ public class UITextField extends TextField implements UIItem {
     public UIItem getParent() { return parent; }
     public void setParent(UIItem parent) { this.parent = parent; }
 
+    private UIMIDlet.PauseHandler pauseHandler;
     public UITextField onPause(UIMIDlet.PauseHandler handler) {
-        this.form.getMidlet().addPauseHandler(handler);
+        this.pauseHandler = handler;
+        subscribeOnPauseIfPossible();
         return this;
     }
 
+    private void subscribeOnPauseIfPossible() {
+        if (this.form != null && this.form.getMidlet() != null) {
+            this.form.getMidlet().getPauseEventPublisher().sink(new Sink() {
+                protected void onValue(Object value) {
+                    pauseHandler.handle();
+                }
+            });
+        }
+    }
+
+    private UIMIDlet.DestroyHandler destroyHandler;
     public UITextField onDestroy(UIMIDlet.DestroyHandler handler) {
-        this.form.getMidlet().addDestroyHandler(handler);
+        this.destroyHandler = handler;
+        this.subscribeOnDestroyIfPossible();
         return this;
+    }
+
+    private void subscribeOnDestroyIfPossible() {
+        if (this.form != null && this.form.getMidlet() != null) {
+            this.form.getMidlet().getDestroyEventPublisher().sink(new Sink() {
+                protected void onValue(Object value) {
+                    boolean unconditional = ((Boolean)value).booleanValue();
+                    destroyHandler.handle(unconditional);
+                }
+            });
+        }
+    }
+
+    private UIMIDlet.StartHandler startHandler;
+    public UITextField onStart(UIMIDlet.StartHandler handler) {
+        this.startHandler = handler;
+        this.subscribeOnStartIfPossible();
+        return this;
+    }
+
+    private void subscribeOnStartIfPossible() {
+        if (this.form != null && this.form.getMidlet() != null) {
+            this.form.getMidlet().getDestroyEventPublisher().sink(new Sink() {
+                protected void onValue(Object value) {
+                    boolean isResume = ((Boolean)value).booleanValue();
+                    startHandler.handle(isResume);
+                }
+            });
+        }
     }
 }

@@ -160,5 +160,11 @@ public class UIForm extends Form implements ItemStateListener, CommandListener {
     }
     
     public UIMIDlet getMidlet() { return this.midlet; }
-    public void setMidlet(UIMIDlet midlet) { this.midlet = midlet; }
+    public void setMidlet(UIMIDlet midlet) {
+        this.midlet = midlet;
+        for (int i = 0; i < uiItems.size(); i++) {
+            UIItem uiItem = (UIItem) uiItems.elementAt(i);
+            uiItem.setForm(this);
+        }
+    }
 }

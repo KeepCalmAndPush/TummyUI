@@ -24,6 +24,10 @@ public class UICommand extends Command {
     public void setForm(UIForm form) {
         this.form = form;
         this.form.commandVisibilityChanged(this);
+        
+        this.subscribeOnStartIfPossible();
+        this.subscribeOnPauseIfPossible();
+        this.subscribeOnDestroyIfPossible();
     }
     
     private boolean isVisible = true;
@@ -67,11 +71,56 @@ public class UICommand extends Command {
         return this;
     }
 
-    public void onPause(UIMIDlet.PauseHandler handler) {
-        this.form.getMidlet().addPauseHandler(handler);
+    private UIMIDlet.PauseHandler pauseHandler;
+    public UICommand onPause(UIMIDlet.PauseHandler handler) {
+        this.pauseHandler = handler;
+        subscribeOnPauseIfPossible();
+        return this;
     }
 
-    public void onDestroy(UIMIDlet.DestroyHandler handler) {
-        this.form.getMidlet().addDestroyHandler(handler);
+    private void subscribeOnPauseIfPossible() {
+        if (this.form != null && this.form.getMidlet() != null) {
+            this.form.getMidlet().getPauseEventPublisher().sink(new Sink() {
+                protected void onValue(Object value) {
+                    pauseHandler.handle();
+                }
+            });
+        }
+    }
+
+    private UIMIDlet.DestroyHandler destroyHandler;
+    public UICommand onDestroy(UIMIDlet.DestroyHandler handler) {
+        this.destroyHandler = handler;
+        this.subscribeOnDestroyIfPossible();
+        return this;
+    }
+
+    private void subscribeOnDestroyIfPossible() {
+        if (this.form != null && this.form.getMidlet() != null) {
+            this.form.getMidlet().getDestroyEventPublisher().sink(new Sink() {
+                protected void onValue(Object value) {
+                    boolean unconditional = ((Boolean)value).booleanValue();
+                    destroyHandler.handle(unconditional);
+                }
+            });
+        }
+    }
+
+    private UIMIDlet.StartHandler startHandler;
+    public UICommand onStart(UIMIDlet.StartHandler handler) {
+        this.startHandler = handler;
+        this.subscribeOnStartIfPossible();
+        return this;
+    }
+
+    private void subscribeOnStartIfPossible() {
+        if (this.form != null && this.form.getMidlet() != null) {
+            this.form.getMidlet().getDestroyEventPublisher().sink(new Sink() {
+                protected void onValue(Object value) {
+                    boolean isResume = ((Boolean)value).booleanValue();
+                    startHandler.handle(isResume);
+                }
+            });
+        }
     }
 }
