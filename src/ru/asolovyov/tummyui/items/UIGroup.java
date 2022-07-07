@@ -51,7 +51,7 @@ public class UIGroup extends UIBasicItem {
     private boolean isVisible = true;
     public UIItem setVisible(BoolBinding binding) {
         final UIItem self = this;
-        binding.getPublisher().sink(new Sink() {
+        binding.sink(new Sink() {
             protected void onValue(Object value) {
                 boolean visible = ((Boolean)value).booleanValue();
                 if (form == null) {

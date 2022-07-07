@@ -26,7 +26,7 @@ public class UIList extends UIGroup {
         this.itemFactory = factory;
         
         this.dataSource = dataSource;
-        this.dataSource.getPublisher().sink(new Sink() {
+        this.dataSource.sink(new Sink() {
             protected void onValue(Object value) {
                 
                 Object[] viewModels = (Object[])value;

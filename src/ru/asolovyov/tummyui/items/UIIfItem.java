@@ -33,7 +33,7 @@ public class UIIfItem extends UIBasicItem {
         for (int i = 0; i < this.ifItems.length; i++) { (this.ifItems[i]).setParent(this); }
         for (int i = 0; i < this.elseItems.length; i++) { (this.elseItems[i]).setParent(this); }
 
-        this.conditionBinding.getPublisher().sink(new Sink() {
+        this.conditionBinding.sink(new Sink() {
             protected void onValue(Object value) {
                 if (form == null) { return; }
                 

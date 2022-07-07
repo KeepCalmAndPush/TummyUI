@@ -52,14 +52,14 @@ public class UIStringItem extends StringItem implements UIItem {
     }
 
     private void subscribeToBindings() {
-        this.labelBinding.getPublisher().removeDuplicates().sink(new Sink() {
+        this.labelBinding.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
                 String string = (String)value;
                 UIStringItem.this.setLabel(string);
             }
         });
 
-        this.textBinding.getPublisher().removeDuplicates().sink(new Sink() {
+        this.textBinding.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
                 String string = (String)value;
                 UIStringItem.this.setText(string);
@@ -101,7 +101,7 @@ public class UIStringItem extends StringItem implements UIItem {
 
     private boolean isVisible = true;
     public UIStringItem visible(BoolBinding binding) {
-        binding.getPublisher().sink(new Sink() {
+        binding.sink(new Sink() {
             protected void onValue(Object value) {
                 boolean visible = ((Boolean)value).booleanValue();
                 if (form == null) {

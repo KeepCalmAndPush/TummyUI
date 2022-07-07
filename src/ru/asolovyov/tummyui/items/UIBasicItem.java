@@ -46,7 +46,7 @@ public abstract class UIBasicItem implements UIItem {
 
     public UIItem setVisible(BoolBinding binding) {
         final UIItem self = this;
-        binding.getPublisher().sink(new Sink() {
+        binding.sink(new Sink() {
             protected void onValue(Object value) {
                 boolean visible = ((Boolean) value).booleanValue();
                 if (form == null) {

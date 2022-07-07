@@ -56,7 +56,7 @@ public class UICommand extends Command {
 
     public UICommand visible(BoolBinding binding) {
         final UICommand self = this;
-        binding.getPublisher().sink(new Sink() {
+        binding.sink(new Sink() {
             protected void onValue(Object value) {
                 boolean visible = ((Boolean) value).booleanValue();
                 if (isVisible == visible) {

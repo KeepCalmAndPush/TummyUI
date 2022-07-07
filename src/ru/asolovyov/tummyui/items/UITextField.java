@@ -52,14 +52,14 @@ public class UITextField extends TextField implements UIItem {
     }
 
     private void subscribeToBindings() {
-        this.labelBinding.getPublisher().removeDuplicates().sink(new Sink() {
+        this.labelBinding.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
                 String string = (String) value;
                 UITextField.this.setLabel(string);
             }
         });
 
-        this.stringBinding.getPublisher().removeDuplicates().sink(new Sink() {
+        this.stringBinding.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
                 String string = (String)value;
                 UITextField.this.setString(string);
@@ -109,7 +109,7 @@ public class UITextField extends TextField implements UIItem {
 
     private boolean isVisible = true;
     public UITextField isVisible(BoolBinding binding) {
-        binding.getPublisher().sink(new Sink() {
+        binding.sink(new Sink() {
             protected void onValue(Object value) {
                 boolean visible = ((Boolean)value).booleanValue();
                 if (form == null) {

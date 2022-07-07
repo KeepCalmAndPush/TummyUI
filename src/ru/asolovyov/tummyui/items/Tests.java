@@ -10,6 +10,7 @@ import javax.microedition.lcdui.StringItem;
 import ru.asolovyov.combime.bindings.ArrayBinding;
 import ru.asolovyov.combime.bindings.BoolBinding;
 import ru.asolovyov.combime.bindings.StringBinding;
+import ru.asolovyov.combime.operators.mapping.Map;
 
 /**
  * @author Администратор
@@ -34,7 +35,11 @@ public class Tests extends UIMIDlet {
             UI.StringItem(labelBinding, textBinding),
             UI.TextField(labelBinding, textBinding),//.isVisible(visiblity),
             UI.StringItem("isVisible", "true").visible(visiblity),
-            UI.StringItem("isVisible", "false").visible(visiblity.inverted()),
+            UI.StringItem("isVisible", "false").visible(visiblity.to(new Map(){
+                            public Object mapValue(Object value) {
+                                return new Boolean(!((Boolean)value).booleanValue());
+                            }
+                        })),
             UI.List(listModel, new UIList.ItemFactory() {
                 public UIItem itemFor(Object v) {
                     return UI.Wrapper(new StringItem(((Pair)v).name, ((Pair)v).value));
@@ -51,12 +56,13 @@ public class Tests extends UIMIDlet {
                         UI.StringItem(null, "Полкан"),
                         UI.StringItem(null, "Мухтар")))
           )
-//          .command(UI.Command("CAT", new UICommand.Handler() { public void handle() {
-//                        isCat.setBool(!isCat.getBool());
-//                   }}).visible(visiblity))
-//          .command(UI.Command("VIS", new UICommand.Handler() { public void handle() {
-//                        visiblity.setBool(!visiblity.getBool());
-//                   }})))
+                        /*
+                         * 
+                         */
+
+                        //сделать прокидывание командов на форму-родителя
+                        
+
                         ;
     
     protected UIForm form() {
@@ -65,6 +71,7 @@ public class Tests extends UIMIDlet {
         final StringBinding destroyText = new StringBinding("Дестроев: " + des + "\n");
         
         return UI.Form("TummyUI",
+                bigItem,
                 UI.StringItem(suspendText)
                 .onPause(new PauseHandler() { public void handle() { 
                     suspendText.setString("Суспендов: " + ++su + "\n");
@@ -80,6 +87,12 @@ public class Tests extends UIMIDlet {
                     startText.setString("Дестроев: " + ++des + "\n");
                 }})
                 )
+                        .command(UI.Command("CAT", new UICommand.Handler() { public void handle() {
+                        isCat.setBool(!isCat.getBool());
+                   }}).visible(visiblity))
+          .command(UI.Command("VIS", new UICommand.Handler() { public void handle() {
+                        visiblity.setBool(!visiblity.getBool());
+                   }}))
           ;
     }
 
