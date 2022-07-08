@@ -45,6 +45,7 @@ public class UITextField extends TextField implements UIItem {
 
     public void setString(String text) {
         this.stringBinding.setString(text);
+        this.itemStateChanged(this);
     }
 
     public void setLabel(String text) {
