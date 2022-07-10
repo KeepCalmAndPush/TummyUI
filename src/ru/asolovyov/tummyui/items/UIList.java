@@ -39,13 +39,20 @@ public class UIList extends UIGroup {
 
                 uiItems = newItems;
                 for (int i = 0; i < uiItems.length; i++) {
-                    uiItems[i].setParent(UIList.this);
+                    UIItem item = uiItems[i];
+                    item.setParent(UIList.this);
+                    item.onChanged.sink(new Sink() {
+                        protected void onValue(Object value) {
+                            onChanged.sendValue(UIList.this);
+                        }
+                    });
                 }
                
                 if (form != null) {
-                    form.didChangeLayout(UIList.this);
                     setForm(form);
                 }
+
+                onChanged.sendValue(UIList.this);
             }
         });
     }

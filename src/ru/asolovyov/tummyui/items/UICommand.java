@@ -8,6 +8,7 @@ package ru.asolovyov.tummyui.items;
 import javax.microedition.lcdui.Command;
 import ru.asolovyov.combime.bindings.BoolBinding;
 import ru.asolovyov.combime.common.Sink;
+import ru.asolovyov.combime.subjects.PassthroughSubject;
 
 /**
  *
@@ -23,7 +24,8 @@ public class UICommand extends Command {
     public UIForm getForm() { return form; }
     public void setForm(UIForm form) {
         this.form = form;
-        this.form.commandVisibilityChanged(this);
+//        this.form.commandRequestsRelayout(this);
+        this.onChanged.sendValue(UICommand.this);
         
         this.subscribeOnStartIfPossible();
         this.subscribeOnPauseIfPossible();
@@ -34,6 +36,8 @@ public class UICommand extends Command {
     public boolean isVisible() {
         return isVisible;
     }
+
+    final PassthroughSubject onChanged = new PassthroughSubject();
 
     private Handler handler;
     private static int availablePriority = Integer.MIN_VALUE;
@@ -54,18 +58,11 @@ public class UICommand extends Command {
         }
     }
 
-    public UICommand visible(BoolBinding binding) {
-        final UICommand self = this;
+    public UICommand isVisible(final BoolBinding binding) {
         binding.sink(new Sink() {
             protected void onValue(Object value) {
-                boolean visible = ((Boolean) value).booleanValue();
-                if (isVisible == visible) {
-                    return;
-                }
-                isVisible = visible;
-                if (form != null) {
-                    form.commandVisibilityChanged(self);
-                }
+                isVisible = binding.getBool();
+                onChanged.sendValue(UICommand.this);
             }
         });
         return this;

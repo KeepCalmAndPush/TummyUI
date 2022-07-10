@@ -9,18 +9,28 @@ import java.util.Vector;
 import javax.microedition.lcdui.Item;
 import ru.asolovyov.combime.bindings.BoolBinding;
 import ru.asolovyov.combime.common.Sink;
+import ru.asolovyov.tummyui.utils.List;
 
 /**
  *
  * @author Администратор
  */
-public class UIGroup extends UIBasicItem {
+public class UIGroup extends UIItem {
     protected UIItem[] uiItems = {};
 
     public UIGroup(UIItem[] uiItems) {
         super();
         this.uiItems = uiItems;
         for (int i = 0; i < this.uiItems.length; i++) { (uiItems[i]).setParent(this); }
+        (new List(this.uiItems)).forEach(new List.Enumerator() {
+            public void onElement(Object element) {
+                ((UIItem)element).onChanged.sink(new Sink() {
+                    protected void onValue(Object value) {
+                        onChanged.sendValue(UIGroup.this);
+                    }
+                });
+            }
+        });
     }
 
     public UIItem[] getUIItems() {
@@ -46,27 +56,14 @@ public class UIGroup extends UIBasicItem {
         return plainItems;
     }
 
-    public void itemStateChanged(Item item) {}
-
-    private boolean isVisible = true;
     public UIItem setVisible(BoolBinding binding) {
-        final UIItem self = this;
         binding.sink(new Sink() {
             protected void onValue(Object value) {
                 boolean visible = ((Boolean)value).booleanValue();
-                if (form == null) {
-                    isVisible = visible;
-                    return;
-                }
-                
                 isVisible = visible;
-                form.didChangeLayout(self);
+                onChanged.sendValue(UIGroup.this);
             }
         });
         return this;
     }
-
-    private UIItem parent;
-    public UIItem getParent() { return parent; }
-    public void setParent(UIItem parent) { this.parent = parent; }
 }

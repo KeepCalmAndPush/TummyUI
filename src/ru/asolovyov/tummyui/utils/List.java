@@ -35,18 +35,28 @@ public class List extends Vector {
         return array;
     }
 
-    public void appendArray(Object[] array) {
+    public List append(Object[] array) {
         this.insertArrayAt(this.size(), array);
+        return this;
     }
 
-    public void insertArrayAt(int position, Object[] array) {
+    public List append(Vector vector) {
+        for (int i = 0; i < vector.size(); i++) {
+            Object object = vector.elementAt(i);
+            this.addElement(object);
+        }
+        return this;
+    }
+
+    public List insertArrayAt(int position, Object[] array) {
         for (int i = array.length - 1; i >= 0; i--) {
             Object object = array[i];
             this.insertElementAt(object, position);
         }
+        return this;
     }
 
-    public void deleteRange(int start, int length) {
+    public List deleteRange(int start, int length) {
         int j = start;
         for (int i = start; i < start + length; i++) {
             Object object = this.elementAt(i);
@@ -58,11 +68,15 @@ public class List extends Vector {
             this.removeElementAt(this.size() - 1);
         }
         this.trimToSize();
+
+        return this;
     }
 
-    public void replaceRange(int start, int length, Object[] replacement) {
+    public List replaceRange(int start, int length, Object[] replacement) {
         this.deleteRange(start, length);
         this.insertArrayAt(start, replacement);
+
+        return this;
     }
 
     public void forEach(Enumerator e) {

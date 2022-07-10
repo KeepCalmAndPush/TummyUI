@@ -10,7 +10,7 @@ import javax.microedition.lcdui.Item;
  *
  * @author Администратор
  */
-public class UIPlainItemWrapper extends UIBasicItem {
+public class UIPlainItemWrapper extends UIItem {
     private Item item;
 
     public UIPlainItemWrapper(Item item) {

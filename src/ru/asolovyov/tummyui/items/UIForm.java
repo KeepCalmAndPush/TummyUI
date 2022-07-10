@@ -12,6 +12,7 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Item;
 import javax.microedition.lcdui.ItemStateListener;
+import ru.asolovyov.combime.common.Sink;
 
 /**
  *
@@ -19,7 +20,8 @@ import javax.microedition.lcdui.ItemStateListener;
  */
 public class UIForm extends Form implements ItemStateListener, CommandListener {
     private List uiItems = new List();
-    private List uiCommands = new List();
+    private List formCommands = new List();
+    private List itemsCommands = new List();
 
     private List itemStateListeners = new List();
     private List commandListeners = new List();
@@ -46,7 +48,21 @@ public class UIForm extends Form implements ItemStateListener, CommandListener {
 
     public void appendUI(UIItem uiItem) {
         uiItem.setForm(this);
+        
         this.uiItems.addElement(uiItem);
+        
+        uiItem.getUICommands().forEach(new List.Enumerator() {
+            public void onElement(Object element) {
+                command((UICommand)element);
+            }
+        });
+        
+        uiItem.onChanged.sink(new Sink() {
+            protected void onValue(Object value) {
+                didChangeLayout((UIItem)value);
+            }
+        });
+        
         Item[] plainItems = uiItem.getPlainItems();
         
         for (int i = 0; i < plainItems.length; i++) {
@@ -77,16 +93,28 @@ public class UIForm extends Form implements ItemStateListener, CommandListener {
         }
     }
 
-    public void didChangeLayout(UIItem uiItem) {
+    private void didChangeLayout(UIItem uiItem) {
         this.deleteAll();
+        this.itemsCommands = new List();
         for (int i = 0; i < this.uiItems.size(); i++) {
             UIItem item = (UIItem) this.uiItems.elementAt(i);
             Item[] plainItems = item.getPlainItems();
+            
             for (int j = 0; j < plainItems.length; j++) {
                 Item plainItem = plainItems[j];
                 this.append(plainItem);
             }
         }
+
+        List commands = new List()
+                .append(formCommands)
+                .append(itemsCommands);
+        
+        commands.forEach(new List.Enumerator() {
+            public void onElement(Object element) {
+                command((UICommand)element);
+            }
+        });
     }
     
     private void deleteAll() {
@@ -94,10 +122,14 @@ public class UIForm extends Form implements ItemStateListener, CommandListener {
         for (int i = size - 1; i >= 0; i--) {
             this.delete(i);
         }
+
+        this.formCommands.forEach(new List.Enumerator() {
+            public void onElement(Object element) {
+                UIForm.this.removeCommand((Command) element);
+            }
+        });
     }
-
-
-
+    
     public void addCommand(Command cmd) {
         final Command command = cmd;
         UICommand.Handler handler = new UICommand.Handler() {
@@ -119,9 +151,16 @@ public class UIForm extends Form implements ItemStateListener, CommandListener {
     }
 
     public UIForm command(UICommand cmd) {
-        super.addCommand(cmd);
+        cmd.onChanged.sink(new Sink() {
+            protected void onValue(Object value) {
+                commandRequestsRelayout((UICommand)value);
+            }
+        });
         cmd.setForm(this);
-        this.uiCommands.addElement(cmd);
+        this.formCommands.addElement(cmd);
+        if (cmd.isVisible()) {
+            super.addCommand(cmd);
+        }
         return this;
     }
     
@@ -137,22 +176,23 @@ public class UIForm extends Form implements ItemStateListener, CommandListener {
             listener.commandAction(c, d);
         }
 
-        UICommand command = (UICommand)c;
-        for (int i = 0; i < this.uiCommands.size(); i++) {
-            if (command == this.uiCommands.elementAt(i)) {
-                command.handle();
-                return;
+        final UICommand command = (UICommand)c;
+        new List().append(this.formCommands).append(this.itemsCommands).forEach(new List.Enumerator() {
+            public void onElement(Object element) {
+                if (command == element) {
+                    command.handle();
+                }
             }
-        }
+        });
     }
 
-    public void commandVisibilityChanged(UICommand command) {
-        for (int i = 0; i < uiCommands.size(); i++) {
-            this.removeCommand((UICommand) uiCommands.elementAt(i));
+    private void commandRequestsRelayout(UICommand command) {
+        for (int i = 0; i < formCommands.size(); i++) {
+            this.removeCommand((UICommand) formCommands.elementAt(i));
         }
 
-        for (int i = 0; i < uiCommands.size(); i++) {
-            UICommand uiCommand = (UICommand) uiCommands.elementAt(i);
+        for (int i = 0; i < formCommands.size(); i++) {
+            UICommand uiCommand = (UICommand) formCommands.elementAt(i);
             if (uiCommand.isVisible()) {
                 super.addCommand(uiCommand);
             }

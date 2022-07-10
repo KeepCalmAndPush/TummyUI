@@ -7,7 +7,10 @@ package ru.asolovyov.tummyui.items;
 
 import javax.microedition.lcdui.Item;
 import ru.asolovyov.combime.bindings.ArrayBinding;
+import ru.asolovyov.combime.bindings.Binding;
 import ru.asolovyov.combime.bindings.BoolBinding;
+import ru.asolovyov.combime.bindings.IntBinding;
+import ru.asolovyov.combime.bindings.ObjectBinding;
 import ru.asolovyov.combime.bindings.StringBinding;
 
 /**
@@ -28,8 +31,8 @@ public class UI {
             return this;
         }
 
-        UIIfItem Else(UIGroup group) {
-            return new UIIfItem(binding, thenGroup, group);
+        UIIfItem Else(UIGroup elseGroup) {
+            return new UIIfItem(binding, thenGroup, elseGroup);
         }
     }
 
@@ -53,17 +56,16 @@ public class UI {
         return new UIPlainItemWrapper(item);
     }
 
-    public static UIStringItem StringItem(String label, String text) {
-        return new UIStringItem(label, text);
+    public static UITextField TextField(String label, String text) {
+        return new UITextField(Binding.String(label), Binding.String(text));
     }
 
-    public static UITextField TextField(String label, String text) {
-        return new UITextField(label, text);
+    public static UIStringItem StringItem(String label, String text) {
+        return new UIStringItem(Binding.String(label), Binding.String(text));
     }
 
     public static UIStringItem StringItem(StringBinding textBinding) {
-        textBinding = textBinding == null ? new StringBinding("") : textBinding;
-        return new UIStringItem(null, textBinding);
+        return StringItem(null, textBinding);
     }
 
     public static UIStringItem StringItem(StringBinding labelBinding, StringBinding textBinding) {
@@ -78,6 +80,18 @@ public class UI {
         return new UITextField(labelBinding, textBinding);
     }
 
+    public static UIImageItem ImageItem(StringBinding label, StringBinding imageName, IntBinding layout, StringBinding altText) {
+        return new UIImageItem(label, imageName, layout, altText);
+    }
+
+    public static UIImageItem ImageItem(String label, StringBinding imageName, int layout, String altText) {
+        return new UIImageItem(label, imageName, layout, altText);
+    }
+
+    public static UIImageItem ImageItem(StringBinding label, ObjectBinding image, IntBinding layout, StringBinding altText) {
+        return new UIImageItem(label, image, layout, altText);
+    }
+    
     public static UIGroup Group() {
         return new UIGroup(new UIItem[]{});
     }

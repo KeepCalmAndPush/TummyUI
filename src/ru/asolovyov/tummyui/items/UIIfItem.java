@@ -8,12 +8,13 @@ package ru.asolovyov.tummyui.items;
 
 import ru.asolovyov.combime.bindings.BoolBinding;
 import ru.asolovyov.combime.common.Sink;
+import ru.asolovyov.tummyui.utils.List;
 
 /**
  *
  * @author Администратор
  */
-public class UIIfItem extends UIBasicItem {
+public class UIIfItem extends UIItem {
     private boolean condition = false;
     private BoolBinding conditionBinding;
     private UIItem[] ifItems = {};
@@ -33,26 +34,22 @@ public class UIIfItem extends UIBasicItem {
         for (int i = 0; i < this.ifItems.length; i++) { (this.ifItems[i]).setParent(this); }
         for (int i = 0; i < this.elseItems.length; i++) { (this.elseItems[i]).setParent(this); }
 
-        this.conditionBinding.sink(new Sink() {
-            protected void onValue(Object value) {
-                if (form == null) { return; }
-                
-                UIIfItem.this.condition = ((Boolean)value).booleanValue();
-                form.didChangeLayout(UIIfItem.this);
+        (new List(this.ifItems)).append(this.elseItems).forEach(new List.Enumerator() {
+            public void onElement(Object element) {
+                ((UIItem)element).onChanged.sink(new Sink() {
+                    protected void onValue(Object value) {
+                        onChanged.sendValue(UIIfItem.this);
+                    }
+                });
             }
         });
-    }
 
-    public void setForm(UIForm form) {
-        this.form = form;
-        for (int i = 0; i < ifItems.length; i++) {
-            UIItem item = ifItems[i];
-            item.setForm(form);
-        }
-        for (int i = 0; i < elseItems.length; i++) {
-            UIItem item = elseItems[i];
-            item.setForm(form);
-        }
+        this.conditionBinding.sink(new Sink() {
+            protected void onValue(Object value) {
+                UIIfItem.this.condition = ((Boolean)value).booleanValue();
+                onChanged.sendValue(UIIfItem.this);
+            }
+        });
     }
 
     public UIItem[] getUIItems() {
