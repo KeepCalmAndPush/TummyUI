@@ -9,14 +9,12 @@ import java.io.IOException;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.ImageItem;
 import javax.microedition.lcdui.Item;
-import ru.asolovyov.combime.api.IPublisher;
 import ru.asolovyov.combime.bindings.Binding;
 import ru.asolovyov.combime.bindings.IntBinding;
 import ru.asolovyov.combime.bindings.ObjectBinding;
 import ru.asolovyov.combime.bindings.StringBinding;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.combime.operators.mapping.Map;
-import ru.asolovyov.combime.publishers.Publisher;
 
 /**
  *
@@ -81,6 +79,10 @@ public class UIImageItem extends UIItem {
     }
 
     public Item[] getPlainItems() {
-        return new Item[]{ this.imageItem };
+        if (this.isVisible) {
+            return new Item[]{ this.imageItem };
+        }
+        
+        return new Item[]{};
     }
 }

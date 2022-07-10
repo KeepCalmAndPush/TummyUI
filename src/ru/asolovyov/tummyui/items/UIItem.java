@@ -8,6 +8,7 @@ import java.util.Vector;
 import javax.microedition.lcdui.Item;
 import javax.microedition.lcdui.ItemStateListener;
 import ru.asolovyov.combime.bindings.BoolBinding;
+import ru.asolovyov.combime.common.S;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.combime.subjects.PassthroughSubject;
 import ru.asolovyov.tummyui.utils.List;
@@ -59,10 +60,12 @@ public abstract class UIItem implements ItemStateListener {
     public void itemStateChanged(Item item) { }
 
     public UIItem isVisible(BoolBinding binding) {
-        binding.sink(new Sink() {
+        final Object o = this;
+        binding.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
-                boolean visible = ((Boolean) value).booleanValue();                
+                boolean visible = ((Boolean) value).booleanValue();
                 isVisible = visible;
+                S.println("UIITEM VIS " + isVisible + " " + o);
                 onChanged.sendValue(UIItem.this);
             }
         });
@@ -139,7 +142,7 @@ public abstract class UIItem implements ItemStateListener {
         }
     }
 
-    public UIItem command(UICommand cmd) {
+    public UIItem addCommand(UICommand cmd) {
         this.getUICommands().addElement(cmd);
         return this;
     }

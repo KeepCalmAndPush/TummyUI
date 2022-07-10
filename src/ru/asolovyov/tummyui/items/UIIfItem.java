@@ -44,9 +44,9 @@ public class UIIfItem extends UIItem {
             }
         });
 
-        this.conditionBinding.sink(new Sink() {
+        this.conditionBinding.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
-                UIIfItem.this.condition = ((Boolean)value).booleanValue();
+                UIIfItem.this.condition = conditionBinding.getBool();
                 onChanged.sendValue(UIIfItem.this);
             }
         });

@@ -5,8 +5,10 @@
 
 package ru.asolovyov.tummyui.items;
 
+import ru.asolovyov.combime.api.ISubscription;
 import ru.asolovyov.combime.bindings.ArrayBinding;
 import ru.asolovyov.combime.common.Sink;
+import ru.asolovyov.tummyui.utils.List;
 
 /**
  *
@@ -20,6 +22,8 @@ public class UIList extends UIGroup {
     private ArrayBinding dataSource;
     private ItemFactory itemFactory;
 
+    private List subscriptions = new List();
+
     public UIList(ArrayBinding dataSource, ItemFactory factory) {
         super(new UIItem[]{});
 
@@ -31,6 +35,12 @@ public class UIList extends UIGroup {
                 
                 Object[] viewModels = (Object[])value;
 
+                subscriptions.forEach(new List.Enumerator() {
+                    public void onElement(Object element) {
+                        ((ISubscription) element).cancel();
+                    }
+                });
+
                 UIItem[] newItems = new UIItem[viewModels.length];
                 for (int i = 0; i < viewModels.length; i++) {
                     Object viewModel = viewModels[i];
@@ -38,20 +48,18 @@ public class UIList extends UIGroup {
                 }
 
                 uiItems = newItems;
+                
                 for (int i = 0; i < uiItems.length; i++) {
                     UIItem item = uiItems[i];
                     item.setParent(UIList.this);
-                    item.onChanged.sink(new Sink() {
+                    Object o = item.onChanged.sink(new Sink() {
                         protected void onValue(Object value) {
                             onChanged.sendValue(UIList.this);
                         }
                     });
+                    subscriptions.addElement(o);
                 }
-               
-                if (form != null) {
-                    setForm(form);
-                }
-
+                
                 onChanged.sendValue(UIList.this);
             }
         });

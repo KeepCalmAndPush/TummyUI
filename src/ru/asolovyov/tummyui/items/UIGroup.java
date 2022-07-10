@@ -21,10 +21,12 @@ public class UIGroup extends UIItem {
     public UIGroup(UIItem[] uiItems) {
         super();
         this.uiItems = uiItems;
-        for (int i = 0; i < this.uiItems.length; i++) { (uiItems[i]).setParent(this); }
+
         (new List(this.uiItems)).forEach(new List.Enumerator() {
             public void onElement(Object element) {
-                ((UIItem)element).onChanged.sink(new Sink() {
+                UIItem item = ((UIItem)element);
+                item.setParent(UIGroup.this);
+                item.onChanged.sink(new Sink() {
                     protected void onValue(Object value) {
                         onChanged.sendValue(UIGroup.this);
                     }
@@ -54,16 +56,5 @@ public class UIGroup extends UIItem {
         Item[] plainItems = new Item[result.size()];
         result.copyInto(plainItems);
         return plainItems;
-    }
-
-    public UIItem setVisible(BoolBinding binding) {
-        binding.sink(new Sink() {
-            protected void onValue(Object value) {
-                boolean visible = ((Boolean)value).booleanValue();
-                isVisible = visible;
-                onChanged.sendValue(UIGroup.this);
-            }
-        });
-        return this;
     }
 }

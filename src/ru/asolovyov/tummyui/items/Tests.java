@@ -11,6 +11,7 @@ import ru.asolovyov.combime.bindings.ArrayBinding;
 import ru.asolovyov.combime.bindings.Binding;
 import ru.asolovyov.combime.bindings.BoolBinding;
 import ru.asolovyov.combime.bindings.StringBinding;
+import ru.asolovyov.combime.common.S;
 import ru.asolovyov.combime.operators.combining.CombineLatest;
 import ru.asolovyov.combime.operators.mapping.Map;
 
@@ -54,18 +55,20 @@ public class Tests extends UIMIDlet {
                 }
             }),//.visible(visiblity),
 
-            UI.If(isCat).Then(UI.Group(
-            UI.StringItem(null, "Котии:\n"),
-            UI.StringItem(null, "Барсик").isVisible(visiblity),
-            UI.StringItem(null, "Мурзик"),
-            UI.StringItem(null, "Мурка\n"))).Else(UI.Group(
-            UI.StringItem(null, "Пёсели:\n"),
-            UI.StringItem(null, "Шарик").isVisible(visiblity.inverted()),
-            UI.StringItem(null, "Полкан"),
-            UI.StringItem(null, "Мухтар"))))
-                    ;
-                    
-    int i = 0;
+            UI.If(isCat)
+                    .Then(UI.Group(
+                        UI.StringItem(null, "Котии:\n"),
+                        UI.StringItem(null, "Барсик").isVisible(visiblity),
+                        UI.StringItem(null, "Мурзик"),
+                        UI.StringItem(null, "Мурка\n")))
+                    .Else(UI.Group(
+                        UI.StringItem(null, "Пёсели:\n"),
+                        UI.StringItem(null, "Шарик").isVisible(visiblity.inverted()),
+                        UI.StringItem(null, "Полкан"),
+                        UI.StringItem(null, "Мухтар"))
+                        )
+                        
+                        );
 
     UIItem lcTracker = UI.Group(
             UI.Group(
@@ -88,15 +91,7 @@ public class Tests extends UIMIDlet {
 
     protected UIForm form() {
         return UI.Form("TummyUI",
-                bigItem
-                .command(UI.Command("CAT", new UICommand.Handler() {
-                    public void handle() {
-                        isCat.setBool(!isCat.getBool());
-                    }}))
-                .command(UI.Command("VIS", new UICommand.Handler() {
-                        public void handle() {
-                            visiblity.setBool(!visiblity.getBool());
-                    }})),
+                bigItem,
                 UI.StringItem(textBinding, textBinding.to(new CombineLatest(labelBinding)).to(new Map() {
             public Object mapValue(Object value) {
                 String text = (String) (((Object[]) value)[0]);
@@ -107,8 +102,19 @@ public class Tests extends UIMIDlet {
                 return label + "(" + text.length() + ")";
             }
             })),
-                    UI.ImageItem(null, Binding.String("res/1.png"), ImageItem.LAYOUT_CENTER, null)
-                    ) //
+
+            UI.ImageItem(null, Binding.String("res/1.png"), ImageItem.LAYOUT_CENTER, null).isVisible(visiblity)
+            )
+                    .addCommand(UI.Command("CAT", new UICommand.Handler() {
+                    public void handle() {
+                        S.println("CAT");
+                        isCat.setBool(!isCat.getBool());
+                    }}))
+                .addCommand(UI.Command("VIS", new UICommand.Handler() {
+                        public void handle() {
+                            S.println("VIS");
+                            visiblity.setBool(!visiblity.getBool());
+                    }}))//
                     
 
               ;

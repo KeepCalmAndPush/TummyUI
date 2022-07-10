@@ -13,6 +13,7 @@ import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Item;
 import javax.microedition.lcdui.ItemStateListener;
 import ru.asolovyov.combime.common.Sink;
+import ru.asolovyov.combime.common.S;
 
 /**
  *
@@ -53,7 +54,7 @@ public class UIForm extends Form implements ItemStateListener, CommandListener {
         
         uiItem.getUICommands().forEach(new List.Enumerator() {
             public void onElement(Object element) {
-                command((UICommand)element);
+                addCommand((UICommand)element);
             }
         });
         
@@ -107,12 +108,12 @@ public class UIForm extends Form implements ItemStateListener, CommandListener {
         }
 
         List commands = new List()
-                .append(formCommands)
-                .append(itemsCommands);
+                .append(formCommands);
+                //.append(itemsCommands);
         
         commands.forEach(new List.Enumerator() {
             public void onElement(Object element) {
-                command((UICommand)element);
+                addCommand((UICommand)element);
             }
         });
     }
@@ -147,20 +148,30 @@ public class UIForm extends Form implements ItemStateListener, CommandListener {
                 cmd.getPriority(),
                 handler);
         
-        this.command(uiCommand);
+        this.addCommand(uiCommand);
     }
 
-    public UIForm command(UICommand cmd) {
-        cmd.onChanged.sink(new Sink() {
-            protected void onValue(Object value) {
-                commandRequestsRelayout((UICommand)value);
-            }
-        });
-        cmd.setForm(this);
-        this.formCommands.addElement(cmd);
+    public UIForm addCommand(UICommand cmd) {
         if (cmd.isVisible()) {
             super.addCommand(cmd);
         }
+
+        if (this.formCommands.contains(cmd)) {
+            return this;
+        }
+
+        if (cmd.getForm() != this) {
+            cmd.setForm(this);
+        }
+        
+        this.formCommands.addElement(cmd);
+        cmd.onChanged.sink(new Sink() {
+            protected void onValue(Object value) {
+                S.println("1");
+                commandRequestsRelayout((UICommand) value);
+            }
+        });
+
         return this;
     }
     
@@ -187,16 +198,15 @@ public class UIForm extends Form implements ItemStateListener, CommandListener {
     }
 
     private void commandRequestsRelayout(UICommand command) {
-        for (int i = 0; i < formCommands.size(); i++) {
-            this.removeCommand((UICommand) formCommands.elementAt(i));
-        }
-
-        for (int i = 0; i < formCommands.size(); i++) {
-            UICommand uiCommand = (UICommand) formCommands.elementAt(i);
-            if (uiCommand.isVisible()) {
-                super.addCommand(uiCommand);
+        this.formCommands.forEach(new List.Enumerator() {
+            public void onElement(Object element) {
+                UICommand command = (UICommand)element;
+                removeCommand(command);
+                if (command.isVisible()) {
+                    addCommand(command);
+                }
             }
-        }
+        });
     }
     
     public UIMIDlet getMidlet() { return this.midlet; }
