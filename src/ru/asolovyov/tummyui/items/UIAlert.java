@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package ru.asolovyov.tummyui.items;
 
 import javax.microedition.lcdui.Alert;
@@ -21,31 +20,46 @@ import ru.asolovyov.tummyui.utils.List;
  * @author Администратор
  */
 public class UIAlert extends Alert implements CommandListener {
+
     private List uiCommands = new List();
     private List commandListeners = new List();
 
     public UIAlert(StringBinding title, StringBinding alertText, ObjectBinding alertImage, ObjectBinding alertType) {
         super(title.getString());
+
         title.removeDuplicates().sink(new Sink() {
+
             protected void onValue(Object value) {
                 setTitle((String) value);
             }
         });
-        alertText.removeDuplicates().sink(new Sink() {
-            protected void onValue(Object value) {
-                setString((String) value);
-            }
-        });
-        alertImage.removeDuplicates().sink(new Sink() {
-            protected void onValue(Object value) {
-                setImage((Image)value);
-            }
-        });
-        alertType.removeDuplicates().sink(new Sink() {
-            protected void onValue(Object value) {
-                setType((AlertType)value);
-            }
-        });
+
+        if (alertText != null) {
+            alertText.removeDuplicates().sink(new Sink() {
+
+                protected void onValue(Object value) {
+                    setString((String) value);
+                }
+            });
+        }
+
+        if (alertImage != null) {
+            alertImage.removeDuplicates().sink(new Sink() {
+
+                protected void onValue(Object value) {
+                    setImage((Image) value);
+                }
+            });
+        }
+
+        if (alertType != null) {
+            alertType.removeDuplicates().sink(new Sink() {
+
+                protected void onValue(Object value) {
+                    setType((AlertType) value);
+                }
+            });
+        }
 
         setCommandListener(this);
     }
@@ -53,6 +67,7 @@ public class UIAlert extends Alert implements CommandListener {
     public void addCommand(Command cmd) {
         final Command command = cmd;
         UICommand.Handler handler = new UICommand.Handler() {
+
             public void handle() {
                 for (int i = 0; i < commandListeners.size(); i++) {
                     CommandListener listener = (CommandListener) commandListeners.elementAt(i);
@@ -76,8 +91,10 @@ public class UIAlert extends Alert implements CommandListener {
         return this;
     }
 
-        public void setCommandListener(CommandListener listener) {
-        if (listener == this) { return; }
+    public void setCommandListener(CommandListener listener) {
+        if (listener == this) {
+            return;
+        }
         this.commandListeners.removeElement(listener);
         this.commandListeners.addElement(listener);
     }
@@ -88,7 +105,7 @@ public class UIAlert extends Alert implements CommandListener {
             listener.commandAction(c, d);
         }
 
-        UICommand command = (UICommand)c;
+        UICommand command = (UICommand) c;
         for (int i = 0; i < this.uiCommands.size(); i++) {
             if (command == this.uiCommands.elementAt(i)) {
                 command.handle();

@@ -65,4 +65,8 @@ public abstract class UIMIDlet extends MIDlet {
         
         this.startEventPublisher.sendValue(isResume);
     }
+
+    public Display getDisplay() {
+        return display;
+    }
 }

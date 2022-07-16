@@ -4,6 +4,7 @@
  */
 package ru.asolovyov.tummyui.items;
 
+import javax.microedition.lcdui.AlertType;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.ImageItem;
 import javax.microedition.lcdui.StringItem;
@@ -28,6 +29,7 @@ public class Tests extends UIMIDlet {
         final StringBinding startText = new StringBinding("Стартов: " + sta + "\n");
         final StringBinding destroyText = new StringBinding("Дестроев: " + des + "\n");
 
+        final BoolBinding alertVisible = Binding.Bool(false);
     
     private StringBinding labelBinding = Binding.String("Label");
     private StringBinding textBinding = Binding.String("Text");
@@ -105,6 +107,7 @@ public class Tests extends UIMIDlet {
 
             UI.ImageItem(null, Binding.String("res/1.png"), ImageItem.LAYOUT_CENTER, null).isVisible(visiblity)
             )
+                    .alert(alertVisible, UI.Alert("Hello", "World", UI.Image("res/1.png"), AlertType.ALARM))
                     .addCommand(UI.Command("CAT", new UICommand.Handler() {
                     public void handle() {
                         S.println("CAT");
@@ -113,7 +116,7 @@ public class Tests extends UIMIDlet {
                 .addCommand(UI.Command("VIS", new UICommand.Handler() {
                         public void handle() {
                             S.println("VIS");
-                            visiblity.setBool(!visiblity.getBool());
+                            alertVisible.setBool(!alertVisible.getBool());
                     }}))//
                     
 

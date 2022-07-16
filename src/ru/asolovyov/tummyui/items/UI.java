@@ -5,6 +5,9 @@
 
 package ru.asolovyov.tummyui.items;
 
+import java.io.IOException;
+import javax.microedition.lcdui.AlertType;
+import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.Item;
 import ru.asolovyov.combime.bindings.ArrayBinding;
 import ru.asolovyov.combime.bindings.Binding;
@@ -44,6 +47,17 @@ public class UI {
         return new IfFactory(condition);
     }
 
+    public static UIAlert Alert(String title, String alertText, Image alertImage, AlertType alertType) {
+        UIAlert alert = new UIAlert(
+                Binding.String(title),
+                Binding.String(alertText),
+                Binding.Object(alertImage),
+                Binding.Object(alertType)
+                );
+        alert.setTimeout(UIAlert.FOREVER);
+        return alert;
+    }
+
     public static UICommand Command(String label, UICommand.Handler handler) {
         return new UICommand(label, handler);
     }
@@ -78,6 +92,15 @@ public class UI {
         labelBinding = labelBinding == null ? new StringBinding("") : labelBinding;
         textBinding = textBinding == null ? new StringBinding("") : textBinding;
         return new UITextField(labelBinding, textBinding);
+    }
+
+    public static Image Image(String path) {
+        try {
+            return Image.createImage(path);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        return null;
     }
 
     public static UIImageItem ImageItem(StringBinding label, StringBinding imageName, IntBinding layout, StringBinding altText) {

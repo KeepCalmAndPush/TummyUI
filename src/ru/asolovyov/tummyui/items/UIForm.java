@@ -12,6 +12,7 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Item;
 import javax.microedition.lcdui.ItemStateListener;
+import ru.asolovyov.combime.bindings.BoolBinding;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.combime.common.S;
 
@@ -216,5 +217,17 @@ public class UIForm extends Form implements ItemStateListener, CommandListener {
             UIItem uiItem = (UIItem) uiItems.elementAt(i);
             uiItem.setForm(this);
         }
+    }
+
+    public UIForm alert(final BoolBinding isVisible, final UIAlert alert) {
+        isVisible.removeDuplicates().sink(new Sink() {
+            protected void onValue(Object value) {
+                if (isVisible.getBool()) {
+                    midlet.getDisplay().setCurrent(alert);
+                }
+            }
+        });
+
+        return this;
     }
 }
