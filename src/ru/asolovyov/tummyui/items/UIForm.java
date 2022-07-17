@@ -12,7 +12,9 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Item;
 import javax.microedition.lcdui.ItemStateListener;
-import ru.asolovyov.combime.bindings.BoolBinding;
+import ru.asolovyov.combime.bindings.Binding;
+import ru.asolovyov.combime.bindings.Bool;
+import ru.asolovyov.combime.bindings.StringBinding;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.combime.common.S;
 
@@ -29,18 +31,30 @@ public class UIForm extends Form implements ItemStateListener, CommandListener {
     private List commandListeners = new List();
 
     private UIMIDlet midlet;
-    
-    public UIForm(String title) {
+
+    private StringBinding titleBinding;
+
+    public UIForm(StringBinding title, Item[] items) {
+        super(title.getString(), items);
+        super.setItemStateListener(this);
+        super.setCommandListener(this);
+
+        if (title != null) {
+            title.removeDuplicates().sink(new Sink() {
+            protected void onValue(Object value) {
+                setTitle((String)value);
+            }
+        });
+        }
+
+        this.titleBinding = title;
+    }
+
+    public UIForm(StringBinding title) {
        this(title, new Item[] {});
     }
 
-    public UIForm(String title, Item[] items) {
-        super(title, items);
-        super.setItemStateListener(this);
-        super.setCommandListener(this);
-    }
-
-    public UIForm(String title, UIItem[] items) {
+    public UIForm(StringBinding title, UIItem[] items) {
         this(title, new Item[]{});
         for (int i = 0; i < items.length; i++) {
             UIItem uiItem = items[i];
@@ -55,7 +69,7 @@ public class UIForm extends Form implements ItemStateListener, CommandListener {
         
         uiItem.getUICommands().forEach(new List.Enumerator() {
             public void onElement(Object element) {
-                addCommand((UICommand)element);
+                command((UICommand)element);
             }
         });
         
@@ -114,7 +128,7 @@ public class UIForm extends Form implements ItemStateListener, CommandListener {
         
         commands.forEach(new List.Enumerator() {
             public void onElement(Object element) {
-                addCommand((UICommand)element);
+                command((UICommand)element);
             }
         });
     }
@@ -144,15 +158,16 @@ public class UIForm extends Form implements ItemStateListener, CommandListener {
         };
         
         UICommand uiCommand = new UICommand(
-                cmd.getLabel(),
+                Binding.String(cmd.getLabel()),
                 cmd.getCommandType(),
                 cmd.getPriority(),
-                handler);
+                handler
+                );
         
-        this.addCommand(uiCommand);
+        this.command(uiCommand);
     }
 
-    public UIForm addCommand(UICommand cmd) {
+    public UIForm command(UICommand cmd) {
         if (cmd.isVisible()) {
             super.addCommand(cmd);
         }
@@ -204,7 +219,7 @@ public class UIForm extends Form implements ItemStateListener, CommandListener {
                 UICommand command = (UICommand)element;
                 removeCommand(command);
                 if (command.isVisible()) {
-                    addCommand(command);
+                    command(command);
                 }
             }
         });
@@ -219,7 +234,7 @@ public class UIForm extends Form implements ItemStateListener, CommandListener {
         }
     }
 
-    public UIForm alert(final BoolBinding isVisible, final UIAlert alert) {
+    public UIForm alert(final Bool isVisible, final UIAlert alert) {
         isVisible.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
                 if (isVisible.getBool()) {
@@ -229,5 +244,48 @@ public class UIForm extends Form implements ItemStateListener, CommandListener {
         });
 
         return this;
+    }
+    
+    public UIForm navigationLink(
+            StringBinding linkTitle,
+            StringBinding backTitle,
+            StringBinding formTitle,
+            UIItem content
+            ) {
+        UIForm form = new UIForm(formTitle, new UIItem[]{ content });
+        return this.navigationLink(linkTitle, backTitle, form);
+    }
+
+    public UIForm navigationLink(StringBinding linkTitle, final Displayable content) {
+        return this.command(new UICommand(linkTitle, new UICommand.Handler() {
+            public void handle() {
+                command(new UICommand("", new UICommand.Handler() {
+                    public void handle() {
+                        getMidlet().getDisplay().setCurrent(UIForm.this);
+                    }
+                }));
+                getMidlet().getDisplay().setCurrent(content);
+            }
+        }));
+    }
+
+    public UIForm navigationLink(
+            final StringBinding linkTitle,
+            final StringBinding backTitle,
+            final UIForm form
+            ) {
+        final StringBinding back = backTitle != null ? backTitle : this.titleBinding;
+        final StringBinding link = linkTitle != null ? linkTitle : form.titleBinding;
+
+        form.command(new UICommand(back, new UICommand.Handler() {
+            public void handle() {
+                getMidlet().getDisplay().setCurrent(UIForm.this);
+            }
+        }));
+        return this.command(new UICommand(link, new UICommand.Handler() {
+            public void handle() {
+                getMidlet().getDisplay().setCurrent(form);
+            }
+        }));
     }
 }

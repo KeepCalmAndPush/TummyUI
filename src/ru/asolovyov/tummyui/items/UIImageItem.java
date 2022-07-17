@@ -69,7 +69,7 @@ public class UIImageItem extends UIItem {
 
         altText.sink(new Sink() {
             protected void onValue(Object value) {
-                imageItem.setAltText((String)value);
+                imageItem.setAltText((String) value);
             }
         });
     }

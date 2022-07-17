@@ -6,7 +6,7 @@
 package ru.asolovyov.tummyui.items;
 
 
-import ru.asolovyov.combime.bindings.BoolBinding;
+import ru.asolovyov.combime.bindings.Bool;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.tummyui.utils.List;
 
@@ -16,15 +16,15 @@ import ru.asolovyov.tummyui.utils.List;
  */
 public class UIIfItem extends UIItem {
     private boolean condition = false;
-    private BoolBinding conditionBinding;
+    private Bool conditionBinding;
     private UIItem[] ifItems = {};
     private UIItem[] elseItems = {};
 
-    public UIIfItem(BoolBinding condition, UIGroup ifGroup, UIGroup elseGroup) {
+    public UIIfItem(Bool condition, UIGroup ifGroup, UIGroup elseGroup) {
         this(condition, ifGroup.uiItems, elseGroup.uiItems);
     }
 
-    public UIIfItem(BoolBinding condition, UIItem[] ifItems, UIItem[] elseItems) {
+    public UIIfItem(Bool condition, UIItem[] ifItems, UIItem[] elseItems) {
         super();
         this.conditionBinding = condition;
         this.ifItems = ifItems;

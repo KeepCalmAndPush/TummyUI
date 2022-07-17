@@ -6,7 +6,9 @@
 package ru.asolovyov.tummyui.items;
 
 import javax.microedition.lcdui.Command;
-import ru.asolovyov.combime.bindings.BoolBinding;
+import ru.asolovyov.combime.bindings.Binding;
+import ru.asolovyov.combime.bindings.Bool;
+import ru.asolovyov.combime.bindings.StringBinding;
 import ru.asolovyov.combime.common.S;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.combime.subjects.PassthroughSubject;
@@ -25,8 +27,6 @@ public class UICommand extends Command {
     public UIForm getForm() { return form; }
     public void setForm(UIForm form) {
         this.form = form;
-//        this.form.commandRequestsRelayout(this);
-//        this.onChanged.sendValue(UICommand.this);
         
         this.subscribeOnStartIfPossible();
         this.subscribeOnPauseIfPossible();
@@ -43,14 +43,17 @@ public class UICommand extends Command {
     private Handler handler;
     private static int availablePriority = Integer.MIN_VALUE;
 
-    public UICommand(String label, int commandType, int priority, Handler handler) {
-        super(label, commandType, priority);
+    public UICommand(StringBinding label, int commandType, int priority, Handler handler) {
+        super(label.getString(), commandType, priority);
         this.handler = handler;
     }
 
+    public UICommand(StringBinding label, Handler handler) {
+        this(label, Command.SCREEN, availablePriority++, handler);
+    }
+
     public UICommand(String label, Handler handler) {
-        super(label, Command.SCREEN, availablePriority++);
-        this.handler = handler;
+        this(Binding.String(label), handler);
     }
 
     void handle() {
@@ -59,7 +62,7 @@ public class UICommand extends Command {
         }
     }
 
-    public UICommand isVisible(final BoolBinding binding) {
+    public UICommand isVisible(final Bool binding) {
         binding.sink(new Sink() {
             protected void onValue(Object value) {
                 if (isVisible == binding.getBool()) {
@@ -84,7 +87,9 @@ public class UICommand extends Command {
         if (this.form != null && this.form.getMidlet() != null) {
             this.form.getMidlet().getPauseEventPublisher().sink(new Sink() {
                 protected void onValue(Object value) {
-                    pauseHandler.handle();
+                    if (pauseHandler != null) {
+                        pauseHandler.handle();
+                    }
                 }
             });
         }
@@ -102,7 +107,9 @@ public class UICommand extends Command {
             this.form.getMidlet().getDestroyEventPublisher().sink(new Sink() {
                 protected void onValue(Object value) {
                     boolean unconditional = ((Boolean)value).booleanValue();
-                    destroyHandler.handle(unconditional);
+                    if (destroyHandler != null) {
+                        destroyHandler.handle(unconditional);
+                    }
                 }
             });
         }
@@ -120,7 +127,9 @@ public class UICommand extends Command {
             this.form.getMidlet().getDestroyEventPublisher().sink(new Sink() {
                 protected void onValue(Object value) {
                     boolean isResume = ((Boolean)value).booleanValue();
-                    startHandler.handle(isResume);
+                    if (startHandler != null) {
+                        startHandler.handle(isResume);
+                    }
                 }
             });
         }
