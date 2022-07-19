@@ -14,17 +14,17 @@ import ru.asolovyov.tummyui.utils.List;
  *
  * @author Администратор
  */
-public class UIIfItem extends UIItem {
+public class UIIf extends UIItem {
     private boolean condition = false;
     private Bool conditionBinding;
     private UIItem[] ifItems = {};
     private UIItem[] elseItems = {};
 
-    public UIIfItem(Bool condition, UIGroup ifGroup, UIGroup elseGroup) {
+    public UIIf(Bool condition, UIGroup ifGroup, UIGroup elseGroup) {
         this(condition, ifGroup.uiItems, elseGroup.uiItems);
     }
 
-    public UIIfItem(Bool condition, UIItem[] ifItems, UIItem[] elseItems) {
+    public UIIf(Bool condition, UIItem[] ifItems, UIItem[] elseItems) {
         super();
         this.conditionBinding = condition;
         this.ifItems = ifItems;
@@ -38,7 +38,7 @@ public class UIIfItem extends UIItem {
             public void onElement(Object element) {
                 ((UIItem)element).onChanged.sink(new Sink() {
                     protected void onValue(Object value) {
-                        onChanged.sendValue(UIIfItem.this);
+                        onChanged.sendValue(UIIf.this);
                     }
                 });
             }
@@ -46,8 +46,8 @@ public class UIIfItem extends UIItem {
 
         this.conditionBinding.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
-                UIIfItem.this.condition = conditionBinding.getBool();
-                onChanged.sendValue(UIIfItem.this);
+                UIIf.this.condition = conditionBinding.getBool();
+                onChanged.sendValue(UIIf.this);
             }
         });
     }

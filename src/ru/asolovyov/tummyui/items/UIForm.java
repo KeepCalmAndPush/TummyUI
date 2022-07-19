@@ -5,6 +5,7 @@
 
 package ru.asolovyov.tummyui.items;
 
+import java.util.Hashtable;
 import javax.microedition.lcdui.Displayable;
 import ru.asolovyov.tummyui.utils.List;
 import javax.microedition.lcdui.Command;
@@ -256,7 +257,10 @@ public class UIForm extends Form implements ItemStateListener, CommandListener {
         return this.navigationLink(linkTitle, backTitle, form);
     }
 
-    public UIForm navigationLink(StringBinding linkTitle, final Displayable content) {
+    private Hashtable displayableListeners = new Hashtable();
+
+    public UIForm navigationLink(StringBinding linkTitle, Displayable displayable) {
+        final Displayable content = displayable;
         return this.command(new UICommand(linkTitle, new UICommand.Handler() {
             public void handle() {
                 command(new UICommand("", new UICommand.Handler() {

@@ -35,8 +35,8 @@ public class UI {
             return this;
         }
 
-        UIIfItem Else(UIGroup elseGroup) {
-            return new UIIfItem(binding, thenGroup, elseGroup);
+        UIIf Else(UIGroup elseGroup) {
+            return new UIIf(binding, thenGroup, elseGroup);
         }
     }
 
@@ -57,6 +57,14 @@ public class UI {
                 );
     }
 
+    public static UIChoiceGroup ChoiceGroup(String label, int type, UIChoiceGroup.Item[] items) {
+        return new UIChoiceGroup(Binding.String(label), type, Binding.Array(items));
+    }
+
+    public static UIChoiceGroup ChoiceGroup(StringBinding label, int type, ArrayBinding items) {
+        return new UIChoiceGroup(label, type, items);
+    }
+
     public static UIAlert Alert(StringBinding title, StringBinding alertText, ObjectBinding alertImage, ObjectBinding alertType) {
         UIAlert alert = new UIAlert(title, alertText, alertImage, alertType);
         alert.setTimeout(UIAlert.FOREVER);
@@ -67,8 +75,8 @@ public class UI {
         return new UICommand(label, handler);
     }
 
-    public static UIList List(ArrayBinding dataSource, final UIList.ItemFactory itemFactory) {
-        return new UIList(dataSource, itemFactory);
+    public static UIForEach ForEach(ArrayBinding dataSource, final UIForEach.ItemFactory itemFactory) {
+        return new UIForEach(dataSource, itemFactory);
     }
 
     public static UIPlainItemWrapper Wrapper(Item item) {

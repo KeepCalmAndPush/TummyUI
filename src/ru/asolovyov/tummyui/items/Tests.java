@@ -6,6 +6,7 @@ package ru.asolovyov.tummyui.items;
 
 import javax.microedition.lcdui.AlertType;
 import javax.microedition.lcdui.Canvas;
+import javax.microedition.lcdui.ChoiceGroup;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
@@ -51,7 +52,7 @@ public class Tests extends UIMIDlet {
             return new Boolean(!((Boolean) value).booleanValue());
         }
     })),
-            UI.List(listModel, new UIList.ItemFactory() {
+            UI.ForEach(listModel, new UIForEach.ItemFactory() {
 
         public UIItem itemFor(Object v) {
             return UI.Wrapper(new StringItem(((Pair) v).name, ((Pair) v).value));
@@ -88,9 +89,22 @@ public class Tests extends UIMIDlet {
         }
     })));
 
+    private ArrayBinding choiceItems = Binding.Array(new UIChoiceGroup.Item[] {
+            new UIChoiceGroup.Item("Привет", null, true),
+            new UIChoiceGroup.Item("Как", null, false),
+            new UIChoiceGroup.Item("Дела", null, true)
+        });
+
     protected UIForm form() {
         return UI.Form("TummyUI",
-                bigItem,
+//                bigItem,
+                UI.ChoiceGroup(Binding.String("Чойс груп"), ChoiceGroup.MULTIPLE, choiceItems),
+                UI.ForEach(choiceItems, new UIForEach.ItemFactory() {
+                public UIItem itemFor(Object viewModel) {
+                    UIChoiceGroup.Item item = (UIChoiceGroup.Item) viewModel;
+                    return UI.StringItem(item.getStringPart(), item.isSelected() ? ":)))" : ":(((");
+                    }
+                }),
                 UI.StringItem(textBinding, textBinding.to(new CombineLatest(labelBinding)).to(new Map() {
 
             public Object mapValue(Object value) {

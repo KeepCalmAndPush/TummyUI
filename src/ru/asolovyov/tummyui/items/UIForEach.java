@@ -14,7 +14,7 @@ import ru.asolovyov.tummyui.utils.List;
  *
  * @author Администратор
  */
-public class UIList extends UIGroup {
+public class UIForEach extends UIGroup {
     public static abstract class ItemFactory {
         public abstract UIItem itemFor(Object viewModel);
     }
@@ -24,7 +24,7 @@ public class UIList extends UIGroup {
 
     private List subscriptions = new List();
 
-    public UIList(ArrayBinding dataSource, ItemFactory factory) {
+    public UIForEach(ArrayBinding dataSource, ItemFactory factory) {
         super(new UIItem[]{});
 
         this.itemFactory = factory;
@@ -51,16 +51,16 @@ public class UIList extends UIGroup {
                 
                 for (int i = 0; i < uiItems.length; i++) {
                     UIItem item = uiItems[i];
-                    item.setParent(UIList.this);
+                    item.setParent(UIForEach.this);
                     Object o = item.onChanged.sink(new Sink() {
                         protected void onValue(Object value) {
-                            onChanged.sendValue(UIList.this);
+                            onChanged.sendValue(UIForEach.this);
                         }
                     });
                     subscriptions.addElement(o);
                 }
                 
-                onChanged.sendValue(UIList.this);
+                onChanged.sendValue(UIForEach.this);
             }
         });
     }
