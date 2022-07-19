@@ -32,7 +32,8 @@ public class UICommand extends Command {
         this.subscribeOnPauseIfPossible();
         this.subscribeOnDestroyIfPossible();
     }
-    
+
+    public boolean needsRelayout = false;
     private boolean isVisible = true;
     public boolean isVisible() {
         return isVisible;
@@ -70,6 +71,7 @@ public class UICommand extends Command {
                 }
                 isVisible = binding.getBool();
                 S.print("UICOMMAND VIS");
+                UICommand.this.needsRelayout = true;
                 onChanged.sendValue(UICommand.this);
             }
         });

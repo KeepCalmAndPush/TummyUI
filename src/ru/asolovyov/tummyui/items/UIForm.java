@@ -73,10 +73,14 @@ public class UIForm extends Form implements ItemStateListener, CommandListener {
                 command((UICommand)element);
             }
         });
-        
-        uiItem.onChanged.sink(new Sink() {
+
+        final UIItem item = uiItem;
+        item.onChanged.sink(new Sink() {
             protected void onValue(Object value) {
-                didChangeLayout((UIItem)value);
+                if (item.needsRelayout) {
+                    didChangeLayout((UIItem)value);
+                    item.needsRelayout = false;
+                }
             }
         });
         
@@ -184,7 +188,6 @@ public class UIForm extends Form implements ItemStateListener, CommandListener {
         this.formCommands.addElement(cmd);
         cmd.onChanged.sink(new Sink() {
             protected void onValue(Object value) {
-                S.println("1");
                 commandRequestsRelayout((UICommand) value);
             }
         });

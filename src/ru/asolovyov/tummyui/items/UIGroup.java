@@ -28,6 +28,7 @@ public class UIGroup extends UIItem {
                 item.setParent(UIGroup.this);
                 item.onChanged.sink(new Sink() {
                     protected void onValue(Object value) {
+                        UIGroup.this.needsRelayout |= ((UIItem)value).needsRelayout;
                         onChanged.sendValue(UIGroup.this);
                     }
                 });

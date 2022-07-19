@@ -4,9 +4,12 @@
  */
 package ru.asolovyov.tummyui.items;
 
+import java.util.Date;
+import java.util.TimeZone;
 import javax.microedition.lcdui.AlertType;
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.ChoiceGroup;
+import javax.microedition.lcdui.DateField;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
@@ -16,10 +19,12 @@ import javax.microedition.lcdui.StringItem;
 import ru.asolovyov.combime.bindings.ArrayBinding;
 import ru.asolovyov.combime.bindings.Binding;
 import ru.asolovyov.combime.bindings.Bool;
+import ru.asolovyov.combime.bindings.ObjectBinding;
 import ru.asolovyov.combime.bindings.StringBinding;
 import ru.asolovyov.combime.common.S;
 import ru.asolovyov.combime.operators.combining.CombineLatest;
 import ru.asolovyov.combime.operators.mapping.Map;
+import ru.asolovyov.tummyui.models.ListItem;
 
 /**
  * @author Администратор
@@ -89,19 +94,28 @@ public class Tests extends UIMIDlet {
         }
     })));
 
-    private ArrayBinding choiceItems = Binding.Array(new UIChoiceGroup.Item[] {
-            new UIChoiceGroup.Item("Привет", null, true),
-            new UIChoiceGroup.Item("Как", null, false),
-            new UIChoiceGroup.Item("Дела", null, true)
+    private ArrayBinding choiceItems = Binding.Array(new ListItem[] {
+            new ListItem("Привет", null, true),
+            new ListItem("Как", null, false),
+            new ListItem("Дела", null, true)
         });
+
+    private ObjectBinding dateBinding = Binding.Object(new Date());
 
     protected UIForm form() {
         return UI.Form("TummyUI",
-//                bigItem,
+                UI.DateField("Дата", DateField.DATE_TIME, dateBinding, TimeZone.getDefault()),
+                UI.StringItem(new StringBinding(dateBinding.to(new Map() {
+            public Object mapValue(Object value) {
+                Date date = (Date)value;
+                return date.toString();
+            }
+        }))),
+
                 UI.ChoiceGroup(Binding.String("Чойс груп"), ChoiceGroup.MULTIPLE, choiceItems),
                 UI.ForEach(choiceItems, new UIForEach.ItemFactory() {
                 public UIItem itemFor(Object viewModel) {
-                    UIChoiceGroup.Item item = (UIChoiceGroup.Item) viewModel;
+                    ListItem item = (ListItem) viewModel;
                     return UI.StringItem(item.getStringPart(), item.isSelected() ? ":)))" : ":(((");
                     }
                 }),
@@ -131,6 +145,7 @@ public class Tests extends UIMIDlet {
                 alertVisible.setBool(!alertVisible.getBool());
             }
         }))
+                .navigationLink(Binding.String("Лист"), UI.List(Binding.String("Hello"), UIList.IMPLICIT, this.choiceItems))
                 .navigationLink(Binding.String("Navi"), null, Binding.String("ЖЦ ТРЕКЕР"), lcTracker)
                 .navigationLink(Binding.String("Канвас"), new Canvas() {
             protected void paint(Graphics g) {

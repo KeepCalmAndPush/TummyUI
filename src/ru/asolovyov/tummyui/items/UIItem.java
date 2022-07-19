@@ -37,6 +37,8 @@ public abstract class UIItem implements ItemStateListener {
     private boolean maySubscribeOnPause = true;
     private boolean maySubscribeOnDestroy = true;
 
+    public boolean needsRelayout = false;
+
     public Item[] getPlainItems() {
         if (!isVisible) {
             return new Item[]{};
@@ -66,6 +68,7 @@ public abstract class UIItem implements ItemStateListener {
                 boolean visible = ((Boolean) value).booleanValue();
                 isVisible = visible;
                 S.println("UIITEM VIS " + isVisible + " " + o);
+                UIItem.this.needsRelayout = true;
                 onChanged.sendValue(UIItem.this);
             }
         });

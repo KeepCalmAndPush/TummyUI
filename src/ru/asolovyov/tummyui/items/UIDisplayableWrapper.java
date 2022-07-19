@@ -5,7 +5,10 @@
 
 package ru.asolovyov.tummyui.items;
 
+import javax.microedition.lcdui.Canvas;
+import javax.microedition.lcdui.DateField;
 import javax.microedition.lcdui.Displayable;
+import javax.microedition.lcdui.Screen;
 
 /**
  *
@@ -13,5 +16,7 @@ import javax.microedition.lcdui.Displayable;
  */
 public class UIDisplayableWrapper {
     private Displayable displayable;
+    private Canvas c;
+    DateField d;
 
 }

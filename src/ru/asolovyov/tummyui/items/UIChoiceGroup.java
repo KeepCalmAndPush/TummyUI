@@ -6,10 +6,10 @@
 package ru.asolovyov.tummyui.items;
 
 import javax.microedition.lcdui.ChoiceGroup;
-import javax.microedition.lcdui.Image;
 import ru.asolovyov.combime.bindings.ArrayBinding;
 import ru.asolovyov.combime.bindings.StringBinding;
 import ru.asolovyov.combime.common.Sink;
+import ru.asolovyov.tummyui.models.ListItem;
 import ru.asolovyov.tummyui.utils.List;
 
 /**
@@ -17,30 +17,6 @@ import ru.asolovyov.tummyui.utils.List;
  * @author Администратор
  */
 public class UIChoiceGroup extends UIItem {
-    public static final class Item {
-        private String stringPart;
-        private Image imagePart;
-        private boolean selected;
-
-        public Item(String stringPart, Image imagePart, boolean isSelected) {
-            this.stringPart = stringPart;
-            this.imagePart = imagePart;
-            this.selected = isSelected;
-        }
-
-        public String getStringPart() {
-            return stringPart;
-        }
-
-        public Image getImagePart() {
-            return imagePart;
-        }
-        
-        public boolean isSelected() {
-            return selected;
-        }
-    }
-    
     private ChoiceGroup plainItem;
     private ArrayBinding itemsBinding;
     private boolean isSendingUpdates = false;
@@ -72,7 +48,7 @@ public class UIChoiceGroup extends UIItem {
                 items.forEach(new List.Enumerator() {
                     int i = 0;
                     public void onElement(Object element) {
-                        Item item = (Item) element;
+                        ListItem item = (ListItem) element;
                         if (i >= plainItem.size()) {
                             plainItem.append(item.getStringPart(), item.getImagePart());
                         } else {
@@ -105,9 +81,9 @@ public class UIChoiceGroup extends UIItem {
         boolean flags[] = new boolean[this.plainItem.size()];
         this.plainItem.getSelectedFlags(flags);
 
-        Item[] items = (Item[]) this.itemsBinding.getArray();
+        ListItem[] items = (ListItem[]) this.itemsBinding.getArray();
         for (int i = 0; i < this.plainItem.size(); i++) {
-            items[i].selected = flags[i];
+            items[i].setSelected(flags[i]);
         }
 
         this.isSendingUpdates = true;

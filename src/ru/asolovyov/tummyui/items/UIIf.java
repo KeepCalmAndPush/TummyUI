@@ -38,6 +38,7 @@ public class UIIf extends UIItem {
             public void onElement(Object element) {
                 ((UIItem)element).onChanged.sink(new Sink() {
                     protected void onValue(Object value) {
+                        UIIf.this.needsRelayout |= ((UIItem)value).needsRelayout;
                         onChanged.sendValue(UIIf.this);
                     }
                 });

@@ -6,8 +6,10 @@
 package ru.asolovyov.tummyui.items;
 
 import java.io.IOException;
+import java.util.Date;
+import java.util.TimeZone;
 import javax.microedition.lcdui.AlertType;
-import javax.microedition.lcdui.Displayable;
+import javax.microedition.lcdui.DateField;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.Item;
 import ru.asolovyov.combime.bindings.ArrayBinding;
@@ -16,6 +18,7 @@ import ru.asolovyov.combime.bindings.Bool;
 import ru.asolovyov.combime.bindings.IntBinding;
 import ru.asolovyov.combime.bindings.ObjectBinding;
 import ru.asolovyov.combime.bindings.StringBinding;
+import ru.asolovyov.tummyui.models.ListItem;
 
 /**
  *
@@ -57,7 +60,23 @@ public class UI {
                 );
     }
 
-    public static UIChoiceGroup ChoiceGroup(String label, int type, UIChoiceGroup.Item[] items) {
+    public static UIDateField DateField(String label, int mode, ObjectBinding date, TimeZone timeZone) {
+        return new UIDateField(Binding.String(label), Binding.Int(mode), date, timeZone);
+    }
+
+    public static UIDateField DateField(final StringBinding label, final IntBinding mode, final ObjectBinding date, TimeZone timeZone) {
+        return new UIDateField(label, mode, date, timeZone);
+    }
+
+    public static UIList List(String title, int type, ListItem[] items) {
+        return new UIList(Binding.String(title), type, Binding.Array(items));
+    }
+
+    public static UIList List(StringBinding title, int type, ArrayBinding items) {
+        return new UIList(title, type, items);
+    }
+
+    public static UIChoiceGroup ChoiceGroup(String label, int type, ListItem[] items) {
         return new UIChoiceGroup(Binding.String(label), type, Binding.Array(items));
     }
 

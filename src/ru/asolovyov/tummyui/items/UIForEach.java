@@ -54,12 +54,14 @@ public class UIForEach extends UIGroup {
                     item.setParent(UIForEach.this);
                     Object o = item.onChanged.sink(new Sink() {
                         protected void onValue(Object value) {
+                            UIForEach.this.needsRelayout |= ((UIItem)value).needsRelayout;
                             onChanged.sendValue(UIForEach.this);
                         }
                     });
                     subscriptions.addElement(o);
                 }
                 
+                UIForEach.this.needsRelayout = true;
                 onChanged.sendValue(UIForEach.this);
             }
         });
