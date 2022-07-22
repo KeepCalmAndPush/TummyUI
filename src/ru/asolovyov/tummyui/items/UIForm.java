@@ -5,7 +5,6 @@
 
 package ru.asolovyov.tummyui.items;
 
-import java.util.Hashtable;
 import javax.microedition.lcdui.Displayable;
 import ru.asolovyov.tummyui.utils.List;
 import javax.microedition.lcdui.Command;
@@ -17,7 +16,6 @@ import ru.asolovyov.combime.bindings.Binding;
 import ru.asolovyov.combime.bindings.Bool;
 import ru.asolovyov.combime.bindings.StringBinding;
 import ru.asolovyov.combime.common.Sink;
-import ru.asolovyov.combime.common.S;
 
 /**
  *
@@ -260,17 +258,22 @@ public class UIForm extends Form implements ItemStateListener, CommandListener {
         return this.navigationLink(linkTitle, backTitle, form);
     }
 
-    private Hashtable displayableListeners = new Hashtable();
-
     public UIForm navigationLink(StringBinding linkTitle, Displayable displayable) {
-        final Displayable content = displayable;
+        return this.navigationLink(linkTitle, new UIDisplayableNavigationWrapper(displayable));
+    }
+
+    public UIForm navigationLink(StringBinding linkTitle, UINavigatable navigatable) {
+        final Displayable content = navigatable.displayable();
+
+        //сделать константы для назада и прочих важных команд. и сделать коснтанту минкомманд - доступную для своих команд, больше чем любая из важных
+        navigatable.backCommand(new UICommand(Binding.String("Назад"), Command.BACK, Integer.MIN_VALUE, new UICommand.Handler() {
+            public void handle() {
+                getMidlet().getDisplay().setCurrent(UIForm.this);
+            }
+        }));
+        
         return this.command(new UICommand(linkTitle, new UICommand.Handler() {
             public void handle() {
-                command(new UICommand("", new UICommand.Handler() {
-                    public void handle() {
-                        getMidlet().getDisplay().setCurrent(UIForm.this);
-                    }
-                }));
                 getMidlet().getDisplay().setCurrent(content);
             }
         }));

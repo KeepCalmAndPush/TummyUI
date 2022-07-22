@@ -9,6 +9,7 @@ import java.util.TimeZone;
 import javax.microedition.lcdui.AlertType;
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.ChoiceGroup;
+import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.DateField;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Font;
@@ -100,6 +101,8 @@ public class Tests extends UIMIDlet {
             new ListItem("Дела", null, true)
         });
 
+    private StringBinding textBoxText = Binding.String("Текст для текст бокса");
+
     private ObjectBinding dateBinding = Binding.Object(new Date());
 
     protected UIForm form() {
@@ -145,6 +148,8 @@ public class Tests extends UIMIDlet {
                 alertVisible.setBool(!alertVisible.getBool());
             }
         }))
+
+                .navigationLink(Binding.String("TEXT BOX"), (UINavigatable)(new UITextBox(Binding.String("текст бокс"), textBoxText)))
                 .navigationLink(Binding.String("Лист"), UI.List(Binding.String("Hello"), UIList.IMPLICIT, this.choiceItems))
                 .navigationLink(Binding.String("Navi"), null, Binding.String("ЖЦ ТРЕКЕР"), lcTracker)
                 .navigationLink(Binding.String("Канвас"), new Canvas() {

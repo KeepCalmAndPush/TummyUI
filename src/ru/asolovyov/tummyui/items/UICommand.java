@@ -42,6 +42,9 @@ public class UICommand extends Command {
     final PassthroughSubject onChanged = new PassthroughSubject();
 
     private Handler handler;
+    public Handler getHandler() { return this.handler; }
+    public void setHandler(Handler handler) { this.handler = handler; }
+    
     private static int availablePriority = Integer.MIN_VALUE;
 
     public UICommand(StringBinding label, int commandType, int priority, Handler handler) {
@@ -51,6 +54,10 @@ public class UICommand extends Command {
 
     public UICommand(StringBinding label, Handler handler) {
         this(label, Command.SCREEN, availablePriority++, handler);
+    }
+
+    public UICommand(String label, int type, Handler handler) {
+        this(Binding.String(label), type, availablePriority++, handler);
     }
 
     public UICommand(String label, Handler handler) {

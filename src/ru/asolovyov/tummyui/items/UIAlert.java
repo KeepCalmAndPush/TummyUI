@@ -67,7 +67,6 @@ public class UIAlert extends Alert implements CommandListener {
     public void addCommand(Command cmd) {
         final Command command = cmd;
         UICommand.Handler handler = new UICommand.Handler() {
-
             public void handle() {
                 for (int i = 0; i < commandListeners.size(); i++) {
                     CommandListener listener = (CommandListener) commandListeners.elementAt(i);

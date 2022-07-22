@@ -88,4 +88,54 @@ public class UIList extends List implements CommandListener {
         this.itemsBinding.sendValue(items);
         this.isSendingUpdates = false;
     }
+
+//
+//    public void addCommand(Command cmd) {
+//        final Command command = cmd;
+//        UICommand.Handler handler = new UICommand.Handler() {
+//            public void handle() {
+//                for (int i = 0; i < commandListeners.size(); i++) {
+//                    CommandListener listener = (CommandListener) commandListeners.elementAt(i);
+//                    listener.commandAction(command, UIAlert.this);
+//                }
+//            }
+//        };
+//
+//        UICommand uiCommand = new UICommand(
+//                Binding.String(cmd.getLabel()),
+//                cmd.getCommandType(),
+//                cmd.getPriority(),
+//                handler);
+//
+//        this.command(uiCommand);
+//    }
+//
+//    public UIAlert command(UICommand cmd) {
+//        super.addCommand(cmd);
+//        this.uiCommands.addElement(cmd);
+//        return this;
+//    }
+//
+//    public void setCommandListener(CommandListener listener) {
+//        if (listener == this) {
+//            return;
+//        }
+//        this.commandListeners.removeElement(listener);
+//        this.commandListeners.addElement(listener);
+//    }
+//
+//    public void commandAction(Command c, Displayable d) {
+//        for (int i = 0; i < this.commandListeners.size(); i++) {
+//            CommandListener listener = (CommandListener) this.commandListeners.elementAt(i);
+//            listener.commandAction(c, d);
+//        }
+//
+//        UICommand command = (UICommand) c;
+//        for (int i = 0; i < this.uiCommands.size(); i++) {
+//            if (command == this.uiCommands.elementAt(i)) {
+//                command.handle();
+//                return;
+//            }
+//        }
+//    }
 }

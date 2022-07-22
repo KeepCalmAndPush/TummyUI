@@ -94,6 +94,10 @@ public class UI {
         return new UICommand(label, handler);
     }
 
+    public static UICommand Command(String label, int type, UICommand.Handler handler) {
+        return new UICommand(label, handler);
+    }
+
     public static UIForEach ForEach(ArrayBinding dataSource, final UIForEach.ItemFactory itemFactory) {
         return new UIForEach(dataSource, itemFactory);
     }
