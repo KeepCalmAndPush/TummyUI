@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package ru.asolovyov.tummyui.items;
+package ru.asolovyov.tummyui.forms;
 
 import java.util.Date;
 import java.util.TimeZone;
@@ -25,16 +25,19 @@ public class UIDateField extends UIItem {
     public UIDateField(final StringBinding label, final IntBinding mode, final ObjectBinding date, TimeZone timeZone) {
         super();
 
-        this.plainItem = new DateField(label.getString(), mode.getInt(), timeZone);
+        String labelString = label == null ? null : label.getString();
+        this.plainItem = new DateField(labelString, mode.getInt(), timeZone);
 
         this.dateBinding = date;
-        
-        label.removeDuplicates().sink(new Sink() {
+
+        if (label != null) {
+            label.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
                 plainItem.setLabel(label.getString());
             }
         });
-
+        }
+        
         mode.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
                 plainItem.setInputMode(mode.getInt());

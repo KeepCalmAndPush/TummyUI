@@ -3,10 +3,9 @@
  * and open the template in the editor.
  */
 
-package ru.asolovyov.tummyui.items;
+package ru.asolovyov.tummyui.forms;
 
 import javax.microedition.lcdui.Command;
-import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.TextBox;
 import javax.microedition.lcdui.TextField;
@@ -14,7 +13,7 @@ import ru.asolovyov.combime.bindings.Binding;
 import ru.asolovyov.combime.bindings.IntBinding;
 import ru.asolovyov.combime.bindings.StringBinding;
 import ru.asolovyov.combime.common.Sink;
-import ru.asolovyov.tummyui.items.UICommand.Handler;
+import ru.asolovyov.tummyui.forms.UICommand.Handler;
 
 /**
  *
@@ -105,7 +104,5 @@ public class UITextBox extends TextBox implements UINavigatable {
     public Displayable displayable() {
         return this;
     }
-
-//    public void title(StringBinding title) { }
 }
 

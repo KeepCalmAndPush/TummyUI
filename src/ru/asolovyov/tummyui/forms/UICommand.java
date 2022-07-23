@@ -3,11 +3,11 @@
  * and open the template in the editor.
  */
 
-package ru.asolovyov.tummyui.items;
+package ru.asolovyov.tummyui.forms;
 
 import javax.microedition.lcdui.Command;
 import ru.asolovyov.combime.bindings.Binding;
-import ru.asolovyov.combime.bindings.Bool;
+import ru.asolovyov.combime.bindings.BoolBinding;
 import ru.asolovyov.combime.bindings.StringBinding;
 import ru.asolovyov.combime.common.S;
 import ru.asolovyov.combime.common.Sink;
@@ -70,7 +70,7 @@ public class UICommand extends Command {
         }
     }
 
-    public UICommand isVisible(final Bool binding) {
+    public UICommand isVisible(final BoolBinding binding) {
         binding.sink(new Sink() {
             protected void onValue(Object value) {
                 if (isVisible == binding.getBool()) {

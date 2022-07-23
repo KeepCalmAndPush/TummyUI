@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package ru.asolovyov.tummyui.items;
+package ru.asolovyov.tummyui.forms;
 
 import javax.microedition.lcdui.Displayable;
 import ru.asolovyov.tummyui.utils.List;
@@ -13,7 +13,7 @@ import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Item;
 import javax.microedition.lcdui.ItemStateListener;
 import ru.asolovyov.combime.bindings.Binding;
-import ru.asolovyov.combime.bindings.Bool;
+import ru.asolovyov.combime.bindings.BoolBinding;
 import ru.asolovyov.combime.bindings.StringBinding;
 import ru.asolovyov.combime.common.Sink;
 
@@ -21,7 +21,7 @@ import ru.asolovyov.combime.common.Sink;
  *
  * @author Администратор
  */
-public class UIForm extends Form implements ItemStateListener, CommandListener {
+public class UIForm extends Form implements ItemStateListener, CommandListener, UINavigatable {
     private List uiItems = new List();
     private List formCommands = new List();
     private List itemsCommands = new List();
@@ -236,7 +236,7 @@ public class UIForm extends Form implements ItemStateListener, CommandListener {
         }
     }
 
-    public UIForm alert(final Bool isVisible, final UIAlert alert) {
+    public UIForm alert(final BoolBinding isVisible, final UIAlert alert) {
         isVisible.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
                 if (isVisible.getBool()) {
@@ -247,26 +247,40 @@ public class UIForm extends Form implements ItemStateListener, CommandListener {
 
         return this;
     }
+
+    public UIForm navigationCommand(
+            StringBinding linkTitle,
+            StringBinding formTitle,
+            UIItem content
+            ) {
+        return this.navigationCommand(linkTitle, this.titleBinding, formTitle, content);
+    }
     
-    public UIForm navigationLink(
+    public UIForm navigationCommand(
             StringBinding linkTitle,
             StringBinding backTitle,
             StringBinding formTitle,
             UIItem content
             ) {
         UIForm form = new UIForm(formTitle, new UIItem[]{ content });
-        return this.navigationLink(linkTitle, backTitle, form);
+        return this.navigationCommand(linkTitle, backTitle, form);
     }
 
-    public UIForm navigationLink(StringBinding linkTitle, Displayable displayable) {
-        return this.navigationLink(linkTitle, new UIDisplayableNavigationWrapper(displayable));
+    public UIForm navigationCommand(
+            StringBinding linkTitle,
+            UINavigatable navigatable) {
+        return this.navigationCommand(linkTitle, this.titleBinding, navigatable);
     }
 
-    public UIForm navigationLink(StringBinding linkTitle, UINavigatable navigatable) {
+    public UIForm navigationCommand(
+            StringBinding linkTitle,
+            StringBinding backTitle,
+            UINavigatable navigatable
+            ) {
         final Displayable content = navigatable.displayable();
 
         //сделать константы для назада и прочих важных команд. и сделать коснтанту минкомманд - доступную для своих команд, больше чем любая из важных
-        navigatable.backCommand(new UICommand(Binding.String("Назад"), Command.BACK, Integer.MIN_VALUE, new UICommand.Handler() {
+        navigatable.backCommand(new UICommand(backTitle, Command.BACK, Integer.MIN_VALUE, new UICommand.Handler() {
             public void handle() {
                 getMidlet().getDisplay().setCurrent(UIForm.this);
             }
@@ -279,23 +293,66 @@ public class UIForm extends Form implements ItemStateListener, CommandListener {
         }));
     }
 
-    public UIForm navigationLink(
-            final StringBinding linkTitle,
-            final StringBinding backTitle,
-            final UIForm form
-            ) {
-        final StringBinding back = backTitle != null ? backTitle : this.titleBinding;
-        final StringBinding link = linkTitle != null ? linkTitle : form.titleBinding;
+    public UIForm navigationLink(UINavigatable navigatable, final BoolBinding trigger) {
+        return this.navigationLink(this.titleBinding, navigatable, trigger);
+    }
+    
+    public UIForm navigationLink(StringBinding backBinding, UINavigatable navigatable, final BoolBinding trigger) {
+        final Displayable content = navigatable.displayable();
 
-        form.command(new UICommand(back, new UICommand.Handler() {
+        //сделать константы для назада и прочих важных команд. и сделать коснтанту минкомманд - доступную для своих команд, больше чем любая из важных
+        navigatable.backCommand(new UICommand(backBinding, Command.BACK, Integer.MIN_VALUE, new UICommand.Handler() {
             public void handle() {
                 getMidlet().getDisplay().setCurrent(UIForm.this);
             }
         }));
-        return this.command(new UICommand(link, new UICommand.Handler() {
-            public void handle() {
-                getMidlet().getDisplay().setCurrent(form);
+
+        trigger.removeDuplicates().sink(new Sink() {
+            protected void onValue(Object value) {
+                if (trigger.getBool()) {
+                    getMidlet().getDisplay().setCurrent(content);
+                } else {
+                    getMidlet().getDisplay().setCurrent(UIForm.this);
+                }
             }
-        }));
+        });
+
+        return this;
+    }
+
+    public UIForm navigationLink(
+            StringBinding formTitle,
+            UIItem content,
+            BoolBinding trigger
+            ) {
+        return this.navigationLink(this.titleBinding, formTitle, content, trigger);
+    }
+
+    public UIForm navigationLink(
+            StringBinding backTitle,
+            StringBinding formTitle,
+            UIItem content,
+            BoolBinding trigger
+            ) {
+        UIForm form = new UIForm(formTitle, new UIItem[]{ content });
+        return this.navigationLink(backTitle, form, trigger);
+    }
+
+    public StringBinding title() {
+        return this.titleBinding;
+    }
+
+    public Displayable displayable() {
+        return this;
+    }
+
+    public UINavigatable backCommand(UICommand command) {
+        this.command(command);
+        return this;
+    }
+
+
+    public UICommandsProxy commands() {
+        return null;
     }
 }

@@ -3,18 +3,17 @@
  * and open the template in the editor.
  */
 
-package ru.asolovyov.tummyui.items;
+package ru.asolovyov.tummyui.forms;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.TimeZone;
 import javax.microedition.lcdui.AlertType;
-import javax.microedition.lcdui.DateField;
+import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.Item;
 import ru.asolovyov.combime.bindings.ArrayBinding;
 import ru.asolovyov.combime.bindings.Binding;
-import ru.asolovyov.combime.bindings.Bool;
+import ru.asolovyov.combime.bindings.BoolBinding;
 import ru.asolovyov.combime.bindings.IntBinding;
 import ru.asolovyov.combime.bindings.ObjectBinding;
 import ru.asolovyov.combime.bindings.StringBinding;
@@ -26,10 +25,10 @@ import ru.asolovyov.tummyui.models.ListItem;
  */
 public class UI {
     public static class IfFactory {
-        private Bool binding;
+        private BoolBinding binding;
         private UIGroup thenGroup;
 
-        IfFactory(Bool binding) {
+        IfFactory(BoolBinding binding) {
             this.binding = binding;
         }
 
@@ -47,7 +46,7 @@ public class UI {
         return new UIForm(title, items);
     }
 
-    public static IfFactory If(Bool condition) {
+    public static IfFactory If(BoolBinding condition) {
         return new IfFactory(condition);
     }
 
@@ -60,8 +59,20 @@ public class UI {
                 );
     }
 
+    public static UINavigatable Navigatable(Displayable d) {
+        return new UIDisplayableNavigationWrapper(d);
+    }
+
+    public static UIDateField DateField(int mode, ObjectBinding date, TimeZone timeZone) {
+        return new UIDateField(null, Binding.Int(mode), date, timeZone);
+    }
+
     public static UIDateField DateField(String label, int mode, ObjectBinding date, TimeZone timeZone) {
         return new UIDateField(Binding.String(label), Binding.Int(mode), date, timeZone);
+    }
+
+    public static UIDateField DateField(final IntBinding mode, final ObjectBinding date, TimeZone timeZone) {
+        return new UIDateField(null, mode, date, timeZone);
     }
 
     public static UIDateField DateField(final StringBinding label, final IntBinding mode, final ObjectBinding date, TimeZone timeZone) {
@@ -104,6 +115,10 @@ public class UI {
 
     public static UIPlainItemWrapper Wrapper(Item item) {
         return new UIPlainItemWrapper(item);
+    }
+
+    public static UITextField TextField(StringBinding text) {
+        return new UITextField(null, text);
     }
 
     public static UITextField TextField(StringBinding label, StringBinding text) {

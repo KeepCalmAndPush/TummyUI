@@ -3,11 +3,11 @@
  * and open the template in the editor.
  */
 
-package ru.asolovyov.tummyui.items;
+package ru.asolovyov.tummyui.forms;
 
 import java.util.Vector;
 import javax.microedition.lcdui.Item;
-import ru.asolovyov.combime.bindings.Bool;
+import ru.asolovyov.combime.bindings.BoolBinding;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.tummyui.utils.List;
 

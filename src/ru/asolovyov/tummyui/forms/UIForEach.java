@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package ru.asolovyov.tummyui.items;
+package ru.asolovyov.tummyui.forms;
 
 import ru.asolovyov.combime.api.ISubscription;
 import ru.asolovyov.combime.bindings.ArrayBinding;

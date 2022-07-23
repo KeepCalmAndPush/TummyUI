@@ -3,10 +3,10 @@
  * and open the template in the editor.
  */
 
-package ru.asolovyov.tummyui.items;
+package ru.asolovyov.tummyui.forms;
 
 
-import ru.asolovyov.combime.bindings.Bool;
+import ru.asolovyov.combime.bindings.BoolBinding;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.tummyui.utils.List;
 
@@ -16,15 +16,15 @@ import ru.asolovyov.tummyui.utils.List;
  */
 public class UIIf extends UIItem {
     private boolean condition = false;
-    private Bool conditionBinding;
+    private BoolBinding conditionBinding;
     private UIItem[] ifItems = {};
     private UIItem[] elseItems = {};
 
-    public UIIf(Bool condition, UIGroup ifGroup, UIGroup elseGroup) {
+    public UIIf(BoolBinding condition, UIGroup ifGroup, UIGroup elseGroup) {
         this(condition, ifGroup.uiItems, elseGroup.uiItems);
     }
 
-    public UIIf(Bool condition, UIItem[] ifItems, UIItem[] elseItems) {
+    public UIIf(BoolBinding condition, UIItem[] ifItems, UIItem[] elseItems) {
         super();
         this.conditionBinding = condition;
         this.ifItems = ifItems;

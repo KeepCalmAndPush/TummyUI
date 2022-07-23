@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package ru.asolovyov.tummyui.items;
+package ru.asolovyov.tummyui.forms;
 
 import javax.microedition.lcdui.Item;
 import javax.microedition.lcdui.TextField;
@@ -38,12 +38,14 @@ public class UITextField extends UIItem {
         super();
 
         this.textBinding = textBinding;
-        
-        labelBinding.removeDuplicates().sink(new Sink() {
-            protected void onValue(Object value) {
-                textField.setLabel((String)value);
-            }
-        });
+
+        if (labelBinding != null) {
+            labelBinding.removeDuplicates().sink(new Sink() {
+                protected void onValue(Object value) {
+                    textField.setLabel((String) value);
+                }
+            });
+        }
 
         textBinding.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {

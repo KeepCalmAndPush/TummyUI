@@ -3,11 +3,12 @@
  * and open the template in the editor.
  */
 
-package ru.asolovyov.tummyui.items;
+package ru.asolovyov.tummyui.forms;
 
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
+import ru.asolovyov.combime.common.S;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.tummyui.utils.List;
 
@@ -21,13 +22,20 @@ public class UICommandsProxy implements CommandListener {
     private List commands = new List();
     private List commandListeners = new List();
 
+    private UICommand backCommand;
+
     public UICommandsProxy(Displayable displayable) {
         super();
         this.displayable = displayable;
         this.displayable.setCommandListener(this);
     }
 
-    public Displayable command(UICommand cmd) {
+    public void addCommandListener(CommandListener listener) {
+        this.commandListeners.removeElement(listener);
+        this.commandListeners.addElement(listener);
+    }
+
+    public Displayable addCommand(UICommand cmd) {
         if (cmd.isVisible()) {
             displayable.addCommand(cmd);
         }
@@ -48,14 +56,18 @@ public class UICommandsProxy implements CommandListener {
             listener.commandAction(c, d);
         }
 
-        final UICommand command = (UICommand)c;
-        this.commands.forEach(new List.Enumerator() {
-            public void onElement(Object element) {
-                if (command == element) {
-                    command.handle();
+        try {
+            final UICommand command = (UICommand) c;
+            this.commands.forEach(new List.Enumerator() {
+                public void onElement(Object element) {
+                    if (command == element) {
+                        command.handle();
+                    }
                 }
-            }
-        });
+            });
+        } catch(ClassCastException e) {
+            S.println("UICommandsProxy found non-UI command. Falling back to displayable to handle it.");
+        }
     }
 
     private void commandRequestsRelayout(UICommand command) {
@@ -64,19 +76,18 @@ public class UICommandsProxy implements CommandListener {
                 UICommand command = (UICommand)element;
                 displayable.removeCommand(command);
                 if (command.isVisible()) {
-                    command(command);
+                    addCommand(command);
                 }
             }
         });
     }
-
-    private UICommand backCommand;
+    
     public void setBackCommand(UICommand command) {
         if (this.backCommand != null) {
             this.displayable.removeCommand(this.backCommand);
         }
 
         this.backCommand = command;
-        this.command(command);
+        this.addCommand(command);
     }
 }
