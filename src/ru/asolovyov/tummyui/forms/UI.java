@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.TimeZone;
 import javax.microedition.lcdui.AlertType;
 import javax.microedition.lcdui.Displayable;
+import javax.microedition.lcdui.Gauge;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.Item;
 import ru.asolovyov.combime.bindings.ArrayBinding;
@@ -17,7 +18,7 @@ import ru.asolovyov.combime.bindings.BoolBinding;
 import ru.asolovyov.combime.bindings.IntBinding;
 import ru.asolovyov.combime.bindings.ObjectBinding;
 import ru.asolovyov.combime.bindings.StringBinding;
-import ru.asolovyov.tummyui.models.ListItem;
+import ru.asolovyov.tummyui.utils.ListItem;
 
 /**
  *
@@ -59,8 +60,36 @@ public class UI {
                 );
     }
 
+    public static UIGauge Gauge(String label, boolean isInteractive, int maxValue, int value) {
+        return new UIGauge(Binding.String(label), isInteractive, Binding.Int(maxValue), Binding.Int(value));
+    }
+
+    public static UIGauge Gauge(String label, boolean isInteractive, int maxValue, IntBinding value) {
+        return new UIGauge(Binding.String(label), isInteractive, Binding.Int(maxValue), value);
+    }
+
+    public static UIGauge Gauge(boolean isInteractive, int maxValue, IntBinding value) {
+        return new UIGauge(null, isInteractive, Binding.Int(maxValue), value);
+    }
+
+    public static UIGauge Gauge(StringBinding label, boolean isInteractive, int maxValue, IntBinding value) {
+        return new UIGauge(label, isInteractive, Binding.Int(maxValue), value);
+    }
+
+    public static UIGauge Gauge(StringBinding label, boolean isInteractive, IntBinding maxValue, IntBinding value) {
+        return new UIGauge(label, isInteractive, maxValue, value);
+    }
+
     public static UINavigatable Navigatable(Displayable d) {
         return new UIDisplayableNavigationWrapper(d);
+    }
+
+    public static UIDateField DateField(StringBinding label, int mode, ObjectBinding date) {
+        return new UIDateField(label, Binding.Int(mode), date, TimeZone.getDefault());
+    }
+
+    public static UIDateField DateField(int mode, ObjectBinding date) {
+        return new UIDateField(null, Binding.Int(mode), date, TimeZone.getDefault());
     }
 
     public static UIDateField DateField(int mode, ObjectBinding date, TimeZone timeZone) {

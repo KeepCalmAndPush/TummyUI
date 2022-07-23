@@ -16,12 +16,13 @@ import javax.microedition.lcdui.StringItem;
 import ru.asolovyov.combime.bindings.ArrayBinding;
 import ru.asolovyov.combime.bindings.Binding;
 import ru.asolovyov.combime.bindings.BoolBinding;
+import ru.asolovyov.combime.bindings.IntBinding;
 import ru.asolovyov.combime.bindings.ObjectBinding;
 import ru.asolovyov.combime.bindings.StringBinding;
 import ru.asolovyov.combime.common.S;
 import ru.asolovyov.combime.operators.combining.CombineLatest;
 import ru.asolovyov.combime.operators.mapping.Map;
-import ru.asolovyov.tummyui.models.ListItem;
+import ru.asolovyov.tummyui.utils.ListItem;
 
 /**
  * @author Администратор
@@ -112,13 +113,18 @@ public class TestsUIMIDlet extends UIMIDlet {
         });
 
     private StringBinding textBoxText = Binding.String("Текст для текст бокса");
-
     private ObjectBinding dateBinding = Binding.Object(new Date());
+
+    private IntBinding gaugeBinding = Binding.Int(2);
 
     protected UIForm form() {
         return UI.Form("TummyUI",
-                UI.TextField(textBoxText),
-                UI.StringItem(textBoxText, textBoxText.to(new CombineLatest(labelBinding)).to(new Map() {
+                UI.Gauge(new StringBinding(gaugeBinding.to(new Map() {
+            public Object mapValue(Object value) {
+                return "" + value;
+            }
+        })), true, 10, gaugeBinding),
+                UI.TextField(textBoxText.to(new CombineLatest(labelBinding)).to(new Map() {
             public Object mapValue(Object value) {
                 String text = (String) (((Object[]) value)[0]);
                 String label = (String) (((Object[]) value)[1]);
@@ -127,15 +133,14 @@ public class TestsUIMIDlet extends UIMIDlet {
                 }
                 return label + "(" + text.length() + ")";
             }
-        })),
-                UI.DateField(DateField.DATE_TIME, dateBinding, TimeZone.getDefault()),
-                UI.StringItem(new StringBinding(dateBinding.to(new Map() {
+        }), textBoxText),
+                UI.DateField(new StringBinding(dateBinding.to(new Map() {
 
             public Object mapValue(Object value) {
                 Date date = (Date) value;
                 return date.toString();
             }
-        }))),
+        })), DateField.DATE_TIME, dateBinding),
                 UI.ChoiceGroup(Binding.String("Чойс груп"), ChoiceGroup.MULTIPLE, choiceItems),
                 UI.ForEach(choiceItems, new UIForEach.ItemFactory() {
 

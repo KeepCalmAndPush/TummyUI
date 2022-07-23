@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package ru.asolovyov.tummyui.models;
+package ru.asolovyov.tummyui.utils;
 
 import javax.microedition.lcdui.Image;
 
