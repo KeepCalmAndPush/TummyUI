@@ -8,7 +8,7 @@ package ru.asolovyov.tummyui.forms;
 import ru.asolovyov.combime.api.ISubscription;
 import ru.asolovyov.combime.bindings.ArrayBinding;
 import ru.asolovyov.combime.common.Sink;
-import ru.asolovyov.tummyui.utils.List;
+import ru.asolovyov.tummyui.data.List;
 
 /**
  *

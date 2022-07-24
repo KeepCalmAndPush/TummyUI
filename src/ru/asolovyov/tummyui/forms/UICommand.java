@@ -93,8 +93,8 @@ public class UICommand extends Command {
     }
 
     private void subscribeOnPauseIfPossible() {
-        if (this.form != null && this.form.getMidlet() != null) {
-            this.form.getMidlet().getPauseEventPublisher().sink(new Sink() {
+        if (this.form != null) {
+            Environment.midlet.getPauseEventPublisher().sink(new Sink() {
                 protected void onValue(Object value) {
                     if (pauseHandler != null) {
                         pauseHandler.handle();
@@ -112,8 +112,8 @@ public class UICommand extends Command {
     }
 
     private void subscribeOnDestroyIfPossible() {
-        if (this.form != null && this.form.getMidlet() != null) {
-            this.form.getMidlet().getDestroyEventPublisher().sink(new Sink() {
+        if (this.form != null) {
+            Environment.midlet.getDestroyEventPublisher().sink(new Sink() {
                 protected void onValue(Object value) {
                     boolean unconditional = ((Boolean)value).booleanValue();
                     if (destroyHandler != null) {
@@ -132,8 +132,8 @@ public class UICommand extends Command {
     }
 
     private void subscribeOnStartIfPossible() {
-        if (this.form != null && this.form.getMidlet() != null) {
-            this.form.getMidlet().getDestroyEventPublisher().sink(new Sink() {
+        if (this.form != null) {
+            Environment.midlet.getDestroyEventPublisher().sink(new Sink() {
                 protected void onValue(Object value) {
                     boolean isResume = ((Boolean)value).booleanValue();
                     if (startHandler != null) {

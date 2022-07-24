@@ -11,7 +11,7 @@ import ru.asolovyov.combime.bindings.BoolBinding;
 import ru.asolovyov.combime.common.S;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.combime.subjects.PassthroughSubject;
-import ru.asolovyov.tummyui.utils.List;
+import ru.asolovyov.tummyui.data.List;
 
 /**
  *
@@ -99,9 +99,9 @@ public abstract class UIItem implements ItemStateListener {
     }
 
     private void subscribeOnPauseIfPossible() {
-        if (this.pauseHandler != null && this.form != null && this.form.getMidlet() != null && this.maySubscribeOnPause) {
+        if (this.pauseHandler != null && this.form != null && this.maySubscribeOnPause) {
             this.maySubscribeOnPause = false;
-            this.form.getMidlet().getPauseEventPublisher().sink(new Sink() {
+           Environment.midlet.getPauseEventPublisher().sink(new Sink() {
                 protected void onValue(Object value) {
                     pauseHandler.handle();
                 }
@@ -116,9 +116,9 @@ public abstract class UIItem implements ItemStateListener {
     }
 
     private void subscribeOnDestroyIfPossible() {
-        if (this.destroyHandler != null && this.form != null && this.form.getMidlet() != null && this.maySubscribeOnDestroy) {
+        if (this.destroyHandler != null && this.form != null && this.maySubscribeOnDestroy) {
             this.maySubscribeOnDestroy = false;
-            this.form.getMidlet().getDestroyEventPublisher().sink(new Sink() {
+            Environment.midlet.getDestroyEventPublisher().sink(new Sink() {
                 protected void onValue(Object value) {
                     boolean unconditional = ((Boolean)value).booleanValue();
                     destroyHandler.handle(unconditional);
@@ -134,9 +134,9 @@ public abstract class UIItem implements ItemStateListener {
     }
 
     private void subscribeOnStartIfPossible() {
-        if (this.startHandler != null && this.form != null && this.form.getMidlet() != null && this.maySubscribeOnStart) {
+        if (this.startHandler != null && this.form != null && this.maySubscribeOnStart) {
             this.maySubscribeOnStart = false;
-            this.form.getMidlet().getStartEventPublisher().sink(new Sink() {
+            Environment.midlet.getStartEventPublisher().sink(new Sink() {
                 protected void onValue(Object value) {
                     boolean isResume = ((Boolean)value).booleanValue();
                     startHandler.handle(isResume);

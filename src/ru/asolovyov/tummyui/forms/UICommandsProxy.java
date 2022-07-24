@@ -10,7 +10,7 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import ru.asolovyov.combime.common.S;
 import ru.asolovyov.combime.common.Sink;
-import ru.asolovyov.tummyui.utils.List;
+import ru.asolovyov.tummyui.data.List;
 
 /**
  *

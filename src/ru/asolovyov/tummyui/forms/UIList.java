@@ -12,7 +12,7 @@ import ru.asolovyov.combime.bindings.ArrayBinding;
 import ru.asolovyov.combime.bindings.StringBinding;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.tummyui.forms.UICommand.Handler;
-import ru.asolovyov.tummyui.utils.ListItem;
+import ru.asolovyov.tummyui.data.ListItem;
 
 /**
  *

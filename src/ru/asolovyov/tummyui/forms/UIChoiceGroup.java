@@ -9,8 +9,8 @@ import javax.microedition.lcdui.ChoiceGroup;
 import ru.asolovyov.combime.bindings.ArrayBinding;
 import ru.asolovyov.combime.bindings.StringBinding;
 import ru.asolovyov.combime.common.Sink;
-import ru.asolovyov.tummyui.utils.ListItem;
-import ru.asolovyov.tummyui.utils.List;
+import ru.asolovyov.tummyui.data.ListItem;
+import ru.asolovyov.tummyui.data.List;
 
 /**
  *

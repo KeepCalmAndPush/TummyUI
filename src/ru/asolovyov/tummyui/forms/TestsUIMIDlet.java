@@ -22,7 +22,7 @@ import ru.asolovyov.combime.bindings.StringBinding;
 import ru.asolovyov.combime.common.S;
 import ru.asolovyov.combime.operators.combining.CombineLatest;
 import ru.asolovyov.combime.operators.mapping.Map;
-import ru.asolovyov.tummyui.utils.ListItem;
+import ru.asolovyov.tummyui.data.ListItem;
 
 /**
  * @author Администратор
@@ -119,7 +119,25 @@ public class TestsUIMIDlet extends UIMIDlet {
 
     protected UIForm form() {
         return UI.Form("TummyUI",
-                UI.Gauge(new StringBinding(gaugeBinding.to(new Map() {
+                UI.StringItem(Environment.put("STRING", "Строка из энвайронмента"))
+                )
+
+                // Переделать на билдер
+                //.navigationCommand(displayable).title(title).linktitle(link)
+           .navigationCommand(Binding.String("TEXT BOX"), (new UITextBox(Binding.String("текст бокс"), Environment.string("STRING"))))
+           .navigationCommand(Binding.String("Лист"), UI.List(Binding.String("Hello"), UIList.IMPLICIT, this.choiceItems))
+           .navigationCommand(Binding.String("Э1"), Binding.String("ЭНВ 1"), 
+                UI.Form("Э111", UI.TextField(Environment.string("STRING")))
+                .navigationCommand(Binding.String("Э2"), UI.Form("Э222", UI.StringItem(Environment.string("STRING"))))
+           )
+           .navigationCommand(Binding.String("Navi"), Binding.String("ЖЦ ТРЕКЕР"), lcTracker)
+           .navigationCommand(Binding.String("Канвас"), UI.Navigatable(canvas))//
+                ;
+
+    }
+
+    private UIItem main = UI.Group(
+            UI.Gauge(new StringBinding(gaugeBinding.to(new Map() {
             public Object mapValue(Object value) {
                 return "" + value;
             }
@@ -149,24 +167,21 @@ public class TestsUIMIDlet extends UIMIDlet {
                 return UI.StringItem(item.getStringPart(), item.isSelected() ? ":)))" : ":(((");
             }
         }),
-                UI.ImageItem(null, "res/1.png", ImageItem.LAYOUT_CENTER, null).isVisible(visiblity)).alert(alertVisible, UI.Alert("Hello", "World", UI.Image("res/1.png"), AlertType.ALARM)).command(UI.Command("CAT", new UICommand.Handler() {
-
-            public void handle() {
-                S.println("CAT");
-                isCat.setBool(!isCat.getBool());
-            }
-        })).command(UI.Command("VIS", new UICommand.Handler() {
-            public void handle() {
-                S.println("VIS");
-                alertVisible.setBool(!alertVisible.getBool());
-            }
-        })).navigationCommand(Binding.String("TEXT BOX"), (new UITextBox(Binding.String("текст бокс"), textBoxText)))
-           .navigationCommand(Binding.String("Лист"), UI.List(Binding.String("Hello"), UIList.IMPLICIT, this.choiceItems))
-           .navigationCommand(Binding.String("Navi"), Binding.String("ЖЦ ТРЕКЕР"), lcTracker)
-           .navigationCommand(Binding.String("Канвас"), UI.Navigatable(canvas))//
-                ;
-
-    }
+                UI.ImageItem(null, "res/1.png", ImageItem.LAYOUT_CENTER, null).isVisible(visiblity)
+//                ).alert(alertVisible, UI.Alert("Hello", "World", UI.Image("res/1.png"), AlertType.ALARM))
+//                .command(UI.Command("CAT", new UICommand.Handler() {
+//
+//            public void handle() {
+//                S.println("CAT");
+//                isCat.setBool(!isCat.getBool());
+//            }
+//        })).command(UI.Command("VIS", new UICommand.Handler() {
+//            public void handle() {
+//                S.println("VIS");
+//                alertVisible.setBool(!alertVisible.getBool());
+//            }
+//        })
+            );
 
     private class Pair {
         String name;

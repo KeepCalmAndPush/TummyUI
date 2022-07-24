@@ -18,7 +18,7 @@ import ru.asolovyov.combime.bindings.BoolBinding;
 import ru.asolovyov.combime.bindings.IntBinding;
 import ru.asolovyov.combime.bindings.ObjectBinding;
 import ru.asolovyov.combime.bindings.StringBinding;
-import ru.asolovyov.tummyui.utils.ListItem;
+import ru.asolovyov.tummyui.data.ListItem;
 
 /**
  *

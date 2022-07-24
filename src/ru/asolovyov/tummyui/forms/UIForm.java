@@ -6,12 +6,13 @@
 package ru.asolovyov.tummyui.forms;
 
 import javax.microedition.lcdui.Displayable;
-import ru.asolovyov.tummyui.utils.List;
+import ru.asolovyov.tummyui.data.List;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Item;
 import javax.microedition.lcdui.ItemStateListener;
+import javax.microedition.lcdui.TextBox;
 import ru.asolovyov.combime.bindings.Binding;
 import ru.asolovyov.combime.bindings.BoolBinding;
 import ru.asolovyov.combime.bindings.StringBinding;
@@ -28,8 +29,6 @@ public class UIForm extends Form implements ItemStateListener, CommandListener, 
 
     private List itemStateListeners = new List();
     private List commandListeners = new List();
-
-    private UIMIDlet midlet;
 
     private StringBinding titleBinding;
 
@@ -226,26 +225,25 @@ public class UIForm extends Form implements ItemStateListener, CommandListener, 
             }
         });
     }
-    
-    public UIMIDlet getMidlet() { return this.midlet; }
-    public void setMidlet(UIMIDlet midlet) {
-        this.midlet = midlet;
-        for (int i = 0; i < uiItems.size(); i++) {
-            UIItem uiItem = (UIItem) uiItems.elementAt(i);
-            uiItem.setForm(this);
-        }
-    }
 
     public UIForm alert(final BoolBinding isVisible, final UIAlert alert) {
         isVisible.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
                 if (isVisible.getBool()) {
-                    midlet.getDisplay().setCurrent(alert);
+                    Environment.midlet.getDisplay().setCurrent(alert);
                 }
             }
         });
 
         return this;
+    }
+
+    public UIForm navigationCommand(
+            String linkTitle,
+            String formTitle,
+            UIItem content
+            ) {
+        return this.navigationCommand(Binding.String(linkTitle), this.titleBinding, Binding.String(formTitle), content);
     }
 
     public UIForm navigationCommand(
@@ -282,13 +280,13 @@ public class UIForm extends Form implements ItemStateListener, CommandListener, 
         //сделать константы для назада и прочих важных команд. и сделать коснтанту минкомманд - доступную для своих команд, больше чем любая из важных
         navigatable.backCommand(new UICommand(backTitle, Command.BACK, Integer.MIN_VALUE, new UICommand.Handler() {
             public void handle() {
-                getMidlet().getDisplay().setCurrent(UIForm.this);
+                Environment.midlet.getDisplay().setCurrent(UIForm.this);
             }
         }));
         
         return this.command(new UICommand(linkTitle, new UICommand.Handler() {
             public void handle() {
-                getMidlet().getDisplay().setCurrent(content);
+                Environment.midlet.getDisplay().setCurrent(content);
             }
         }));
     }
@@ -303,16 +301,16 @@ public class UIForm extends Form implements ItemStateListener, CommandListener, 
         //сделать константы для назада и прочих важных команд. и сделать коснтанту минкомманд - доступную для своих команд, больше чем любая из важных
         navigatable.backCommand(new UICommand(backBinding, Command.BACK, Integer.MIN_VALUE, new UICommand.Handler() {
             public void handle() {
-                getMidlet().getDisplay().setCurrent(UIForm.this);
+                Environment.midlet.getDisplay().setCurrent(UIForm.this);
             }
         }));
 
         trigger.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
                 if (trigger.getBool()) {
-                    getMidlet().getDisplay().setCurrent(content);
+                    Environment.midlet.getDisplay().setCurrent(content);
                 } else {
-                    getMidlet().getDisplay().setCurrent(UIForm.this);
+                    Environment.midlet.getDisplay().setCurrent(UIForm.this);
                 }
             }
         });

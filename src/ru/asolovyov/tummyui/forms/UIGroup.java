@@ -9,7 +9,7 @@ import java.util.Vector;
 import javax.microedition.lcdui.Item;
 import ru.asolovyov.combime.bindings.BoolBinding;
 import ru.asolovyov.combime.common.Sink;
-import ru.asolovyov.tummyui.utils.List;
+import ru.asolovyov.tummyui.data.List;
 
 /**
  *

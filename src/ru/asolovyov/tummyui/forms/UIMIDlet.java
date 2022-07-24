@@ -44,6 +44,7 @@ public abstract class UIMIDlet extends MIDlet {
 
     protected void destroyApp(boolean unconditional) throws MIDletStateChangeException {
         this.destroyEventPublisher.sendValue(new Boolean(unconditional));
+        Environment.clear();
     }
 
     protected void pauseApp() {
@@ -51,6 +52,8 @@ public abstract class UIMIDlet extends MIDlet {
     }
 
     protected void startApp() throws MIDletStateChangeException {
+        Environment.midlet = this;
+        
         Boolean isResume = new Boolean(this.form != null);
         
         if (isResume.booleanValue()) {
@@ -59,7 +62,6 @@ public abstract class UIMIDlet extends MIDlet {
         }
         
         this.form = form();
-        this.form.setMidlet(this);
         display = Display.getDisplay(this);
         display.setCurrent(form);
         
