@@ -9,8 +9,10 @@ import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import ru.asolovyov.combime.bindings.Binding;
+import ru.asolovyov.combime.bindings.BoolBinding;
 import ru.asolovyov.combime.bindings.IntBinding;
 import ru.asolovyov.combime.bindings.ObjectBinding;
+import ru.asolovyov.combime.bindings.StringBinding;
 import ru.asolovyov.combime.common.Sink;
 
 /**
@@ -60,13 +62,15 @@ interface CGDrawable {
     void needsRedraw();
     void needsRelayout();
 
-    CGDrawable color(int colorHex);
+    CGDrawable canvas(CGCanvas canvas);
+
+//    CGDrawable color(int colorHex);
     CGDrawable color(IntBinding colorHex);
 
-    CGDrawable frame(CGFrame frame);
+//    CGDrawable frame(CGFrame frame);
     CGDrawable frame(ObjectBinding frame);
 
-    CGDrawable canvas(CGCanvas canvas);
+    CGDrawable isVisible(BoolBinding frame);
 }
 
 interface CGStrokable extends CGDrawable {
@@ -82,6 +86,7 @@ interface CGFontSupporting extends CGDrawable {
 abstract class CGSomeDrawable implements CGDrawable {
     protected IntBinding color;
     protected ObjectBinding frameBinding;
+    protected BoolBinding isVisible;;
     
     protected CGCanvas canvas;
 
@@ -137,6 +142,23 @@ abstract class CGSomeDrawable implements CGDrawable {
            return color.getInt();
         }
         return 0x00000000;
+    }
+
+    public CGDrawable isVisible(BoolBinding isVisible) {
+        this.isVisible = isVisible;
+        this.isVisible.removeDuplicates().sink(new Sink() {
+            protected void onValue(Object value) {
+                needsRelayout();
+            }
+        });
+        return this;
+    }
+
+    public boolean isVisible() {
+        if (this.isVisible != null) {
+            return this.isVisible.getBool();
+        }
+        return true;
     }
 }
 abstract class CGSomeStrokable extends CGSomeDrawable {
@@ -232,8 +254,6 @@ class CGForEach extends CGSomeDrawable {
 
 }
 
-//arc(+fill), image, line(+dashed/dotted etc), rect(+rounded, fill), string(+substring)
-
 class CGArc extends CGSomeStrokable {
     private ObjectBinding cornerRadiusBinding;
 
@@ -274,5 +294,105 @@ class CGArc extends CGSomeStrokable {
                 getCornerRadius().width,
                 getCornerRadius().height
                 );
+    }
+}
+
+class CGText extends CGSomeDrawable implements CGFontSupporting {
+    private StringBinding text;
+    private ObjectBinding font;
+    private IntBinding anchor;
+
+    CGText(StringBinding text) {
+        super();
+        this.text = text;
+        this.text.sink(new Sink() {
+            protected void onValue(Object value) {
+                needsRelayout();
+            }
+        });
+    }
+
+    public CGText anchor(int anchor) {
+        return this.anchor(Binding.Int(anchor));
+    }
+
+    public CGText anchor(IntBinding anchor) {
+        this.anchor = anchor;
+        this.anchor.sink(new Sink() {
+            protected void onValue(Object value) {
+                needsRelayout();
+            }
+        });
+        return this;
+    }
+    
+    private int getAnchor() {
+        if (this.anchor != null) {
+            return this.anchor.getInt();
+        }
+        
+        return Graphics.HCENTER;
+    }
+
+    public StringBinding text() {
+        return this.text;
+    }
+
+    public void draw(Graphics g) {
+        super.draw(g);
+        g.setFont(getFont());
+        CGFrame frame = getFrame();
+        g.drawString(text.getString(), frame.x, frame.y, this.getAnchor());
+    }
+
+    public CGFontSupporting font(Font font) {
+        return this.font(Binding.Object(font));
+    }
+
+    public CGFontSupporting font(ObjectBinding font) {
+        this.font = font;
+        this.font.sink(new Sink() {
+            protected void onValue(Object value) {
+                needsRelayout();
+            }
+        });
+        return this;
+    }
+
+    private Font getFont() {
+        if (this.font != null) {
+            return (Font)this.font.getObject();
+        }
+        return null;
+    }
+}
+
+class CGLine extends CGSomeStrokable {
+    public void draw(Graphics g) {
+        super.draw(g);
+        CGFrame frame = this.getFrame();
+        g.drawLine(
+                frame.x,
+                frame.y,
+                frame.x + frame.width,
+                frame.y + frame.height);
+    }
+}
+
+class CGImage extends CGSomeDrawable {
+    private ObjectBinding image;
+
+    public CGImage(ObjectBinding image) {
+        super();
+        this.image = image;
+        this.image.sink(new Sink() {
+            protected void onValue(Object value) {
+                needsRelayout();
+            }
+        });
+    }
+
+    public ObjectBinding image() {
+        return this.image;
     }
 }
