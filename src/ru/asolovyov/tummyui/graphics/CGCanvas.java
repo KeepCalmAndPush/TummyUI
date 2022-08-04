@@ -7,15 +7,33 @@ package ru.asolovyov.tummyui.graphics;
 
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
+import ru.asolovyov.combime.bindings.B;
+import ru.asolovyov.combime.bindings.IntBinding;
+import ru.asolovyov.combime.common.Sink;
 
 /**
  *
  * @author Администратор
  */
 
-public abstract class CGCanvas extends Canvas {
+public class CGCanvas extends Canvas {
     
-    public abstract CGDrawable drawable();
+    private CGDrawable[] content;
+    private IntBinding color;
+
+    public CGCanvas(CGDrawable content) {
+        this(new CGDrawable[] { content });
+    }
+
+    public CGCanvas(CGDrawable[] content) {
+        super();
+        this.content = content;
+        for (int i = 0; i < this.content.length; i++) {
+            CGDrawable drawable = content[i];
+            drawable.canvas(this);
+        }
+        this.color(0);
+    }
 
     public void repaint(CGFrame frame) {
         if (frame == null) {
@@ -26,41 +44,28 @@ public abstract class CGCanvas extends Canvas {
     }
 
     protected void paint(Graphics g) {
-        this.drawable().draw(g);
+        g.setColor(this.color.getInt());
+        g.fillRect(0, 0, this.getWidth(), this.getHeight());
+        for (int i = 0; i < this.content.length; i++) {
+            CGDrawable drawable = content[i];
+            drawable.draw(g);
+        }
+    }
+
+    public CGCanvas color(int colorHex) {
+        return this.color(B.Int(colorHex));
+    }
+
+    public CGCanvas color(IntBinding colorHex) {
+        this.color = colorHex;
+        this.color.sink(new Sink() {
+            protected void onValue(Object value) {
+                repaint();
+            }
+        });
+        return this;
     }
 }
 
-class Stack extends CGSomeDrawable {
-    protected CGDrawable drawables[];
-    public Stack(CGDrawable drawables[]) {
-        super();
-        this.drawables = drawables;
-    }
-}
 
-class HStack extends Stack{
-    public HStack(CGDrawable drawables[]) {
-        super(drawables);
-    }
-}
-
-class VStack extends Stack {
-    public VStack(CGDrawable drawables[]) {
-        super(drawables);
-    }
-}
-
-class ZStack extends Stack {
-    public ZStack(CGDrawable drawables[]) {
-        super(drawables);
-    }
-}
-
-class CGIf extends CGSomeDrawable {
-
-}
-
-class CGForEach extends CGSomeDrawable {
-
-}
 

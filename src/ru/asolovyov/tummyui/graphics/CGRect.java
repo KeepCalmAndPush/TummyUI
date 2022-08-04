@@ -6,7 +6,7 @@
 package ru.asolovyov.tummyui.graphics;
 
 import javax.microedition.lcdui.Graphics;
-import ru.asolovyov.combime.bindings.Binding;
+import ru.asolovyov.combime.bindings.B;
 import ru.asolovyov.combime.bindings.ObjectBinding;
 import ru.asolovyov.combime.common.Sink;
 
@@ -18,7 +18,7 @@ public class CGRect extends CGSomeStrokable {
     private ObjectBinding cornerRadiusBinding;
 
     public CGRect cornerRaduis(CGSize cornerRadius) {
-        return this.cornerRaduis(Binding.Object(cornerRadius));
+        return this.cornerRaduis(B.Object(cornerRadius));
     }
 
     public CGRect cornerRaduis(ObjectBinding cornerRadiusBinding) {

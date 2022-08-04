@@ -1,5 +1,6 @@
-MIDlet-1: Tests, ,ru.asolovyov.tummyui.forms.TestsUIMIDlet
-MIDlet-Jar-Size: 360380
+MIDlet-1: Canvas,,ru.asolovyov.tummyui.data.test.Canvas
+MIDlet-2: Forms,,ru.asolovyov.tummyui.data.test.Forms
+MIDlet-Jar-Size: 382263
 MIDlet-Jar-URL: TummyUI.jar
 MIDlet-Name: TummyUI
 MIDlet-Vendor: Vendor

@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package ru.asolovyov.tummyui.forms;
+package ru.asolovyov.tummyui.data.test;
 
 import java.util.Date;
 import java.util.TimeZone;
@@ -10,11 +10,12 @@ import javax.microedition.lcdui.AlertType;
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.ChoiceGroup;
 import javax.microedition.lcdui.DateField;
+import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.ImageItem;
 import javax.microedition.lcdui.StringItem;
 import ru.asolovyov.combime.bindings.ArrayBinding;
-import ru.asolovyov.combime.bindings.Binding;
+import ru.asolovyov.combime.bindings.B;
 import ru.asolovyov.combime.bindings.BoolBinding;
 import ru.asolovyov.combime.bindings.IntBinding;
 import ru.asolovyov.combime.bindings.ObjectBinding;
@@ -23,11 +24,19 @@ import ru.asolovyov.combime.common.S;
 import ru.asolovyov.combime.operators.combining.CombineLatest;
 import ru.asolovyov.combime.operators.mapping.Map;
 import ru.asolovyov.tummyui.data.ListItem;
+import ru.asolovyov.tummyui.forms.Environment;
+import ru.asolovyov.tummyui.forms.UI;
+import ru.asolovyov.tummyui.forms.UIForEach;
+import ru.asolovyov.tummyui.forms.UIForm;
+import ru.asolovyov.tummyui.forms.UIItem;
+import ru.asolovyov.tummyui.forms.UIList;
+import ru.asolovyov.tummyui.forms.UIMIDlet;
+import ru.asolovyov.tummyui.forms.UITextBox;
 
 /**
  * @author Администратор
  */
-public class TestsUIMIDlet extends UIMIDlet {
+public class Forms extends UIMIDlet {
 
     private Canvas canvas = new Canvas() {
         protected void paint(Graphics g) {
@@ -49,12 +58,12 @@ public class TestsUIMIDlet extends UIMIDlet {
     final StringBinding suspendText = new StringBinding("Суспендов: " + su + "\n");
     final StringBinding startText = new StringBinding("Стартов: " + sta + "\n");
     final StringBinding destroyText = new StringBinding("Дестроев: " + des + "\n");
-    final BoolBinding alertVisible = Binding.Bool(false);
-    private StringBinding labelBinding = Binding.String("Label");
-    private StringBinding textBinding = Binding.String("Text");
-    private BoolBinding isCat = Binding.Bool(false);
-    private BoolBinding visiblity = Binding.Bool(false);
-    private ArrayBinding listModel = Binding.Array(new Pair[]{
+    final BoolBinding alertVisible = B.Bool(false);
+    private StringBinding labelBinding = B.String("Label");
+    private StringBinding textBinding = B.String("Text");
+    private BoolBinding isCat = B.Bool(false);
+    private BoolBinding visiblity = B.Bool(false);
+    private ArrayBinding listModel = B.Array(new Pair[]{
                 new Pair("1", "Первый пункт"),
                 new Pair("2", "Второй пункт"),
                 new Pair("3", "Третий пункт\n")
@@ -106,32 +115,32 @@ public class TestsUIMIDlet extends UIMIDlet {
         }
     })));
 
-    private ArrayBinding choiceItems = Binding.Array(new ListItem[] {
+    private ArrayBinding choiceItems = B.Array(new ListItem[] {
             new ListItem("Привет", null, true),
             new ListItem("Как", null, false),
             new ListItem("Дела", null, true)
         });
 
-    private StringBinding textBoxText = Binding.String("Текст для текст бокса");
-    private ObjectBinding dateBinding = Binding.Object(new Date());
+    private StringBinding textBoxText = B.String("Текст для текст бокса");
+    private ObjectBinding dateBinding = B.Object(new Date());
 
-    private IntBinding gaugeBinding = Binding.Int(2);
+    private IntBinding gaugeBinding = B.Int(2);
 
-    protected UIForm form() {
+    protected Displayable content() {
         return UI.Form("TummyUI",
                 UI.StringItem(Environment.put("STRING", "Строка из энвайронмента"))
                 )
 
                 // Переделать на билдер
                 //.navigationCommand(displayable).title(title).linktitle(link)
-           .navigationCommand(Binding.String("TEXT BOX"), (new UITextBox(Binding.String("текст бокс"), Environment.string("STRING"))))
-           .navigationCommand(Binding.String("Лист"), UI.List(Binding.String("Hello"), UIList.IMPLICIT, this.choiceItems))
-           .navigationCommand(Binding.String("Э1"), Binding.String("ЭНВ 1"), 
+           .navigationCommand(B.String("TEXT BOX"), (new UITextBox(B.String("текст бокс"), Environment.string("STRING"))))
+           .navigationCommand(B.String("Лист"), UI.List(B.String("Hello"), UIList.IMPLICIT, this.choiceItems))
+           .navigationCommand(B.String("Э1"), B.String("ЭНВ 1"),
                 UI.Form("Э111", UI.TextField(Environment.string("STRING")))
-                .navigationCommand(Binding.String("Э2"), UI.Form("Э222", UI.StringItem(Environment.string("STRING"))))
+                .navigationCommand(B.String("Э2"), UI.Form("Э222", UI.StringItem(Environment.string("STRING"))))
            )
-           .navigationCommand(Binding.String("Navi"), Binding.String("ЖЦ ТРЕКЕР"), lcTracker)
-           .navigationCommand(Binding.String("Канвас"), UI.Navigatable(canvas))//
+           .navigationCommand(B.String("Navi"), B.String("ЖЦ ТРЕКЕР"), lcTracker)
+           .navigationCommand(B.String("Канвас"), UI.Navigatable(canvas))//
                 ;
 
     }
@@ -159,7 +168,7 @@ public class TestsUIMIDlet extends UIMIDlet {
                 return date.toString();
             }
         })), DateField.DATE_TIME, dateBinding),
-                UI.ChoiceGroup(Binding.String("Чойс груп"), ChoiceGroup.MULTIPLE, choiceItems),
+                UI.ChoiceGroup(B.String("Чойс груп"), ChoiceGroup.MULTIPLE, choiceItems),
                 UI.ForEach(choiceItems, new UIForEach.ItemFactory() {
 
             public UIItem itemFor(Object viewModel) {

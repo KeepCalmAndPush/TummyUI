@@ -11,7 +11,15 @@ package ru.asolovyov.tummyui.graphics;
  */
 public final class CGFrame {
     public static CGFrame zero() {
-        return new CGFrame();
+        return new CGFrame(0, 0, 0, 0);
+    }
+
+    public CGFrame(int x, int y, int width, int height) {
+        super();
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
     }
 
     public int x = 0,

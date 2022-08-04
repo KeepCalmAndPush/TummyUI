@@ -6,7 +6,7 @@
 package ru.asolovyov.tummyui.graphics;
 
 import javax.microedition.lcdui.Graphics;
-import ru.asolovyov.combime.bindings.Binding;
+import ru.asolovyov.combime.bindings.B;
 import ru.asolovyov.combime.bindings.IntBinding;
 import ru.asolovyov.combime.common.Sink;
 
@@ -18,7 +18,7 @@ public abstract class CGSomeStrokable extends CGSomeDrawable {
     protected IntBinding strokeStyle;
 
     public CGSomeStrokable stroke(int strokeStyle) {
-        return this.stroke(Binding.Int(strokeStyle));
+        return this.stroke(B.Int(strokeStyle));
     }
 
     public CGSomeStrokable stroke(IntBinding strokeStyle) {

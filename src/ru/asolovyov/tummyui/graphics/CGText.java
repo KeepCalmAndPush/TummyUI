@@ -7,7 +7,7 @@ package ru.asolovyov.tummyui.graphics;
 
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
-import ru.asolovyov.combime.bindings.Binding;
+import ru.asolovyov.combime.bindings.B;
 import ru.asolovyov.combime.bindings.IntBinding;
 import ru.asolovyov.combime.bindings.ObjectBinding;
 import ru.asolovyov.combime.bindings.StringBinding;
@@ -32,8 +32,22 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
         });
     }
 
+    public CGText text(StringBinding text) {
+        this.text = text;
+        this.text.sink(new Sink() {
+            protected void onValue(Object value) {
+                needsRelayout();
+            }
+        });
+        return this;
+    }
+
+    public CGText text(String text) {
+        return this.text(B.String(text));
+    }
+
     public CGText anchor(int anchor) {
-        return this.anchor(Binding.Int(anchor));
+        return this.anchor(B.Int(anchor));
     }
 
     public CGText anchor(IntBinding anchor) {
@@ -66,7 +80,7 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
     }
 
     public CGFontSupporting font(Font font) {
-        return this.font(Binding.Object(font));
+        return this.font(B.Object(font));
     }
 
     public CGFontSupporting font(ObjectBinding font) {

@@ -6,6 +6,8 @@
 package ru.asolovyov.tummyui.forms;
 
 import javax.microedition.lcdui.Display;
+import javax.microedition.lcdui.Displayable;
+import javax.microedition.lcdui.Screen;
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
 import ru.asolovyov.combime.api.IPublisher;
@@ -38,9 +40,9 @@ public abstract class UIMIDlet extends MIDlet {
 
     private Display display;
 
-    private UIForm form;
+    private Displayable content;
     
-    protected abstract UIForm form();
+    protected abstract Displayable content();
 
     protected void destroyApp(boolean unconditional) throws MIDletStateChangeException {
         this.destroyEventPublisher.sendValue(new Boolean(unconditional));
@@ -54,16 +56,16 @@ public abstract class UIMIDlet extends MIDlet {
     protected void startApp() throws MIDletStateChangeException {
         Environment.midlet = this;
         
-        Boolean isResume = new Boolean(this.form != null);
+        Boolean isResume = new Boolean(this.content != null);
         
         if (isResume.booleanValue()) {
             this.startEventPublisher.sendValue(isResume);
             return;
         }
         
-        this.form = form();
+        this.content = content();
         display = Display.getDisplay(this);
-        display.setCurrent(form);
+        display.setCurrent(this.content);
         
         this.startEventPublisher.sendValue(isResume);
     }

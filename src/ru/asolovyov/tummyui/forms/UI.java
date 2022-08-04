@@ -13,7 +13,7 @@ import javax.microedition.lcdui.Gauge;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.Item;
 import ru.asolovyov.combime.bindings.ArrayBinding;
-import ru.asolovyov.combime.bindings.Binding;
+import ru.asolovyov.combime.bindings.B;
 import ru.asolovyov.combime.bindings.BoolBinding;
 import ru.asolovyov.combime.bindings.IntBinding;
 import ru.asolovyov.combime.bindings.ObjectBinding;
@@ -29,16 +29,16 @@ public class UI {
         private BoolBinding binding;
         private UIGroup thenGroup;
 
-        IfFactory(BoolBinding binding) {
+        public IfFactory(BoolBinding binding) {
             this.binding = binding;
         }
 
-        IfFactory Then(UIGroup group) {
+        public IfFactory Then(UIGroup group) {
             this.thenGroup = group;
             return this;
         }
 
-        UIIf Else(UIGroup elseGroup) {
+        public UIIf Else(UIGroup elseGroup) {
             return new UIIf(binding, thenGroup, elseGroup);
         }
     }
@@ -53,27 +53,27 @@ public class UI {
 
     public static UIAlert Alert(String title, String alertText, Image alertImage, AlertType alertType) {
         return Alert(
-                Binding.String(title),
-                Binding.String(alertText),
-                Binding.Object(alertImage),
-                Binding.Object(alertType)
+                B.String(title),
+                B.String(alertText),
+                B.Object(alertImage),
+                B.Object(alertType)
                 );
     }
 
     public static UIGauge Gauge(String label, boolean isInteractive, int maxValue, int value) {
-        return new UIGauge(Binding.String(label), isInteractive, Binding.Int(maxValue), Binding.Int(value));
+        return new UIGauge(B.String(label), isInteractive, B.Int(maxValue), B.Int(value));
     }
 
     public static UIGauge Gauge(String label, boolean isInteractive, int maxValue, IntBinding value) {
-        return new UIGauge(Binding.String(label), isInteractive, Binding.Int(maxValue), value);
+        return new UIGauge(B.String(label), isInteractive, B.Int(maxValue), value);
     }
 
     public static UIGauge Gauge(boolean isInteractive, int maxValue, IntBinding value) {
-        return new UIGauge(null, isInteractive, Binding.Int(maxValue), value);
+        return new UIGauge(null, isInteractive, B.Int(maxValue), value);
     }
 
     public static UIGauge Gauge(StringBinding label, boolean isInteractive, int maxValue, IntBinding value) {
-        return new UIGauge(label, isInteractive, Binding.Int(maxValue), value);
+        return new UIGauge(label, isInteractive, B.Int(maxValue), value);
     }
 
     public static UIGauge Gauge(StringBinding label, boolean isInteractive, IntBinding maxValue, IntBinding value) {
@@ -85,19 +85,19 @@ public class UI {
     }
 
     public static UIDateField DateField(StringBinding label, int mode, ObjectBinding date) {
-        return new UIDateField(label, Binding.Int(mode), date, TimeZone.getDefault());
+        return new UIDateField(label, B.Int(mode), date, TimeZone.getDefault());
     }
 
     public static UIDateField DateField(int mode, ObjectBinding date) {
-        return new UIDateField(null, Binding.Int(mode), date, TimeZone.getDefault());
+        return new UIDateField(null, B.Int(mode), date, TimeZone.getDefault());
     }
 
     public static UIDateField DateField(int mode, ObjectBinding date, TimeZone timeZone) {
-        return new UIDateField(null, Binding.Int(mode), date, timeZone);
+        return new UIDateField(null, B.Int(mode), date, timeZone);
     }
 
     public static UIDateField DateField(String label, int mode, ObjectBinding date, TimeZone timeZone) {
-        return new UIDateField(Binding.String(label), Binding.Int(mode), date, timeZone);
+        return new UIDateField(B.String(label), B.Int(mode), date, timeZone);
     }
 
     public static UIDateField DateField(final IntBinding mode, final ObjectBinding date, TimeZone timeZone) {
@@ -109,7 +109,7 @@ public class UI {
     }
 
     public static UIList List(String title, int type, ListItem[] items) {
-        return new UIList(Binding.String(title), type, Binding.Array(items));
+        return new UIList(B.String(title), type, B.Array(items));
     }
 
     public static UIList List(StringBinding title, int type, ArrayBinding items) {
@@ -117,7 +117,7 @@ public class UI {
     }
 
     public static UIChoiceGroup ChoiceGroup(String label, int type, ListItem[] items) {
-        return new UIChoiceGroup(Binding.String(label), type, Binding.Array(items));
+        return new UIChoiceGroup(B.String(label), type, B.Array(items));
     }
 
     public static UIChoiceGroup ChoiceGroup(StringBinding label, int type, ArrayBinding items) {
@@ -155,7 +155,7 @@ public class UI {
     }
 
     public static UIStringItem StringItem(String label, String text) {
-        return new UIStringItem(Binding.String(label), Binding.String(text));
+        return new UIStringItem(B.String(label), B.String(text));
     }
 
     public static UIStringItem StringItem(StringBinding textBinding) {
@@ -171,7 +171,7 @@ public class UI {
     public static UITextField TextField(String label, String text) {
         label = label == null ? "" : label;
         text = text == null ? "" : text;
-        return new UITextField(Binding.String(label), Binding.String(text));
+        return new UITextField(B.String(label), B.String(text));
     }
 
     public static Image Image(String path) {
@@ -184,11 +184,11 @@ public class UI {
     }
 
     public static UIImageItem ImageItem(String label, String imageName, int layout, String altText) {
-        return new UIImageItem(Binding.String(label), Binding.String(imageName), Binding.Int(layout), Binding.String(altText));
+        return new UIImageItem(B.String(label), B.String(imageName), B.Int(layout), B.String(altText));
     }
 
     public static UIImageItem ImageItem(StringBinding label, StringBinding imageName, int layout, StringBinding altText) {
-        return new UIImageItem(label, imageName, Binding.Int(layout), altText);
+        return new UIImageItem(label, imageName, B.Int(layout), altText);
     }
 
     public static UIImageItem ImageItem(StringBinding label, ObjectBinding image, IntBinding layout, StringBinding altText) {
@@ -260,34 +260,34 @@ public class UI {
     }
 
     public static UIForm Form(String title) {
-        return new UIForm(Binding.String(title), new UIItem[]{});
+        return new UIForm(B.String(title), new UIItem[]{});
     }
 
     public static UIForm Form(String title, UIItem i1) {
-        return new UIForm(Binding.String(title), new UIItem[]{i1});
+        return new UIForm(B.String(title), new UIItem[]{i1});
     }
 
     public static UIForm Form(String title, UIItem i1, UIItem i2) {
-        return new UIForm(Binding.String(title), new UIItem[]{i1, i2});
+        return new UIForm(B.String(title), new UIItem[]{i1, i2});
     }
 
     public static UIForm Form(String title, UIItem i1, UIItem i2, UIItem i3) {
-        return new UIForm(Binding.String(title), new UIItem[]{i1, i2, i3});
+        return new UIForm(B.String(title), new UIItem[]{i1, i2, i3});
     }
 
     public static UIForm Form(String title, UIItem i1, UIItem i2, UIItem i3, UIItem i4) {
-        return new UIForm(Binding.String(title), new UIItem[]{i1, i2, i3, i4});
+        return new UIForm(B.String(title), new UIItem[]{i1, i2, i3, i4});
     }
 
     public static UIForm Form(String title, UIItem i1, UIItem i2, UIItem i3, UIItem i4, UIItem i5) {
-        return new UIForm(Binding.String(title), new UIItem[]{i1, i2, i3, i4, i5});
+        return new UIForm(B.String(title), new UIItem[]{i1, i2, i3, i4, i5});
     }
 
     public static UIForm Form(String title, UIItem i1, UIItem i2, UIItem i3, UIItem i4, UIItem i5, UIItem i6) {
-        return new UIForm(Binding.String(title), new UIItem[]{i1, i2, i3, i4, i5, i6});
+        return new UIForm(B.String(title), new UIItem[]{i1, i2, i3, i4, i5, i6});
     }
 
     public static UIForm Form(String title, UIItem i1, UIItem i2, UIItem i3, UIItem i4, UIItem i5, UIItem i6, UIItem i7) {
-        return new UIForm(Binding.String(title), new UIItem[]{i1, i2, i3, i4, i5, i6, i7});
+        return new UIForm(B.String(title), new UIItem[]{i1, i2, i3, i4, i5, i6, i7});
     }
 }

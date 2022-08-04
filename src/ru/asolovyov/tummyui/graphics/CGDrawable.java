@@ -21,9 +21,14 @@ public interface CGDrawable {
     public void needsRelayout();
 
     public CGDrawable canvas(CGCanvas canvas);
-    
+
+    public CGDrawable color(int colorHex);
+    public CGDrawable frame(CGFrame frame);
+    public CGDrawable frame(int x, int y, int width, int height);
+    public CGDrawable isVisible(boolean isVisible);
+
     public CGDrawable color(IntBinding colorHex);
     public CGDrawable frame(ObjectBinding frame);
-    public CGDrawable isVisible(BoolBinding frame);
+    public CGDrawable isVisible(BoolBinding isVisible);
 }
 

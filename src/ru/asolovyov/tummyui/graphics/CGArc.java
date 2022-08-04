@@ -6,8 +6,7 @@
 package ru.asolovyov.tummyui.graphics;
 
 import javax.microedition.lcdui.Graphics;
-import ru.asolovyov.combime.bindings.Binding;
-import ru.asolovyov.combime.bindings.ObjectBinding;
+import ru.asolovyov.combime.bindings.IntBinding;
 import ru.asolovyov.combime.common.Sink;
 
 /**
@@ -15,27 +14,27 @@ import ru.asolovyov.combime.common.Sink;
  * @author Администратор
  */
 public class CGArc extends CGSomeStrokable {
-    private ObjectBinding cornerRadiusBinding;
+    private IntBinding startAngleBinding;
+    private IntBinding endAngleBinding;
 
-    public CGArc cornerRaduis(CGSize cornerRadius) {
-        return this.cornerRaduis(Binding.Object(cornerRadius));
-    }
-
-    public CGArc cornerRaduis(ObjectBinding cornerRadiusBinding) {
-        this.cornerRadiusBinding = cornerRadiusBinding;
-        this.cornerRadiusBinding.sink(new Sink() {
+    public CGArc startAngle(IntBinding startAngleBinding) {
+        this.startAngleBinding = startAngleBinding;
+        this.startAngleBinding.sink(new Sink() {
             protected void onValue(Object value) {
-                CGArc.this.needsRedraw();
+                needsRedraw();
             }
         });
         return this;
     }
 
-    protected CGSize getCornerRadius() {
-        if (this.cornerRadiusBinding != null) {
-            return (CGSize)this.cornerRadiusBinding.getObject();
-        }
-        return new CGSize();
+    public CGArc endAngle(IntBinding endAngleBinding) {
+        this.endAngleBinding = endAngleBinding;
+        this.endAngleBinding.sink(new Sink() {
+            protected void onValue(Object value) {
+                needsRedraw();
+            }
+        });
+        return this;
     }
 
     public void draw(Graphics g) {
@@ -51,8 +50,8 @@ public class CGArc extends CGSomeStrokable {
                 frame.y,
                 frame.width,
                 frame.height,
-                getCornerRadius().width,
-                getCornerRadius().height
+                startAngleBinding.getInt(),
+                endAngleBinding.getInt()
                 );
     }
 }

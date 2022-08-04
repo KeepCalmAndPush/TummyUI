@@ -7,7 +7,7 @@ package ru.asolovyov.tummyui.forms;
 
 import javax.microedition.lcdui.Item;
 import javax.microedition.lcdui.TextField;
-import ru.asolovyov.combime.bindings.Binding;
+import ru.asolovyov.combime.bindings.B;
 import ru.asolovyov.combime.bindings.IntBinding;
 import ru.asolovyov.combime.bindings.StringBinding;
 import ru.asolovyov.combime.common.Sink;
@@ -21,11 +21,11 @@ public class UITextField extends UIItem {
     private StringBinding textBinding;
 
     public UITextField(StringBinding labelBinding, StringBinding textBinding) {
-        this(labelBinding, textBinding, Binding.Int(255), Binding.Int(TextField.ANY));
+        this(labelBinding, textBinding, B.Int(255), B.Int(TextField.ANY));
     }
 
     public UITextField(StringBinding labelBinding, StringBinding textBinding, IntBinding maxSize) {
-        this(labelBinding, textBinding, maxSize, Binding.Int(TextField.ANY));
+        this(labelBinding, textBinding, maxSize, B.Int(TextField.ANY));
     }
 
     public UITextField(

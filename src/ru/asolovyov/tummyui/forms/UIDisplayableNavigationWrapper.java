@@ -7,7 +7,7 @@ package ru.asolovyov.tummyui.forms;
 
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.Displayable;
-import ru.asolovyov.combime.bindings.Binding;
+import ru.asolovyov.combime.bindings.B;
 import ru.asolovyov.combime.bindings.StringBinding;
 
 /**
@@ -24,7 +24,7 @@ public class UIDisplayableNavigationWrapper implements UINavigatable {
     }
 
     public StringBinding title() {
-        return Binding.String("");
+        return B.String("");
     }
 
     public Displayable displayable() {

@@ -9,7 +9,7 @@ import java.io.IOException;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.ImageItem;
 import javax.microedition.lcdui.Item;
-import ru.asolovyov.combime.bindings.Binding;
+import ru.asolovyov.combime.bindings.B;
 import ru.asolovyov.combime.bindings.IntBinding;
 import ru.asolovyov.combime.bindings.ObjectBinding;
 import ru.asolovyov.combime.bindings.StringBinding;
@@ -36,7 +36,7 @@ public class UIImageItem extends UIItem {
     }
 
     public UIImageItem(String label, StringBinding imageName, int layout, String altText) {
-        this(Binding.String(label), imageName, Binding.Int(layout), Binding.String(altText));
+        this(B.String(label), imageName, B.Int(layout), B.String(altText));
     }
 
     public UIImageItem(final StringBinding label, final ObjectBinding image, final IntBinding layout, final StringBinding altText) {

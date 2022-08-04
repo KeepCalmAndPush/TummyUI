@@ -9,7 +9,7 @@ import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.TextBox;
 import javax.microedition.lcdui.TextField;
-import ru.asolovyov.combime.bindings.Binding;
+import ru.asolovyov.combime.bindings.B;
 import ru.asolovyov.combime.bindings.IntBinding;
 import ru.asolovyov.combime.bindings.StringBinding;
 import ru.asolovyov.combime.common.Sink;
@@ -24,11 +24,11 @@ public class UITextBox extends TextBox implements UINavigatable {
     private StringBinding textBinding;
     
     public UITextBox(StringBinding titleBinding, StringBinding textBinding) {
-        this(titleBinding, textBinding, Binding.Int(255), Binding.Int(TextField.ANY));
+        this(titleBinding, textBinding, B.Int(255), B.Int(TextField.ANY));
     }
 
     public UITextBox(StringBinding titleBinding, StringBinding textBinding, IntBinding maxSize) {
-        this(titleBinding, textBinding, maxSize, Binding.Int(TextField.ANY));
+        this(titleBinding, textBinding, maxSize, B.Int(TextField.ANY));
     }
 
     public UITextBox(

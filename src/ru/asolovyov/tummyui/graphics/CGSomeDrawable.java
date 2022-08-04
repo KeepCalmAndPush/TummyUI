@@ -6,7 +6,7 @@
 package ru.asolovyov.tummyui.graphics;
 
 import javax.microedition.lcdui.Graphics;
-import ru.asolovyov.combime.bindings.Binding;
+import ru.asolovyov.combime.bindings.B;
 import ru.asolovyov.combime.bindings.BoolBinding;
 import ru.asolovyov.combime.bindings.IntBinding;
 import ru.asolovyov.combime.bindings.ObjectBinding;
@@ -19,7 +19,7 @@ import ru.asolovyov.combime.common.Sink;
 public abstract class CGSomeDrawable implements CGDrawable {
     protected IntBinding color;
     protected ObjectBinding frameBinding;
-    protected BoolBinding isVisible;;
+    protected BoolBinding isVisible;
 
     protected CGCanvas canvas;
 
@@ -28,7 +28,11 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     public CGDrawable color(int colorHex) {
-        return this.color(Binding.Int(colorHex));
+        return this.color(B.Int(colorHex));
+    }
+
+    public CGDrawable frame(int x, int y, int width, int height) {
+        return this.frame(new CGFrame(x, y, width, height));
     }
 
     public CGDrawable color(IntBinding colorHex) {
@@ -42,7 +46,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     public CGDrawable frame(CGFrame frame) {
-        return this.frame(Binding.Object(frame));
+        return this.frame(B.Object(frame));
     }
 
     public CGDrawable frame(ObjectBinding frame) {
@@ -51,7 +55,9 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     public void needsRedraw() {
-        canvas.repaint(getFrame());
+        if (this.canvas != null) {
+            this.canvas.repaint(getFrame());
+        }
     }
 
     public void needsRelayout() {
@@ -60,6 +66,8 @@ public abstract class CGSomeDrawable implements CGDrawable {
 
     public CGDrawable canvas(CGCanvas canvas) {
         this.canvas = canvas;
+        this.needsRedraw();
+        
         return this;
     }
 
@@ -75,6 +83,10 @@ public abstract class CGSomeDrawable implements CGDrawable {
            return color.getInt();
         }
         return 0x00000000;
+    }
+
+    public CGDrawable isVisible(boolean isVisible) {
+        return this.isVisible(B.Bool(isVisible));
     }
 
     public CGDrawable isVisible(BoolBinding isVisible) {

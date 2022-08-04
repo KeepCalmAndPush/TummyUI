@@ -13,7 +13,7 @@ import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Item;
 import javax.microedition.lcdui.ItemStateListener;
 import javax.microedition.lcdui.TextBox;
-import ru.asolovyov.combime.bindings.Binding;
+import ru.asolovyov.combime.bindings.B;
 import ru.asolovyov.combime.bindings.BoolBinding;
 import ru.asolovyov.combime.bindings.StringBinding;
 import ru.asolovyov.combime.common.Sink;
@@ -160,7 +160,7 @@ public class UIForm extends Form implements ItemStateListener, CommandListener, 
         };
         
         UICommand uiCommand = new UICommand(
-                Binding.String(cmd.getLabel()),
+                B.String(cmd.getLabel()),
                 cmd.getCommandType(),
                 cmd.getPriority(),
                 handler
@@ -243,7 +243,7 @@ public class UIForm extends Form implements ItemStateListener, CommandListener, 
             String formTitle,
             UIItem content
             ) {
-        return this.navigationCommand(Binding.String(linkTitle), this.titleBinding, Binding.String(formTitle), content);
+        return this.navigationCommand(B.String(linkTitle), this.titleBinding, B.String(formTitle), content);
     }
 
     public UIForm navigationCommand(

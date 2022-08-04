@@ -10,7 +10,7 @@ import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Image;
-import ru.asolovyov.combime.bindings.Binding;
+import ru.asolovyov.combime.bindings.B;
 import ru.asolovyov.combime.bindings.ObjectBinding;
 import ru.asolovyov.combime.bindings.StringBinding;
 import ru.asolovyov.combime.common.Sink;
@@ -76,7 +76,7 @@ public class UIAlert extends Alert implements CommandListener {
         };
 
         UICommand uiCommand = new UICommand(
-                Binding.String(cmd.getLabel()),
+                B.String(cmd.getLabel()),
                 cmd.getCommandType(),
                 cmd.getPriority(),
                 handler);

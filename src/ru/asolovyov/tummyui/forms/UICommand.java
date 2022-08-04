@@ -6,7 +6,7 @@
 package ru.asolovyov.tummyui.forms;
 
 import javax.microedition.lcdui.Command;
-import ru.asolovyov.combime.bindings.Binding;
+import ru.asolovyov.combime.bindings.B;
 import ru.asolovyov.combime.bindings.BoolBinding;
 import ru.asolovyov.combime.bindings.StringBinding;
 import ru.asolovyov.combime.common.S;
@@ -57,11 +57,11 @@ public class UICommand extends Command {
     }
 
     public UICommand(String label, int type, Handler handler) {
-        this(Binding.String(label), type, availablePriority++, handler);
+        this(B.String(label), type, availablePriority++, handler);
     }
 
     public UICommand(String label, Handler handler) {
-        this(Binding.String(label), handler);
+        this(B.String(label), handler);
     }
 
     void handle() {
