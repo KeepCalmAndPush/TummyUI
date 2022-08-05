@@ -17,7 +17,6 @@ import ru.asolovyov.combime.common.Sink;
  */
 
 public class CGCanvas extends Canvas {
-    
     private CGDrawable[] content;
     private IntBinding color;
 

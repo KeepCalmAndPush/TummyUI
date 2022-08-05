@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package ru.asolovyov.tummyui.data.test;
+package ru.asolovyov.tummyui.test;
 
 import java.util.Date;
 import java.util.TimeZone;

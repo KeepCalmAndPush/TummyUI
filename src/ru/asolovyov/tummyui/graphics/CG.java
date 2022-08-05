@@ -14,6 +14,12 @@ import ru.asolovyov.combime.bindings.StringBinding;
  * @author Администратор
  */
 public class CG {
+    public final static int ALIGNMENT_CENTER = 0;
+    public final static int ALIGNMENT_LEFT = 1;
+    public final static int ALIGNMENT_RIGHT = 2;
+    public final static int ALIGNMENT_TOP = 3;
+    public final static int ALIGNMENT_BOTTOM = 4;
+    
     public static CGArc Arc(int startAngle, int endAngle) {
         return new CGArc()
                 .startAngle(B.Int(startAngle))
