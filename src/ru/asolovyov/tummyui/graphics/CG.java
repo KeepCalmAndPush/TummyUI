@@ -6,8 +6,10 @@
 package ru.asolovyov.tummyui.graphics;
 
 import javax.microedition.lcdui.Image;
-import ru.asolovyov.combime.bindings.B;
-import ru.asolovyov.combime.bindings.StringBinding;
+import ru.asolovyov.combime.bindings.Bool;
+import ru.asolovyov.combime.bindings.Int;
+import ru.asolovyov.combime.bindings.Obj;
+import ru.asolovyov.combime.bindings.Str;
 
 /**
  *
@@ -22,8 +24,8 @@ public class CG {
     
     public static CGArc Arc(int startAngle, int endAngle) {
         return new CGArc()
-                .startAngle(B.Int(startAngle))
-                .endAngle(B.Int(endAngle));
+                .startAngle(new Int(startAngle))
+                .endAngle(new Int(endAngle));
     }
 
     public static CGArc Circle() {
@@ -32,23 +34,31 @@ public class CG {
 
     public static CGImage Image(Image image) {
         return new CGImage()
-                .image(B.Object(image));
+                .image(new Obj(image));
     }
 
     public static CGLine Line() {
         return new CGLine();
     }
 
-    public static CGRect Rect() {
-        return new CGRect();
+    public static CGRectangle Rect() {
+        return new CGRectangle();
     }
 
-    public static CGText Text(StringBinding string) {
+    public static CGIf If(boolean condition, CGDrawable ifItem, CGDrawable elseItem) {
+        return new CGIf(new Bool(condition), ifItem, elseItem);
+    }
+
+    public static CGIf If(Bool condition, CGDrawable ifItem, CGDrawable elseItem) {
+        return new CGIf(condition, ifItem, elseItem);
+    }
+
+    public static CGText Text(Str string) {
         return new CGText(string);
     }
 
     public static CGText Text(String string) {
-        return new CGText(B.String(string));
+        return new CGText(new Str(string));
     }
 
     public static CGCanvas Canvas(CGDrawable content) {

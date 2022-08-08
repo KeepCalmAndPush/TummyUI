@@ -6,7 +6,7 @@
 package ru.asolovyov.tummyui.forms;
 
 import ru.asolovyov.combime.api.ISubscription;
-import ru.asolovyov.combime.bindings.ArrayBinding;
+import ru.asolovyov.combime.bindings.Arr;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.tummyui.data.List;
 
@@ -19,12 +19,12 @@ public class UIForEach extends UIGroup {
         public abstract UIItem itemFor(Object viewModel);
     }
     
-    private ArrayBinding dataSource;
+    private Arr dataSource;
     private ItemFactory itemFactory;
 
     private List subscriptions = new List();
 
-    public UIForEach(ArrayBinding dataSource, ItemFactory factory) {
+    public UIForEach(Arr dataSource, ItemFactory factory) {
         super(new UIItem[]{});
 
         this.itemFactory = factory;

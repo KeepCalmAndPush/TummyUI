@@ -5,7 +5,7 @@
 
 package ru.asolovyov.tummyui.graphics;
 
-import ru.asolovyov.combime.bindings.IntBinding;
+import ru.asolovyov.combime.bindings.Int;
 
 /**
  *
@@ -13,5 +13,5 @@ import ru.asolovyov.combime.bindings.IntBinding;
  */
 public interface CGStrokable extends CGDrawable {
     public CGStrokable stroke(int strokeStyle);
-    public CGStrokable stroke(IntBinding strokeStyle);
+    public CGStrokable stroke(Int strokeStyle);
 }

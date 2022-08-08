@@ -6,8 +6,8 @@
 package ru.asolovyov.tummyui.forms;
 
 import javax.microedition.lcdui.ChoiceGroup;
-import ru.asolovyov.combime.bindings.ArrayBinding;
-import ru.asolovyov.combime.bindings.StringBinding;
+import ru.asolovyov.combime.bindings.Arr;
+import ru.asolovyov.combime.bindings.Str;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.tummyui.data.ListItem;
 import ru.asolovyov.tummyui.data.List;
@@ -18,13 +18,13 @@ import ru.asolovyov.tummyui.data.List;
  */
 public class UIChoiceGroup extends UIItem {
     private ChoiceGroup plainItem;
-    private ArrayBinding itemsBinding;
+    private Arr itemsBinding;
     private boolean isSendingUpdates = false;
 
     public UIChoiceGroup(
-            StringBinding label,
+            Str label,
             int choiceType,
-            ArrayBinding itemsBinding
+            Arr itemsBinding
             ) {
         
         super();

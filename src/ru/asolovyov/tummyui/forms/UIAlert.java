@@ -10,9 +10,8 @@ import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Image;
-import ru.asolovyov.combime.bindings.B;
-import ru.asolovyov.combime.bindings.ObjectBinding;
-import ru.asolovyov.combime.bindings.StringBinding;
+import ru.asolovyov.combime.bindings.Obj;
+import ru.asolovyov.combime.bindings.Str;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.tummyui.data.List;
 
@@ -25,7 +24,7 @@ public class UIAlert extends Alert implements CommandListener {
     private List uiCommands = new List();
     private List commandListeners = new List();
 
-    public UIAlert(StringBinding title, StringBinding alertText, ObjectBinding alertImage, ObjectBinding alertType) {
+    public UIAlert(Str title, Str alertText, Obj alertImage, Obj alertType) {
         super(title.getString());
 
         title.removeDuplicates().sink(new Sink() {
@@ -76,7 +75,7 @@ public class UIAlert extends Alert implements CommandListener {
         };
 
         UICommand uiCommand = new UICommand(
-                B.String(cmd.getLabel()),
+                new Str(cmd.getLabel()),
                 cmd.getCommandType(),
                 cmd.getPriority(),
                 handler);

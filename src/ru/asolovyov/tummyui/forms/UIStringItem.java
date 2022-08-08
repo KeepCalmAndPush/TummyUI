@@ -7,7 +7,7 @@ package ru.asolovyov.tummyui.forms;
 
 import javax.microedition.lcdui.Item;
 import javax.microedition.lcdui.StringItem;
-import ru.asolovyov.combime.bindings.StringBinding;
+import ru.asolovyov.combime.bindings.Str;
 import ru.asolovyov.combime.common.Sink;
 
 /**
@@ -17,7 +17,7 @@ import ru.asolovyov.combime.common.Sink;
 public class UIStringItem extends UIItem {
     private StringItem stringItem = new StringItem("", "");
     
-    public UIStringItem(StringBinding labelBinding, StringBinding textBinding) {
+    public UIStringItem(Str labelBinding, Str textBinding) {
         super();
 
         labelBinding.removeDuplicates().sink(new Sink() {

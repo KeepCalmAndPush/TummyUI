@@ -9,10 +9,9 @@ import java.io.IOException;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.ImageItem;
 import javax.microedition.lcdui.Item;
-import ru.asolovyov.combime.bindings.B;
-import ru.asolovyov.combime.bindings.IntBinding;
-import ru.asolovyov.combime.bindings.ObjectBinding;
-import ru.asolovyov.combime.bindings.StringBinding;
+import ru.asolovyov.combime.bindings.Int;
+import ru.asolovyov.combime.bindings.Obj;
+import ru.asolovyov.combime.bindings.Str;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.combime.operators.mapping.Map;
 
@@ -23,8 +22,8 @@ import ru.asolovyov.combime.operators.mapping.Map;
 public class UIImageItem extends UIItem {
     private ImageItem imageItem;
 
-    public UIImageItem(StringBinding label, StringBinding imageName, IntBinding layout, StringBinding altText) {
-        this(label, new ObjectBinding(imageName.to(new Map() {
+    public UIImageItem(Str label, Str imageName, Int layout, Str altText) {
+        this(label, new Obj(imageName.to(new Map() {
             public Object mapValue(Object value) {
                 try {
                     return Image.createImage((String)value);
@@ -35,11 +34,11 @@ public class UIImageItem extends UIItem {
         })), layout, altText);
     }
 
-    public UIImageItem(String label, StringBinding imageName, int layout, String altText) {
-        this(B.String(label), imageName, B.Int(layout), B.String(altText));
+    public UIImageItem(String label, Str imageName, int layout, String altText) {
+        this(new Str(label), imageName, new Int(layout), new Str(altText));
     }
 
-    public UIImageItem(final StringBinding label, final ObjectBinding image, final IntBinding layout, final StringBinding altText) {
+    public UIImageItem(final Str label, final Obj image, final Int layout, final Str altText) {
         super();
 
         this.imageItem = new ImageItem(

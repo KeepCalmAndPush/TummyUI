@@ -26,4 +26,8 @@ public final class CGFrame {
         y = 0,
         width = 0,
         height = 0;
+
+    public CGSize getSize() {
+        return new CGSize(width, height);
+    }
 }

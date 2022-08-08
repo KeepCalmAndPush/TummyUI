@@ -6,7 +6,7 @@
 package ru.asolovyov.tummyui.forms;
 
 
-import ru.asolovyov.combime.bindings.BoolBinding;
+import ru.asolovyov.combime.bindings.Bool;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.tummyui.data.List;
 
@@ -16,15 +16,15 @@ import ru.asolovyov.tummyui.data.List;
  */
 public class UIIf extends UIItem {
     private boolean condition = false;
-    private BoolBinding conditionBinding;
+    private Bool conditionBinding;
     private UIItem[] ifItems = {};
     private UIItem[] elseItems = {};
 
-    public UIIf(BoolBinding condition, UIGroup ifGroup, UIGroup elseGroup) {
+    public UIIf(Bool condition, UIGroup ifGroup, UIGroup elseGroup) {
         this(condition, ifGroup.uiItems, elseGroup.uiItems);
     }
 
-    public UIIf(BoolBinding condition, UIItem[] ifItems, UIItem[] elseItems) {
+    public UIIf(Bool condition, UIItem[] ifItems, UIItem[] elseItems) {
         super();
         this.conditionBinding = condition;
         this.ifItems = ifItems;

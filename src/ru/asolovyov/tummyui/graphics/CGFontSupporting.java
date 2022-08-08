@@ -6,7 +6,7 @@
 package ru.asolovyov.tummyui.graphics;
 
 import javax.microedition.lcdui.Font;
-import ru.asolovyov.combime.bindings.ObjectBinding;
+import ru.asolovyov.combime.bindings.Obj;
 
 /**
  *
@@ -14,5 +14,5 @@ import ru.asolovyov.combime.bindings.ObjectBinding;
  */
 public interface CGFontSupporting extends CGDrawable {
     public CGFontSupporting font(Font font);
-    public CGFontSupporting font(ObjectBinding font);
+    public CGFontSupporting font(Obj font);
 }

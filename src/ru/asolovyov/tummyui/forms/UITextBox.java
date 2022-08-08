@@ -9,9 +9,8 @@ import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.TextBox;
 import javax.microedition.lcdui.TextField;
-import ru.asolovyov.combime.bindings.B;
-import ru.asolovyov.combime.bindings.IntBinding;
-import ru.asolovyov.combime.bindings.StringBinding;
+import ru.asolovyov.combime.bindings.Int;
+import ru.asolovyov.combime.bindings.Str;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.tummyui.forms.UICommand.Handler;
 
@@ -20,22 +19,22 @@ import ru.asolovyov.tummyui.forms.UICommand.Handler;
  * @author Администратор
  */
 public class UITextBox extends TextBox implements UINavigatable {
-    private StringBinding titleBinding;
-    private StringBinding textBinding;
+    private Str titleBinding;
+    private Str textBinding;
     
-    public UITextBox(StringBinding titleBinding, StringBinding textBinding) {
-        this(titleBinding, textBinding, B.Int(255), B.Int(TextField.ANY));
+    public UITextBox(Str titleBinding, Str textBinding) {
+        this(titleBinding, textBinding, new Int(255), new Int(TextField.ANY));
     }
 
-    public UITextBox(StringBinding titleBinding, StringBinding textBinding, IntBinding maxSize) {
-        this(titleBinding, textBinding, maxSize, B.Int(TextField.ANY));
+    public UITextBox(Str titleBinding, Str textBinding, Int maxSize) {
+        this(titleBinding, textBinding, maxSize, new Int(TextField.ANY));
     }
 
     public UITextBox(
-            final StringBinding titleBinding,
-            final StringBinding textBinding,
-            final IntBinding maxSize,
-            final IntBinding constraints
+            final Str titleBinding,
+            final Str textBinding,
+            final Int maxSize,
+            final Int constraints
             ) {
 
         super(titleBinding.getString(), textBinding.getString(), maxSize.getInt(), constraints.getInt());
@@ -77,7 +76,7 @@ public class UITextBox extends TextBox implements UINavigatable {
         return new String(chars);
     }
     
-    public StringBinding title() {
+    public Str title() {
         return this.titleBinding;
     }
 

@@ -7,10 +7,9 @@ package ru.asolovyov.tummyui.graphics;
 
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
-import ru.asolovyov.combime.bindings.B;
-import ru.asolovyov.combime.bindings.IntBinding;
-import ru.asolovyov.combime.bindings.ObjectBinding;
-import ru.asolovyov.combime.bindings.StringBinding;
+import ru.asolovyov.combime.bindings.Int;
+import ru.asolovyov.combime.bindings.Obj;
+import ru.asolovyov.combime.bindings.Str;
 import ru.asolovyov.combime.common.Sink;
 
 /**
@@ -18,11 +17,11 @@ import ru.asolovyov.combime.common.Sink;
  * @author Администратор
  */
 public class CGText extends CGSomeDrawable implements CGFontSupporting {
-    private StringBinding text;
-    private ObjectBinding font;
-    private IntBinding anchor;
+    private Str text;
+    private Obj font;
+    private Int anchor;
 
-    CGText(StringBinding text) {
+    CGText(Str text) {
         super();
         this.text = text;
         this.text.sink(new Sink() {
@@ -32,7 +31,7 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
         });
     }
 
-    public CGText text(StringBinding text) {
+    public CGText text(Str text) {
         this.text = text;
         this.text.sink(new Sink() {
             protected void onValue(Object value) {
@@ -43,14 +42,14 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
     }
 
     public CGText text(String text) {
-        return this.text(B.String(text));
+        return this.text(new Str(text));
     }
 
     public CGText anchor(int anchor) {
-        return this.anchor(B.Int(anchor));
+        return this.anchor(new Int(anchor));
     }
 
-    public CGText anchor(IntBinding anchor) {
+    public CGText anchor(Int anchor) {
         this.anchor = anchor;
         this.anchor.sink(new Sink() {
             protected void onValue(Object value) {
@@ -68,7 +67,7 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
         return Graphics.HCENTER;
     }
 
-    public StringBinding text() {
+    public Str text() {
         return this.text;
     }
 
@@ -80,10 +79,10 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
     }
 
     public CGFontSupporting font(Font font) {
-        return this.font(B.Object(font));
+        return this.font(new Obj(font));
     }
 
-    public CGFontSupporting font(ObjectBinding font) {
+    public CGFontSupporting font(Obj font) {
         this.font = font;
         this.font.sink(new Sink() {
             protected void onValue(Object value) {

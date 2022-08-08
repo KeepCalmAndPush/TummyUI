@@ -7,14 +7,14 @@ package ru.asolovyov.tummyui.forms;
 
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
-import ru.asolovyov.combime.bindings.StringBinding;
+import ru.asolovyov.combime.bindings.Str;
 
 /**
  *
  * @author Администратор
  */
 public interface UINavigatable extends CommandListener {
-    public StringBinding title();
+    public Str title();
     public Displayable displayable();
     
     public UINavigatable backCommand(UICommand command);

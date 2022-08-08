@@ -6,9 +6,8 @@
 package ru.asolovyov.tummyui.forms;
 
 import javax.microedition.lcdui.Command;
-import ru.asolovyov.combime.bindings.B;
-import ru.asolovyov.combime.bindings.BoolBinding;
-import ru.asolovyov.combime.bindings.StringBinding;
+import ru.asolovyov.combime.bindings.Bool;
+import ru.asolovyov.combime.bindings.Str;
 import ru.asolovyov.combime.common.S;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.combime.subjects.PassthroughSubject;
@@ -47,21 +46,21 @@ public class UICommand extends Command {
     
     private static int availablePriority = Integer.MIN_VALUE;
 
-    public UICommand(StringBinding label, int commandType, int priority, Handler handler) {
+    public UICommand(Str label, int commandType, int priority, Handler handler) {
         super(label.getString(), commandType, priority);
         this.handler = handler;
     }
 
-    public UICommand(StringBinding label, Handler handler) {
+    public UICommand(Str label, Handler handler) {
         this(label, Command.SCREEN, availablePriority++, handler);
     }
 
     public UICommand(String label, int type, Handler handler) {
-        this(B.String(label), type, availablePriority++, handler);
+        this(new Str(label), type, availablePriority++, handler);
     }
 
     public UICommand(String label, Handler handler) {
-        this(B.String(label), handler);
+        this(new Str(label), handler);
     }
 
     void handle() {
@@ -70,7 +69,7 @@ public class UICommand extends Command {
         }
     }
 
-    public UICommand isVisible(final BoolBinding binding) {
+    public UICommand isVisible(final Bool binding) {
         binding.sink(new Sink() {
             protected void onValue(Object value) {
                 if (isVisible == binding.getBool()) {

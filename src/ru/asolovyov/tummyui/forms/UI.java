@@ -9,15 +9,13 @@ import java.io.IOException;
 import java.util.TimeZone;
 import javax.microedition.lcdui.AlertType;
 import javax.microedition.lcdui.Displayable;
-import javax.microedition.lcdui.Gauge;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.Item;
-import ru.asolovyov.combime.bindings.ArrayBinding;
-import ru.asolovyov.combime.bindings.B;
-import ru.asolovyov.combime.bindings.BoolBinding;
-import ru.asolovyov.combime.bindings.IntBinding;
-import ru.asolovyov.combime.bindings.ObjectBinding;
-import ru.asolovyov.combime.bindings.StringBinding;
+import ru.asolovyov.combime.bindings.Arr;
+import ru.asolovyov.combime.bindings.Bool;
+import ru.asolovyov.combime.bindings.Int;
+import ru.asolovyov.combime.bindings.Obj;
+import ru.asolovyov.combime.bindings.Str;
 import ru.asolovyov.tummyui.data.ListItem;
 
 /**
@@ -26,10 +24,10 @@ import ru.asolovyov.tummyui.data.ListItem;
  */
 public class UI {
     public static class IfFactory {
-        private BoolBinding binding;
+        private Bool binding;
         private UIGroup thenGroup;
 
-        public IfFactory(BoolBinding binding) {
+        public IfFactory(Bool binding) {
             this.binding = binding;
         }
 
@@ -43,40 +41,40 @@ public class UI {
         }
     }
 
-    public static UIForm Form(StringBinding title, UIItem[] items) {
+    public static UIForm Form(Str title, UIItem[] items) {
         return new UIForm(title, items);
     }
 
-    public static IfFactory If(BoolBinding condition) {
+    public static IfFactory If(Bool condition) {
         return new IfFactory(condition);
     }
 
     public static UIAlert Alert(String title, String alertText, Image alertImage, AlertType alertType) {
         return Alert(
-                B.String(title),
-                B.String(alertText),
-                B.Object(alertImage),
-                B.Object(alertType)
+                new Str(title),
+                new Str(alertText),
+                new Obj(alertImage),
+                new Obj(alertType)
                 );
     }
 
     public static UIGauge Gauge(String label, boolean isInteractive, int maxValue, int value) {
-        return new UIGauge(B.String(label), isInteractive, B.Int(maxValue), B.Int(value));
+        return new UIGauge(new Str(label), isInteractive, new Int(maxValue), new Int(value));
     }
 
-    public static UIGauge Gauge(String label, boolean isInteractive, int maxValue, IntBinding value) {
-        return new UIGauge(B.String(label), isInteractive, B.Int(maxValue), value);
+    public static UIGauge Gauge(String label, boolean isInteractive, int maxValue, Int value) {
+        return new UIGauge(new Str(label), isInteractive, new Int(maxValue), value);
     }
 
-    public static UIGauge Gauge(boolean isInteractive, int maxValue, IntBinding value) {
-        return new UIGauge(null, isInteractive, B.Int(maxValue), value);
+    public static UIGauge Gauge(boolean isInteractive, int maxValue, Int value) {
+        return new UIGauge(null, isInteractive, new Int(maxValue), value);
     }
 
-    public static UIGauge Gauge(StringBinding label, boolean isInteractive, int maxValue, IntBinding value) {
-        return new UIGauge(label, isInteractive, B.Int(maxValue), value);
+    public static UIGauge Gauge(Str label, boolean isInteractive, int maxValue, Int value) {
+        return new UIGauge(label, isInteractive, new Int(maxValue), value);
     }
 
-    public static UIGauge Gauge(StringBinding label, boolean isInteractive, IntBinding maxValue, IntBinding value) {
+    public static UIGauge Gauge(Str label, boolean isInteractive, Int maxValue, Int value) {
         return new UIGauge(label, isInteractive, maxValue, value);
     }
 
@@ -84,47 +82,47 @@ public class UI {
         return new UIDisplayableNavigationWrapper(d);
     }
 
-    public static UIDateField DateField(StringBinding label, int mode, ObjectBinding date) {
-        return new UIDateField(label, B.Int(mode), date, TimeZone.getDefault());
+    public static UIDateField DateField(Str label, int mode, Obj date) {
+        return new UIDateField(label, new Int(mode), date, TimeZone.getDefault());
     }
 
-    public static UIDateField DateField(int mode, ObjectBinding date) {
-        return new UIDateField(null, B.Int(mode), date, TimeZone.getDefault());
+    public static UIDateField DateField(int mode, Obj date) {
+        return new UIDateField(null, new Int(mode), date, TimeZone.getDefault());
     }
 
-    public static UIDateField DateField(int mode, ObjectBinding date, TimeZone timeZone) {
-        return new UIDateField(null, B.Int(mode), date, timeZone);
+    public static UIDateField DateField(int mode, Obj date, TimeZone timeZone) {
+        return new UIDateField(null, new Int(mode), date, timeZone);
     }
 
-    public static UIDateField DateField(String label, int mode, ObjectBinding date, TimeZone timeZone) {
-        return new UIDateField(B.String(label), B.Int(mode), date, timeZone);
+    public static UIDateField DateField(String label, int mode, Obj date, TimeZone timeZone) {
+        return new UIDateField(new Str(label), new Int(mode), date, timeZone);
     }
 
-    public static UIDateField DateField(final IntBinding mode, final ObjectBinding date, TimeZone timeZone) {
+    public static UIDateField DateField(final Int mode, final Obj date, TimeZone timeZone) {
         return new UIDateField(null, mode, date, timeZone);
     }
 
-    public static UIDateField DateField(final StringBinding label, final IntBinding mode, final ObjectBinding date, TimeZone timeZone) {
+    public static UIDateField DateField(final Str label, final Int mode, final Obj date, TimeZone timeZone) {
         return new UIDateField(label, mode, date, timeZone);
     }
 
     public static UIList List(String title, int type, ListItem[] items) {
-        return new UIList(B.String(title), type, B.Array(items));
+        return new UIList(new Str(title), type, new Arr(items));
     }
 
-    public static UIList List(StringBinding title, int type, ArrayBinding items) {
+    public static UIList List(Str title, int type, Arr items) {
         return new UIList(title, type, items);
     }
 
     public static UIChoiceGroup ChoiceGroup(String label, int type, ListItem[] items) {
-        return new UIChoiceGroup(B.String(label), type, B.Array(items));
+        return new UIChoiceGroup(new Str(label), type, new Arr(items));
     }
 
-    public static UIChoiceGroup ChoiceGroup(StringBinding label, int type, ArrayBinding items) {
+    public static UIChoiceGroup ChoiceGroup(Str label, int type, Arr items) {
         return new UIChoiceGroup(label, type, items);
     }
 
-    public static UIAlert Alert(StringBinding title, StringBinding alertText, ObjectBinding alertImage, ObjectBinding alertType) {
+    public static UIAlert Alert(Str title, Str alertText, Obj alertImage, Obj alertType) {
         UIAlert alert = new UIAlert(title, alertText, alertImage, alertType);
         alert.setTimeout(UIAlert.FOREVER);
         return alert;
@@ -138,7 +136,7 @@ public class UI {
         return new UICommand(label, handler);
     }
 
-    public static UIForEach ForEach(ArrayBinding dataSource, final UIForEach.ItemFactory itemFactory) {
+    public static UIForEach ForEach(Arr dataSource, final UIForEach.ItemFactory itemFactory) {
         return new UIForEach(dataSource, itemFactory);
     }
 
@@ -146,32 +144,32 @@ public class UI {
         return new UIPlainItemWrapper(item);
     }
 
-    public static UITextField TextField(StringBinding text) {
+    public static UITextField TextField(Str text) {
         return new UITextField(null, text);
     }
 
-    public static UITextField TextField(StringBinding label, StringBinding text) {
+    public static UITextField TextField(Str label, Str text) {
         return new UITextField(label, text);
     }
 
     public static UIStringItem StringItem(String label, String text) {
-        return new UIStringItem(B.String(label), B.String(text));
+        return new UIStringItem(new Str(label), new Str(text));
     }
 
-    public static UIStringItem StringItem(StringBinding textBinding) {
+    public static UIStringItem StringItem(Str textBinding) {
         return StringItem(null, textBinding);
     }
 
-    public static UIStringItem StringItem(StringBinding labelBinding, StringBinding textBinding) {
-        labelBinding = labelBinding == null ? new StringBinding("") : labelBinding;
-        textBinding = textBinding == null ? new StringBinding("") : textBinding;
+    public static UIStringItem StringItem(Str labelBinding, Str textBinding) {
+        labelBinding = labelBinding == null ? new Str("") : labelBinding;
+        textBinding = textBinding == null ? new Str("") : textBinding;
         return new UIStringItem(labelBinding, textBinding);
     }
 
     public static UITextField TextField(String label, String text) {
         label = label == null ? "" : label;
         text = text == null ? "" : text;
-        return new UITextField(B.String(label), B.String(text));
+        return new UITextField(new Str(label), new Str(text));
     }
 
     public static Image Image(String path) {
@@ -184,14 +182,14 @@ public class UI {
     }
 
     public static UIImageItem ImageItem(String label, String imageName, int layout, String altText) {
-        return new UIImageItem(B.String(label), B.String(imageName), B.Int(layout), B.String(altText));
+        return new UIImageItem(new Str(label), new Str(imageName), new Int(layout), new Str(altText));
     }
 
-    public static UIImageItem ImageItem(StringBinding label, StringBinding imageName, int layout, StringBinding altText) {
-        return new UIImageItem(label, imageName, B.Int(layout), altText);
+    public static UIImageItem ImageItem(Str label, Str imageName, int layout, Str altText) {
+        return new UIImageItem(label, imageName, new Int(layout), altText);
     }
 
-    public static UIImageItem ImageItem(StringBinding label, ObjectBinding image, IntBinding layout, StringBinding altText) {
+    public static UIImageItem ImageItem(Str label, Obj image, Int layout, Str altText) {
         return new UIImageItem(label, image, layout, altText);
     }
     
@@ -227,67 +225,67 @@ public class UI {
         return new UIGroup(new UIItem[]{i1, i2, i3, i4, i5, i6, i7});
     }
 
-    public static UIForm Form(StringBinding title) {
+    public static UIForm Form(Str title) {
         return new UIForm(title, new UIItem[]{});
     }
 
-    public static UIForm Form(StringBinding title, UIItem i1) {
+    public static UIForm Form(Str title, UIItem i1) {
         return new UIForm(title, new UIItem[]{i1});
     }
 
-    public static UIForm Form(StringBinding title, UIItem i1, UIItem i2) {
+    public static UIForm Form(Str title, UIItem i1, UIItem i2) {
         return new UIForm(title, new UIItem[]{i1, i2});
     }
 
-    public static UIForm Form(StringBinding title, UIItem i1, UIItem i2, UIItem i3) {
+    public static UIForm Form(Str title, UIItem i1, UIItem i2, UIItem i3) {
         return new UIForm(title, new UIItem[]{i1, i2, i3});
     }
 
-    public static UIForm Form(StringBinding title, UIItem i1, UIItem i2, UIItem i3, UIItem i4) {
+    public static UIForm Form(Str title, UIItem i1, UIItem i2, UIItem i3, UIItem i4) {
         return new UIForm(title, new UIItem[]{i1, i2, i3, i4});
     }
 
-    public static UIForm Form(StringBinding title, UIItem i1, UIItem i2, UIItem i3, UIItem i4, UIItem i5) {
+    public static UIForm Form(Str title, UIItem i1, UIItem i2, UIItem i3, UIItem i4, UIItem i5) {
         return new UIForm(title, new UIItem[]{i1, i2, i3, i4, i5});
     }
 
-    public static UIForm Form(StringBinding title, UIItem i1, UIItem i2, UIItem i3, UIItem i4, UIItem i5, UIItem i6) {
+    public static UIForm Form(Str title, UIItem i1, UIItem i2, UIItem i3, UIItem i4, UIItem i5, UIItem i6) {
         return new UIForm(title, new UIItem[]{i1, i2, i3, i4, i5, i6});
     }
 
-    public static UIForm Form(StringBinding title, UIItem i1, UIItem i2, UIItem i3, UIItem i4, UIItem i5, UIItem i6, UIItem i7) {
+    public static UIForm Form(Str title, UIItem i1, UIItem i2, UIItem i3, UIItem i4, UIItem i5, UIItem i6, UIItem i7) {
         return new UIForm(title, new UIItem[]{i1, i2, i3, i4, i5, i6, i7});
     }
 
     public static UIForm Form(String title) {
-        return new UIForm(B.String(title), new UIItem[]{});
+        return new UIForm(new Str(title), new UIItem[]{});
     }
 
     public static UIForm Form(String title, UIItem i1) {
-        return new UIForm(B.String(title), new UIItem[]{i1});
+        return new UIForm(new Str(title), new UIItem[]{i1});
     }
 
     public static UIForm Form(String title, UIItem i1, UIItem i2) {
-        return new UIForm(B.String(title), new UIItem[]{i1, i2});
+        return new UIForm(new Str(title), new UIItem[]{i1, i2});
     }
 
     public static UIForm Form(String title, UIItem i1, UIItem i2, UIItem i3) {
-        return new UIForm(B.String(title), new UIItem[]{i1, i2, i3});
+        return new UIForm(new Str(title), new UIItem[]{i1, i2, i3});
     }
 
     public static UIForm Form(String title, UIItem i1, UIItem i2, UIItem i3, UIItem i4) {
-        return new UIForm(B.String(title), new UIItem[]{i1, i2, i3, i4});
+        return new UIForm(new Str(title), new UIItem[]{i1, i2, i3, i4});
     }
 
     public static UIForm Form(String title, UIItem i1, UIItem i2, UIItem i3, UIItem i4, UIItem i5) {
-        return new UIForm(B.String(title), new UIItem[]{i1, i2, i3, i4, i5});
+        return new UIForm(new Str(title), new UIItem[]{i1, i2, i3, i4, i5});
     }
 
     public static UIForm Form(String title, UIItem i1, UIItem i2, UIItem i3, UIItem i4, UIItem i5, UIItem i6) {
-        return new UIForm(B.String(title), new UIItem[]{i1, i2, i3, i4, i5, i6});
+        return new UIForm(new Str(title), new UIItem[]{i1, i2, i3, i4, i5, i6});
     }
 
     public static UIForm Form(String title, UIItem i1, UIItem i2, UIItem i3, UIItem i4, UIItem i5, UIItem i6, UIItem i7) {
-        return new UIForm(B.String(title), new UIItem[]{i1, i2, i3, i4, i5, i6, i7});
+        return new UIForm(new Str(title), new UIItem[]{i1, i2, i3, i4, i5, i6, i7});
     }
 }

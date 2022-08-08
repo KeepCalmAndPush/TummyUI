@@ -8,8 +8,8 @@ package ru.asolovyov.tummyui.forms;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.List;
-import ru.asolovyov.combime.bindings.ArrayBinding;
-import ru.asolovyov.combime.bindings.StringBinding;
+import ru.asolovyov.combime.bindings.Arr;
+import ru.asolovyov.combime.bindings.Str;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.tummyui.forms.UICommand.Handler;
 import ru.asolovyov.tummyui.data.ListItem;
@@ -19,13 +19,13 @@ import ru.asolovyov.tummyui.data.ListItem;
  * @author Администратор
  */
 public class UIList extends List implements UINavigatable {
-    private StringBinding titleBinding;
-    private ArrayBinding itemsBinding;
+    private Str titleBinding;
+    private Arr itemsBinding;
 
     public UIList(
-            StringBinding title,
+            Str title,
             int choiceType,
-            ArrayBinding itemsBinding)
+            Arr itemsBinding)
     {
         super(title.getString(), choiceType);
         this.commands = new UICommandsProxy(this);
@@ -76,7 +76,7 @@ public class UIList extends List implements UINavigatable {
         return this;
     }
 
-    public StringBinding title() {
+    public Str title() {
         return this.titleBinding;
     }
 

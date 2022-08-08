@@ -6,9 +6,9 @@
 package ru.asolovyov.tummyui.graphics;
 
 import javax.microedition.lcdui.Graphics;
-import ru.asolovyov.combime.bindings.BoolBinding;
-import ru.asolovyov.combime.bindings.IntBinding;
-import ru.asolovyov.combime.bindings.ObjectBinding;
+import ru.asolovyov.combime.bindings.Bool;
+import ru.asolovyov.combime.bindings.Int;
+import ru.asolovyov.combime.bindings.Obj;
 
 /**
  *
@@ -20,15 +20,23 @@ public interface CGDrawable {
     public void needsRedraw();
     public void needsRelayout();
 
-    public CGDrawable canvas(CGCanvas canvas);
+    public CGCanvas getCanvas();
+    public CGDrawable setCanvas(CGCanvas canvas);
+
+    public CGDrawable sizeToFit();
+    public CGSize intrinsicContentSize();
 
     public CGDrawable color(int colorHex);
-    public CGDrawable frame(CGFrame frame);
-    public CGDrawable frame(int x, int y, int width, int height);
+
+    public CGDrawable setFrame(Obj frame);
+    public CGDrawable setFrame(CGFrame frame);
+    public CGDrawable setFrame(int x, int y, int width, int height);
+
+    public CGFrame getFrame();
+
     public CGDrawable isVisible(boolean isVisible);
 
-    public CGDrawable color(IntBinding colorHex);
-    public CGDrawable frame(ObjectBinding frame);
-    public CGDrawable isVisible(BoolBinding isVisible);
+    public CGDrawable color(Int colorHex);
+    public CGDrawable isVisible(Bool isVisible);
 }
 

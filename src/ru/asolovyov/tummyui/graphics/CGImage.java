@@ -5,7 +5,7 @@
 
 package ru.asolovyov.tummyui.graphics;
 
-import ru.asolovyov.combime.bindings.ObjectBinding;
+import ru.asolovyov.combime.bindings.Obj;
 import ru.asolovyov.combime.common.Sink;
 
 /**
@@ -13,18 +13,18 @@ import ru.asolovyov.combime.common.Sink;
  * @author Администратор
  */
 public class CGImage extends CGSomeDrawable {
-    private ObjectBinding image;
+    private Obj image;
 
     public CGImage() {
         super();
     }
 
-    public CGImage(ObjectBinding image) {
+    public CGImage(Obj image) {
         super();
         this.image(image);
     }
 
-    public CGImage image(ObjectBinding image) {
+    public CGImage image(Obj image) {
         this.image = image;
         this.image.sink(new Sink() {
             protected void onValue(Object value) {

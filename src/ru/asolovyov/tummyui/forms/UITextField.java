@@ -7,9 +7,8 @@ package ru.asolovyov.tummyui.forms;
 
 import javax.microedition.lcdui.Item;
 import javax.microedition.lcdui.TextField;
-import ru.asolovyov.combime.bindings.B;
-import ru.asolovyov.combime.bindings.IntBinding;
-import ru.asolovyov.combime.bindings.StringBinding;
+import ru.asolovyov.combime.bindings.Int;
+import ru.asolovyov.combime.bindings.Str;
 import ru.asolovyov.combime.common.Sink;
 
 /**
@@ -18,21 +17,21 @@ import ru.asolovyov.combime.common.Sink;
  */
 public class UITextField extends UIItem {
     private TextField textField = new TextField("", "", 255, TextField.ANY);
-    private StringBinding textBinding;
+    private Str textBinding;
 
-    public UITextField(StringBinding labelBinding, StringBinding textBinding) {
-        this(labelBinding, textBinding, B.Int(255), B.Int(TextField.ANY));
+    public UITextField(Str labelBinding, Str textBinding) {
+        this(labelBinding, textBinding, new Int(255), new Int(TextField.ANY));
     }
 
-    public UITextField(StringBinding labelBinding, StringBinding textBinding, IntBinding maxSize) {
-        this(labelBinding, textBinding, maxSize, B.Int(TextField.ANY));
+    public UITextField(Str labelBinding, Str textBinding, Int maxSize) {
+        this(labelBinding, textBinding, maxSize, new Int(TextField.ANY));
     }
 
     public UITextField(
-            final StringBinding labelBinding,
-            final StringBinding textBinding,
-            final IntBinding maxSize,
-            final IntBinding constraints
+            final Str labelBinding,
+            final Str textBinding,
+            final Int maxSize,
+            final Int constraints
             ) {
         
         super();

@@ -6,11 +6,14 @@
 package ru.asolovyov.tummyui.test;
 
 import javax.microedition.lcdui.Displayable;
-import ru.asolovyov.combime.bindings.B;
-import ru.asolovyov.combime.bindings.IntBinding;
+import ru.asolovyov.combime.bindings.Arr;
+import ru.asolovyov.combime.bindings.Bool;
+import ru.asolovyov.combime.bindings.Int;
 import ru.asolovyov.threading.Clock;
 import ru.asolovyov.tummyui.forms.UIMIDlet;
 import ru.asolovyov.tummyui.graphics.CG;
+import ru.asolovyov.tummyui.graphics.CGDrawable;
+import ru.asolovyov.tummyui.graphics.CGStack;
 
 /**
  *
@@ -19,14 +22,18 @@ import ru.asolovyov.tummyui.graphics.CG;
 public class Canvas extends UIMIDlet {
     Clock clock;
     int i = 0;
-    IntBinding arcColor = B.Int(0xFFFF00);
-    IntBinding backColor = B.Int(0x0000FF);
+    Int arcColor = new Int(0xFFFF00);
+    Int backColor = new Int(0x0000FF);
+    Bool cond = new Bool(false);
 
     {
         clock = new Clock(500);
         clock.add(new Runnable() {
             public void run() {
-                if (i++%2 == 0) {
+                int j = i++%2;
+                cond.setBool(j == 0);
+                
+                if (j == 0) {
                     int arc = arcColor.getInt();
                     arcColor.setInt(backColor.getInt());
                     backColor.setInt(arc);
@@ -36,15 +43,35 @@ public class Canvas extends UIMIDlet {
     }
     
     protected Displayable content() {
-        // сюда отлично вольется геометри ридер
+        //TODO сюда отлично вольется геометри ридер
         return CG.Canvas(
-                CG.Arc(30, 300)
-                        .color(arcColor)
-                        .frame(10, 10, 100, 100),
-                CG.Circle()
-                        .color(0xFF0000)
-                        .frame(75, 25, 10, 10)
-
-                ).color(backColor);
+                new CGStack(
+                new Int(CGStack.AXIS_VERTICAL),
+                new Int(CG.ALIGNMENT_CENTER),
+                new Arr(new CGDrawable[] {
+                    CG.Rect()
+                            .color(0xFFFFFF)
+                            .setFrame(0, 0, 100, 33),
+                    CG.Rect()
+                            .color(0x0000FF)
+                            .setFrame(0, 0, 100, 33),
+                    CG.Rect()
+                            .color(0xFF0000)
+                            .setFrame(0, 0, 100, 33)
+                })
+                )
+//                CG.Arc(30, 300)
+//                        .color(arcColor)
+//                        .setFrame(10, 10, 100, 100),
+//                CG.If(cond,
+//                    CG.Rect()
+//                        .color(0x00FF00)
+//                        .setFrame(75, 25, 10, 10),
+//                    CG.Circle()
+//                        .color(0xFF0000)
+//                        .setFrame(75, 25, 10, 10)
+//                )
+                )
+                .color(0x000000);
     }
 }

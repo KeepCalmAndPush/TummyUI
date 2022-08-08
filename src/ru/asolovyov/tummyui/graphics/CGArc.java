@@ -6,7 +6,7 @@
 package ru.asolovyov.tummyui.graphics;
 
 import javax.microedition.lcdui.Graphics;
-import ru.asolovyov.combime.bindings.IntBinding;
+import ru.asolovyov.combime.bindings.Int;
 import ru.asolovyov.combime.common.Sink;
 
 /**
@@ -14,10 +14,10 @@ import ru.asolovyov.combime.common.Sink;
  * @author Администратор
  */
 public class CGArc extends CGSomeStrokable {
-    private IntBinding startAngleBinding;
-    private IntBinding endAngleBinding;
+    private Int startAngleBinding;
+    private Int endAngleBinding;
 
-    public CGArc startAngle(IntBinding startAngleBinding) {
+    public CGArc startAngle(Int startAngleBinding) {
         this.startAngleBinding = startAngleBinding;
         this.startAngleBinding.sink(new Sink() {
             protected void onValue(Object value) {
@@ -27,7 +27,7 @@ public class CGArc extends CGSomeStrokable {
         return this;
     }
 
-    public CGArc endAngle(IntBinding endAngleBinding) {
+    public CGArc endAngle(Int endAngleBinding) {
         this.endAngleBinding = endAngleBinding;
         this.endAngleBinding.sink(new Sink() {
             protected void onValue(Object value) {

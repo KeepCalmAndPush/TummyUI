@@ -6,22 +6,21 @@
 package ru.asolovyov.tummyui.graphics;
 
 import javax.microedition.lcdui.Graphics;
-import ru.asolovyov.combime.bindings.B;
-import ru.asolovyov.combime.bindings.ObjectBinding;
+import ru.asolovyov.combime.bindings.Obj;
 import ru.asolovyov.combime.common.Sink;
 
 /**
  *
  * @author Администратор
  */
-public class CGRect extends CGSomeStrokable {
-    private ObjectBinding cornerRadiusBinding;
+public class CGRectangle extends CGSomeStrokable {
+    private Obj cornerRadiusBinding;
 
-    public CGRect cornerRaduis(CGSize cornerRadius) {
-        return this.cornerRaduis(B.Object(cornerRadius));
+    public CGRectangle cornerRaduis(CGSize cornerRadius) {
+        return this.cornerRaduis(new Obj(cornerRadius));
     }
 
-    public CGRect cornerRaduis(ObjectBinding cornerRadiusBinding) {
+    public CGRectangle cornerRaduis(Obj cornerRadiusBinding) {
         this.cornerRadiusBinding = cornerRadiusBinding;
         this.cornerRadiusBinding.sink(new Sink() {
             protected void onValue(Object value) {
@@ -35,7 +34,7 @@ public class CGRect extends CGSomeStrokable {
         if (this.cornerRadiusBinding != null) {
             return (CGSize)this.cornerRadiusBinding.getObject();
         }
-        return new CGSize();
+        return CGSize.zero();
     }
 
     public void draw(Graphics g) {

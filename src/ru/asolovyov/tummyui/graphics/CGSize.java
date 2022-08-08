@@ -11,7 +11,13 @@ package ru.asolovyov.tummyui.graphics;
  */
 public final class CGSize {
     public static CGSize zero() {
-        return new CGSize();
+        return new CGSize(0, 0);
     }
+
+    public CGSize(int width, int height) {
+        this.width = width;
+        this.height = height;
+    }
+
     public int width = 0, height = 0;
 }

@@ -7,8 +7,8 @@ package ru.asolovyov.tummyui.forms;
 
 import javax.microedition.lcdui.Gauge;
 import javax.microedition.lcdui.Item;
-import ru.asolovyov.combime.bindings.IntBinding;
-import ru.asolovyov.combime.bindings.StringBinding;
+import ru.asolovyov.combime.bindings.Int;
+import ru.asolovyov.combime.bindings.Str;
 import ru.asolovyov.combime.common.Sink;
 
 /**
@@ -17,9 +17,9 @@ import ru.asolovyov.combime.common.Sink;
  */
 public class UIGauge extends UIItem {
     private Gauge gauge;
-    private IntBinding valueBinding;
+    private Int valueBinding;
 
-    public UIGauge(StringBinding label, boolean isInteractive, IntBinding maxValue, IntBinding value) {
+    public UIGauge(Str label, boolean isInteractive, Int maxValue, Int value) {
         super();
 
         String labelString = label == null ? null : label.getString();

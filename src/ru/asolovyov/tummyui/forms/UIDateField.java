@@ -9,9 +9,9 @@ import java.util.Date;
 import java.util.TimeZone;
 import javax.microedition.lcdui.DateField;
 import javax.microedition.lcdui.Item;
-import ru.asolovyov.combime.bindings.IntBinding;
-import ru.asolovyov.combime.bindings.ObjectBinding;
-import ru.asolovyov.combime.bindings.StringBinding;
+import ru.asolovyov.combime.bindings.Int;
+import ru.asolovyov.combime.bindings.Obj;
+import ru.asolovyov.combime.bindings.Str;
 import ru.asolovyov.combime.common.Sink;
 
 /**
@@ -20,9 +20,9 @@ import ru.asolovyov.combime.common.Sink;
  */
 public class UIDateField extends UIItem {
     private DateField plainItem;
-    private ObjectBinding dateBinding;
+    private Obj dateBinding;
 
-    public UIDateField(final StringBinding label, final IntBinding mode, final ObjectBinding date, TimeZone timeZone) {
+    public UIDateField(final Str label, final Int mode, final Obj date, TimeZone timeZone) {
         super();
 
         String labelString = label == null ? null : label.getString();

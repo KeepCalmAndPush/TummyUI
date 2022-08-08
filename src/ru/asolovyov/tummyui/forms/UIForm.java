@@ -12,10 +12,8 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Item;
 import javax.microedition.lcdui.ItemStateListener;
-import javax.microedition.lcdui.TextBox;
-import ru.asolovyov.combime.bindings.B;
-import ru.asolovyov.combime.bindings.BoolBinding;
-import ru.asolovyov.combime.bindings.StringBinding;
+import ru.asolovyov.combime.bindings.Bool;
+import ru.asolovyov.combime.bindings.Str;
 import ru.asolovyov.combime.common.Sink;
 
 /**
@@ -30,9 +28,9 @@ public class UIForm extends Form implements ItemStateListener, CommandListener, 
     private List itemStateListeners = new List();
     private List commandListeners = new List();
 
-    private StringBinding titleBinding;
+    private Str titleBinding;
 
-    public UIForm(StringBinding title, Item[] items) {
+    public UIForm(Str title, Item[] items) {
         super(title.getString(), items);
         super.setItemStateListener(this);
         super.setCommandListener(this);
@@ -48,11 +46,11 @@ public class UIForm extends Form implements ItemStateListener, CommandListener, 
         this.titleBinding = title;
     }
 
-    public UIForm(StringBinding title) {
+    public UIForm(Str title) {
        this(title, new Item[] {});
     }
 
-    public UIForm(StringBinding title, UIItem[] items) {
+    public UIForm(Str title, UIItem[] items) {
         this(title, new Item[]{});
         for (int i = 0; i < items.length; i++) {
             UIItem uiItem = items[i];
@@ -160,7 +158,7 @@ public class UIForm extends Form implements ItemStateListener, CommandListener, 
         };
         
         UICommand uiCommand = new UICommand(
-                B.String(cmd.getLabel()),
+                new Str(cmd.getLabel()),
                 cmd.getCommandType(),
                 cmd.getPriority(),
                 handler
@@ -226,7 +224,7 @@ public class UIForm extends Form implements ItemStateListener, CommandListener, 
         });
     }
 
-    public UIForm alert(final BoolBinding isVisible, final UIAlert alert) {
+    public UIForm alert(final Bool isVisible, final UIAlert alert) {
         isVisible.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
                 if (isVisible.getBool()) {
@@ -243,21 +241,21 @@ public class UIForm extends Form implements ItemStateListener, CommandListener, 
             String formTitle,
             UIItem content
             ) {
-        return this.navigationCommand(B.String(linkTitle), this.titleBinding, B.String(formTitle), content);
+        return this.navigationCommand(new Str(linkTitle), this.titleBinding, new Str(formTitle), content);
     }
 
     public UIForm navigationCommand(
-            StringBinding linkTitle,
-            StringBinding formTitle,
+            Str linkTitle,
+            Str formTitle,
             UIItem content
             ) {
         return this.navigationCommand(linkTitle, this.titleBinding, formTitle, content);
     }
     
     public UIForm navigationCommand(
-            StringBinding linkTitle,
-            StringBinding backTitle,
-            StringBinding formTitle,
+            Str linkTitle,
+            Str backTitle,
+            Str formTitle,
             UIItem content
             ) {
         UIForm form = new UIForm(formTitle, new UIItem[]{ content });
@@ -265,14 +263,14 @@ public class UIForm extends Form implements ItemStateListener, CommandListener, 
     }
 
     public UIForm navigationCommand(
-            StringBinding linkTitle,
+            Str linkTitle,
             UINavigatable navigatable) {
         return this.navigationCommand(linkTitle, this.titleBinding, navigatable);
     }
 
     public UIForm navigationCommand(
-            StringBinding linkTitle,
-            StringBinding backTitle,
+            Str linkTitle,
+            Str backTitle,
             UINavigatable navigatable
             ) {
         final Displayable content = navigatable.displayable();
@@ -291,11 +289,11 @@ public class UIForm extends Form implements ItemStateListener, CommandListener, 
         }));
     }
 
-    public UIForm navigationLink(UINavigatable navigatable, final BoolBinding trigger) {
+    public UIForm navigationLink(UINavigatable navigatable, final Bool trigger) {
         return this.navigationLink(this.titleBinding, navigatable, trigger);
     }
     
-    public UIForm navigationLink(StringBinding backBinding, UINavigatable navigatable, final BoolBinding trigger) {
+    public UIForm navigationLink(Str backBinding, UINavigatable navigatable, final Bool trigger) {
         final Displayable content = navigatable.displayable();
 
         //сделать константы для назада и прочих важных команд. и сделать коснтанту минкомманд - доступную для своих команд, больше чем любая из важных
@@ -319,24 +317,24 @@ public class UIForm extends Form implements ItemStateListener, CommandListener, 
     }
 
     public UIForm navigationLink(
-            StringBinding formTitle,
+            Str formTitle,
             UIItem content,
-            BoolBinding trigger
+            Bool trigger
             ) {
         return this.navigationLink(this.titleBinding, formTitle, content, trigger);
     }
 
     public UIForm navigationLink(
-            StringBinding backTitle,
-            StringBinding formTitle,
+            Str backTitle,
+            Str formTitle,
             UIItem content,
-            BoolBinding trigger
+            Bool trigger
             ) {
         UIForm form = new UIForm(formTitle, new UIItem[]{ content });
         return this.navigationLink(backTitle, form, trigger);
     }
 
-    public StringBinding title() {
+    public Str title() {
         return this.titleBinding;
     }
 

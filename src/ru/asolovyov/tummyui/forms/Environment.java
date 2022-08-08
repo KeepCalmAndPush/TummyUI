@@ -6,11 +6,11 @@
 package ru.asolovyov.tummyui.forms;
 
 import java.util.Hashtable;
-import ru.asolovyov.combime.bindings.ArrayBinding;
-import ru.asolovyov.combime.bindings.BoolBinding;
-import ru.asolovyov.combime.bindings.IntBinding;
-import ru.asolovyov.combime.bindings.ObjectBinding;
-import ru.asolovyov.combime.bindings.StringBinding;
+import ru.asolovyov.combime.bindings.Arr;
+import ru.asolovyov.combime.bindings.Bool;
+import ru.asolovyov.combime.bindings.Int;
+import ru.asolovyov.combime.bindings.Obj;
+import ru.asolovyov.combime.bindings.Str;
 
 /**
  *
@@ -22,77 +22,77 @@ public final class Environment {
 
     private Environment() {}
 
-    public static StringBinding string(Object key) {
-        StringBinding value = (StringBinding) shared.data.get(key);
+    public static Str string(Object key) {
+        Str value = (Str) shared.data.get(key);
         if (value == null) {
-            value = new StringBinding((String)null);
+            value = new Str((String)null);
             shared.data.put(key, value);
         }
         return value;
     }
 
-    public static ObjectBinding object(Object key) {
-        ObjectBinding value = (ObjectBinding) shared.data.get(key);
+    public static Obj object(Object key) {
+        Obj value = (Obj) shared.data.get(key);
         if (value == null) {
-            value = new ObjectBinding((Object)null);
+            value = new Obj((Object)null);
             shared.data.put(key, value);
         }
         return value;
     }
 
-    public static IntBinding integer(Object key) {
-        IntBinding value = (IntBinding) shared.data.get(key);
+    public static Int integer(Object key) {
+        Int value = (Int) shared.data.get(key);
         if (value == null) {
-            value = new IntBinding((Integer)null);
+            value = new Int((Integer)null);
             shared.data.put(key, value);
         }
         return value;
     }
 
-    public static BoolBinding bool(Object key) {
-        BoolBinding value = (BoolBinding) shared.data.get(key);
+    public static Bool bool(Object key) {
+        Bool value = (Bool) shared.data.get(key);
         if (value == null) {
-            value = new BoolBinding((Boolean)null);
+            value = new Bool((Boolean)null);
             shared.data.put(key, value);
         }
         return value;
     }
 
-    public static ArrayBinding array(Object key) {
-        ArrayBinding value = (ArrayBinding) shared.data.get(key);
+    public static Arr array(Object key) {
+        Arr value = (Arr) shared.data.get(key);
         if (value == null) {
-            value = new ArrayBinding((Object[])null);
+            value = new Arr((Object[])null);
             shared.data.put(key, value);
         }
         return value;
     }
 
-    public static ObjectBinding put(Object key, Object value) {
-        ObjectBinding binding = object(key);
+    public static Obj put(Object key, Object value) {
+        Obj binding = object(key);
         binding.setObject(value);
         return binding;
     }
 
-    public static StringBinding put(Object key, String value) {
-        StringBinding binding = string(key);
+    public static Str put(Object key, String value) {
+        Str binding = string(key);
         binding.setString(value);
         return binding;
     }
 
-    public static IntBinding put(Object key, int value) {
-        IntBinding binding = integer(key);
+    public static Int put(Object key, int value) {
+        Int binding = integer(key);
         binding.setInt(value);
         return binding;
     }
 
-    public static BoolBinding put(Object key, boolean value) {
-        BoolBinding binding = bool(key);
+    public static Bool put(Object key, boolean value) {
+        Bool binding = bool(key);
         binding.setBool(value);
         return binding;
     }
 
-    public static ArrayBinding put(Object key, Object[] value) {
-        ArrayBinding binding = array(key);
+    public static Arr put(Object key, Object[] value) {
+        Arr binding = array(key);
         binding.setArray(value);
         return binding;
     }

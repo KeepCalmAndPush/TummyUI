@@ -7,7 +7,7 @@ package ru.asolovyov.tummyui.forms;
 import java.util.Vector;
 import javax.microedition.lcdui.Item;
 import javax.microedition.lcdui.ItemStateListener;
-import ru.asolovyov.combime.bindings.BoolBinding;
+import ru.asolovyov.combime.bindings.Bool;
 import ru.asolovyov.combime.common.S;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.combime.subjects.PassthroughSubject;
@@ -61,7 +61,7 @@ public abstract class UIItem implements ItemStateListener {
 
     public void itemStateChanged(Item item) { }
 
-    public UIItem isVisible(BoolBinding binding) {
+    public UIItem isVisible(Bool binding) {
         final Object o = this;
         binding.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {

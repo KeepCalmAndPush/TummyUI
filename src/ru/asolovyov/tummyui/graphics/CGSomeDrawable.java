@@ -6,10 +6,9 @@
 package ru.asolovyov.tummyui.graphics;
 
 import javax.microedition.lcdui.Graphics;
-import ru.asolovyov.combime.bindings.B;
-import ru.asolovyov.combime.bindings.BoolBinding;
-import ru.asolovyov.combime.bindings.IntBinding;
-import ru.asolovyov.combime.bindings.ObjectBinding;
+import ru.asolovyov.combime.bindings.Bool;
+import ru.asolovyov.combime.bindings.Int;
+import ru.asolovyov.combime.bindings.Obj;
 import ru.asolovyov.combime.common.Sink;
 
 /**
@@ -17,25 +16,25 @@ import ru.asolovyov.combime.common.Sink;
  * @author Администратор
  */
 public abstract class CGSomeDrawable implements CGDrawable {
-    protected IntBinding color;
-    protected ObjectBinding frameBinding;
-    protected BoolBinding isVisible;
+    protected Int color;
+    protected Obj frameBinding;
+    protected Bool isVisible;
 
-    protected CGCanvas canvas;
+    private CGCanvas canvas;
 
     public void draw(Graphics g) {
         g.setColor(this.getColor());
     }
 
     public CGDrawable color(int colorHex) {
-        return this.color(B.Int(colorHex));
+        return this.color(new Int(colorHex));
     }
 
-    public CGDrawable frame(int x, int y, int width, int height) {
-        return this.frame(new CGFrame(x, y, width, height));
+    public CGDrawable setFrame(int x, int y, int width, int height) {
+        return this.setFrame(new CGFrame(x, y, width, height));
     }
 
-    public CGDrawable color(IntBinding colorHex) {
+    public CGDrawable color(Int colorHex) {
         this.color = colorHex;
         this.color.sink(new Sink() {
             protected void onValue(Object value) {
@@ -45,18 +44,18 @@ public abstract class CGSomeDrawable implements CGDrawable {
         return this;
     }
 
-    public CGDrawable frame(CGFrame frame) {
-        return this.frame(B.Object(frame));
+    public CGDrawable setFrame(CGFrame frame) {
+        return this.setFrame(new Obj(frame));
     }
 
-    public CGDrawable frame(ObjectBinding frame) {
+    public CGDrawable setFrame(Obj frame) {
         this.frameBinding = frame;
         return this;
     }
 
     public void needsRedraw() {
-        if (this.canvas != null) {
-            this.canvas.repaint(getFrame());
+        if (this.getCanvas() != null) {
+            this.getCanvas().repaint(getFrame());
         }
     }
 
@@ -64,18 +63,11 @@ public abstract class CGSomeDrawable implements CGDrawable {
         this.needsRedraw();
     }
 
-    public CGDrawable canvas(CGCanvas canvas) {
-        this.canvas = canvas;
-        this.needsRedraw();
-        
-        return this;
-    }
-
-    protected CGFrame getFrame() {
+    public CGFrame getFrame() {
         if (frameBinding != null) {
            return (CGFrame) frameBinding.getObject();
         }
-        return null;
+        return CGFrame.zero();
     }
 
     protected int getColor() {
@@ -86,10 +78,10 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     public CGDrawable isVisible(boolean isVisible) {
-        return this.isVisible(B.Bool(isVisible));
+        return this.isVisible(new Bool(isVisible));
     }
 
-    public CGDrawable isVisible(BoolBinding isVisible) {
+    public CGDrawable isVisible(Bool isVisible) {
         this.isVisible = isVisible;
         this.isVisible.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
@@ -104,5 +96,24 @@ public abstract class CGSomeDrawable implements CGDrawable {
             return this.isVisible.getBool();
         }
         return true;
+    }
+
+    public CGDrawable setCanvas(CGCanvas canvas) {
+        this.canvas = canvas;
+        canvas.needsRepaint().setBool(true);
+
+        return this;
+    }
+    
+    public CGCanvas getCanvas() {
+        return canvas;
+    }
+
+    public CGDrawable sizeToFit() {
+        return this;
+    }
+
+    public CGSize intrinsicContentSize() {
+        return getFrame().getSize();
     }
 }

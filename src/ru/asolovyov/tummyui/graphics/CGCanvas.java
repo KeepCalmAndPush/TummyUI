@@ -7,9 +7,11 @@ package ru.asolovyov.tummyui.graphics;
 
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
-import ru.asolovyov.combime.bindings.B;
-import ru.asolovyov.combime.bindings.IntBinding;
+import ru.asolovyov.combime.bindings.Bool;
+import ru.asolovyov.combime.bindings.Int;
+import ru.asolovyov.combime.bindings.Obj;
 import ru.asolovyov.combime.common.Sink;
+import ru.asolovyov.combime.operators.timing.Debounce;
 
 /**
  *
@@ -18,7 +20,11 @@ import ru.asolovyov.combime.common.Sink;
 
 public class CGCanvas extends Canvas {
     private CGDrawable[] content;
-    private IntBinding color;
+    private Int color;
+    private Bool needsRepaint = new Bool(false);
+    protected Bool needsRepaint() {
+        return needsRepaint;
+    }
 
     public CGCanvas(CGDrawable content) {
         this(new CGDrawable[] { content });
@@ -27,11 +33,21 @@ public class CGCanvas extends Canvas {
     public CGCanvas(CGDrawable[] content) {
         super();
         this.content = content;
+        if (content.length == 1) {
+            if (content[0].getFrame() == CGFrame.zero()) {
+                content[0].setFrame(0, 0, getWidth(), getHeight());
+            }
+        }
         for (int i = 0; i < this.content.length; i++) {
             CGDrawable drawable = content[i];
-            drawable.canvas(this);
+            drawable.setCanvas(this);
         }
         this.color(0);
+        this.needsRepaint.to(new Debounce(33)).sink(new Sink() {
+            protected void onValue(Object value) {
+                repaint();
+            }
+        });
     }
 
     public void repaint(CGFrame frame) {
@@ -52,10 +68,10 @@ public class CGCanvas extends Canvas {
     }
 
     public CGCanvas color(int colorHex) {
-        return this.color(B.Int(colorHex));
+        return this.color(new Int(colorHex));
     }
 
-    public CGCanvas color(IntBinding colorHex) {
+    public CGCanvas color(Int colorHex) {
         this.color = colorHex;
         this.color.sink(new Sink() {
             protected void onValue(Object value) {
