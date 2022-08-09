@@ -46,18 +46,28 @@ public class Canvas extends UIMIDlet {
         //TODO сюда отлично вольется геометри ридер
         return CG.Canvas(
                 new CGStack(
-                new Int(CGStack.AXIS_VERTICAL),
+                new Int(CGStack.AXIS_HORIZONTAL),
                 new Int(CG.ALIGNMENT_CENTER),
+                
+//                new Arr(new CGDrawable[] {
+//                    CG.Rect()
+//                            .color(0xFFFFFF),
+//                    CG.Rect()
+//                            .color(0x0000FF),
+//                    CG.Rect()
+//                            .color(0xFF0000),
+//                })
+
                 new Arr(new CGDrawable[] {
                     CG.Rect()
                             .color(0xFFFFFF)
-                            .setFrame(0, 0, 100, 33),
+                            .width(33).height(33),
                     CG.Rect()
                             .color(0x0000FF)
-                            .setFrame(0, 0, 100, 33),
+                            .width(33).height(33),
                     CG.Rect()
                             .color(0xFF0000)
-                            .setFrame(0, 0, 100, 33)
+                            .width(33).height(33),
                 })
                 )
 //                CG.Arc(30, 300)

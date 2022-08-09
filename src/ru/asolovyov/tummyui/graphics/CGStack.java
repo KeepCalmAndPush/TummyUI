@@ -68,20 +68,114 @@ public class CGStack extends CGSomeDrawable {
         }
     }
 
+    private int nextLeft = 0;
+    private int nextTop = 0;
+
     private void hDraw(Graphics g) {
+        final Graphics graphics = g;
 
+        int unallocatedWidthCount = 0;
+        int contentWidth = 0;
+        for (int i = 0; i < this.drawables.getArray().length; i++) {
+            CGDrawable object = (CGDrawable)this.drawables.getArray()[i];
+            int width = object.getFrame().width;
+            if (width != CGFrame.AUTOMATIC_DIMENSION) {
+                contentWidth += width;
+            } else {
+                unallocatedWidthCount++;
+            }
+        }
+
+        final int defaultWidth = unallocatedWidthCount > 0
+                ? (getFrame().width - contentWidth) / unallocatedWidthCount
+                : 0;
+
+        for (int i = 0; i < this.drawables.getArray().length; i++) {
+            CGDrawable object = (CGDrawable)this.drawables.getArray()[i];
+            CGFrame frame = object.getFrame();
+
+            if (frame.height == CGFrame.AUTOMATIC_DIMENSION) {
+                frame.height = getFrame().height;
+            }
+            if (frame.width == CGFrame.AUTOMATIC_DIMENSION) {
+                frame.width = defaultWidth;
+            }
+        }
+
+        contentWidth += defaultWidth * unallocatedWidthCount;
+
+        int alignment = this.alignment.getInt();
+        if (alignment == CG.ALIGNMENT_CENTER) {
+            this.nextLeft = (getFrame().width - contentWidth) / 2;
+        } else if (alignment == CG.ALIGNMENT_LEFT) {
+            this.nextLeft = getFrame().x;
+        }  else if (alignment == CG.ALIGNMENT_RIGHT) {
+            this.nextLeft = getFrame().width - contentWidth;
+        } else {
+            this.nextLeft += getFrame().x;
+        }
+
+        this.drawables.forEach(new Arr.Enumerator() {
+            public void onElement(Object element) {
+                CGDrawable drawable = (CGDrawable)element;
+                CGFrame frame = drawable.getFrame();
+                frame.x = nextLeft;
+                drawable.draw(graphics);
+                nextLeft += drawable.getFrame().width;
+            }
+        });
     }
-
-    int nextTop = 0;
-
+    
     private void vDraw(Graphics g) {
         final Graphics graphics = g;
-        nextTop = getFrame().y;
+
+        int unallocatedHeightCount = 0;
+        int contentHeight = 0;
+        for (int i = 0; i < this.drawables.getArray().length; i++) {
+            CGDrawable object = (CGDrawable)this.drawables.getArray()[i];
+            int height = object.getFrame().height;
+            if (height != CGFrame.AUTOMATIC_DIMENSION) {
+                contentHeight += object.getFrame().height;
+            } else {
+                unallocatedHeightCount++;
+            }
+        }
+        
+        final int defaultHeight = unallocatedHeightCount > 0
+                ? (getFrame().height - contentHeight) / unallocatedHeightCount
+                : 0;
+        
+        for (int i = 0; i < this.drawables.getArray().length; i++) {
+            CGDrawable object = (CGDrawable)this.drawables.getArray()[i];
+            CGFrame frame = object.getFrame();
+            int height = frame.height;
+            if (height == CGFrame.AUTOMATIC_DIMENSION) {
+                frame.height = defaultHeight;
+            }
+            if (frame.width == CGFrame.AUTOMATIC_DIMENSION) {
+                frame.width = getFrame().width;
+            }
+        }
+
+        contentHeight += defaultHeight * unallocatedHeightCount;
+           
+        int alignment = this.alignment.getInt();
+        if (alignment == CG.ALIGNMENT_CENTER) {
+            this.nextTop = (getFrame().height - contentHeight) / 2;
+        } else if (alignment == CG.ALIGNMENT_TOP) {
+            this.nextTop = getFrame().y;
+        }  else if (alignment == CG.ALIGNMENT_BOTTOM) {
+            this.nextTop = getFrame().height - contentHeight;
+        } else {
+            this.nextTop = getFrame().y;
+        }
         
         this.drawables.forEach(new Arr.Enumerator() {
             public void onElement(Object element) {
                 CGDrawable drawable = (CGDrawable)element;
-                drawable.getFrame().y = nextTop;
+                CGFrame frame = drawable.getFrame();
+                frame.y = nextTop;
+                
                 drawable.draw(graphics);
                 nextTop += drawable.getFrame().height;
             }

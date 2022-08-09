@@ -34,8 +34,12 @@ public class CGCanvas extends Canvas {
         super();
         this.content = content;
         if (content.length == 1) {
-            if (content[0].getFrame() == CGFrame.zero()) {
-                content[0].setFrame(0, 0, getWidth(), getHeight());
+            CGFrame frame = content[0].getFrame();
+            if (frame.width == CGFrame.AUTOMATIC_DIMENSION) {
+                frame.width = this.getWidth();
+            }
+            if (frame.height == CGFrame.AUTOMATIC_DIMENSION) {
+                frame.height = this.getHeight();
             }
         }
         for (int i = 0; i < this.content.length; i++) {

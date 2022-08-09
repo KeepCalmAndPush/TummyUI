@@ -16,8 +16,12 @@ import ru.asolovyov.combime.common.Sink;
  * @author Администратор
  */
 public abstract class CGSomeDrawable implements CGDrawable {
+    protected Obj frameBinding = new Obj(CGFrame.automatic());
+    protected Obj sizeBinding;
+    protected Int widthBinding;
+    protected Int heightBinding;
+
     protected Int color;
-    protected Obj frameBinding;
     protected Bool isVisible;
 
     private CGCanvas canvas;
@@ -64,10 +68,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     public CGFrame getFrame() {
-        if (frameBinding != null) {
-           return (CGFrame) frameBinding.getObject();
-        }
-        return CGFrame.zero();
+        return (CGFrame) frameBinding.getObject();
     }
 
     protected int getColor() {
@@ -75,6 +76,66 @@ public abstract class CGSomeDrawable implements CGDrawable {
            return color.getInt();
         }
         return 0x00000000;
+    }
+
+    public CGDrawable setSize(Obj size) {
+        this.sizeBinding = size;
+        this.sizeBinding.sink(new Sink() {
+            protected void onValue(Object value) {
+                CGSize size = (CGSize)value;
+                setSize(size);
+            }
+        });
+        return this;
+    }
+
+    public CGDrawable setSize(CGSize size) {
+        return this.setSize(size.width, size.height);
+    }
+
+    public CGDrawable setSize(int width, int height) {
+        CGFrame frame = getFrame();
+        frame.width = width;
+        frame.height = height;
+        needsRelayout();
+
+        return this;
+    }
+
+    public CGDrawable width(Int width) {
+        this.widthBinding = width;
+        this.widthBinding.sink(new Sink() {
+            protected void onValue(Object value) {
+                width(widthBinding.getInt());
+            }
+        });
+        return this;
+    }
+
+    public CGDrawable width(int width) {
+        CGFrame frame = getFrame();
+        frame.width = width;
+        needsRelayout();
+
+        return this;
+    }
+
+    public CGDrawable height(Int height) {
+        this.heightBinding = height;
+        this.heightBinding.sink(new Sink() {
+            protected void onValue(Object value) {
+                height(heightBinding.getInt());
+            }
+        });
+        return this;
+    }
+
+    public CGDrawable height(int height) {
+        CGFrame frame = getFrame();
+        frame.height = height;
+        needsRelayout();
+
+        return this;
     }
 
     public CGDrawable isVisible(boolean isVisible) {

@@ -16,6 +16,7 @@ import ru.asolovyov.combime.bindings.Str;
  * @author Администратор
  */
 public class CG {
+    //TODO возможно алайменты надо сделать маской
     public final static int ALIGNMENT_CENTER = 0;
     public final static int ALIGNMENT_LEFT = 1;
     public final static int ALIGNMENT_RIGHT = 2;

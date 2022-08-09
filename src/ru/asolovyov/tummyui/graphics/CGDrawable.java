@@ -32,6 +32,16 @@ public interface CGDrawable {
     public CGDrawable setFrame(CGFrame frame);
     public CGDrawable setFrame(int x, int y, int width, int height);
 
+    public CGDrawable setSize(Obj size);
+    public CGDrawable setSize(CGSize size);
+    public CGDrawable setSize(int width, int height);
+
+    public CGDrawable width(Int width);
+    public CGDrawable width(int width);
+
+    public CGDrawable height(Int height);
+    public CGDrawable height(int height);
+
     public CGFrame getFrame();
 
     public CGDrawable isVisible(boolean isVisible);
