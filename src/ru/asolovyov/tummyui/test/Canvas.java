@@ -12,6 +12,7 @@ import ru.asolovyov.combime.bindings.Int;
 import ru.asolovyov.threading.Clock;
 import ru.asolovyov.tummyui.forms.UIMIDlet;
 import ru.asolovyov.tummyui.graphics.CG;
+import ru.asolovyov.tummyui.graphics.CGArc;
 import ru.asolovyov.tummyui.graphics.CGDrawable;
 import ru.asolovyov.tummyui.graphics.CGStack;
 
@@ -45,9 +46,8 @@ public class Canvas extends UIMIDlet {
     protected Displayable content() {
         //TODO сюда отлично вольется геометри ридер
         return CG.Canvas(
-                new CGStack(
-                new Int(CGStack.AXIS_HORIZONTAL),
-                new Int(CG.ALIGNMENT_CENTER),
+                CG.ZStack(
+                new Int(CG.ALIGNMENT_BOTTOM | CG.ALIGNMENT_LEFT),
                 
 //                new Arr(new CGDrawable[] {
 //                    CG.Rect()
@@ -58,17 +58,15 @@ public class Canvas extends UIMIDlet {
 //                            .color(0xFF0000),
 //                })
 
-                new Arr(new CGDrawable[] {
                     CG.Rect()
                             .color(0xFFFFFF)
-                            .width(33).height(33),
+                            .width(88).height(88),
                     CG.Rect()
                             .color(0x0000FF)
-                            .width(33).height(33),
+                            .width(77).height(77),
                     CG.Rect()
                             .color(0xFF0000)
-                            .width(33).height(33),
-                })
+                            .width(66).height(66)
                 )
 //                CG.Arc(30, 300)
 //                        .color(arcColor)
@@ -82,6 +80,6 @@ public class Canvas extends UIMIDlet {
 //                        .setFrame(75, 25, 10, 10)
 //                )
                 )
-                .color(0x000000);
+                .color(0x00FF00);
     }
 }

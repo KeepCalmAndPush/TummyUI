@@ -27,6 +27,10 @@ public class CGStack extends CGSomeDrawable {
     protected Int alignment;
     protected Int axis;
 
+    public CGStack(Int axis, Arr drawables) {
+        this(axis, new Int(CG.ALIGNMENT_H_CENTER | CG.ALIGNMENT_V_CENTER), drawables);
+    }
+
     public CGStack(Int axis, Int alignment, Arr drawables) {
         super();
         this.axis = axis;
@@ -74,6 +78,9 @@ public class CGStack extends CGSomeDrawable {
     private void hDraw(Graphics g) {
         final Graphics graphics = g;
 
+        this.nextLeft = getFrame().x;
+        this.nextTop = getFrame().y;
+        
         int unallocatedWidthCount = 0;
         int contentWidth = 0;
         for (int i = 0; i < this.drawables.getArray().length; i++) {
@@ -104,22 +111,40 @@ public class CGStack extends CGSomeDrawable {
 
         contentWidth += defaultWidth * unallocatedWidthCount;
 
+        this.nextLeft += getFrame().x;
+
         int alignment = this.alignment.getInt();
-        if (alignment == CG.ALIGNMENT_CENTER) {
+
+        if ((alignment & CG.ALIGNMENT_H_CENTER) == CG.ALIGNMENT_H_CENTER) {
             this.nextLeft = (getFrame().width - contentWidth) / 2;
-        } else if (alignment == CG.ALIGNMENT_LEFT) {
+        } 
+        if ((alignment & CG.ALIGNMENT_LEFT) == CG.ALIGNMENT_LEFT) {
             this.nextLeft = getFrame().x;
-        }  else if (alignment == CG.ALIGNMENT_RIGHT) {
-            this.nextLeft = getFrame().width - contentWidth;
-        } else {
-            this.nextLeft += getFrame().x;
         }
+        if ((alignment & CG.ALIGNMENT_RIGHT) == CG.ALIGNMENT_RIGHT) {
+            this.nextLeft = getFrame().width - contentWidth;
+        }
+
+        final boolean isVCenter = (alignment & CG.ALIGNMENT_V_CENTER) == CG.ALIGNMENT_V_CENTER;
+        final boolean isTop = (alignment & CG.ALIGNMENT_TOP) == CG.ALIGNMENT_TOP;
+        final boolean isBottom = (alignment & CG.ALIGNMENT_BOTTOM) == CG.ALIGNMENT_BOTTOM;
 
         this.drawables.forEach(new Arr.Enumerator() {
             public void onElement(Object element) {
-                CGDrawable drawable = (CGDrawable)element;
+                CGDrawable drawable = (CGDrawable) element;
                 CGFrame frame = drawable.getFrame();
                 frame.x = nextLeft;
+
+                if (isVCenter) {
+                    frame.y = (getFrame().height - frame.height) / 2;
+                }
+                if (isTop) {
+                    frame.y = 0;
+                }
+                if (isBottom) {
+                    frame.y = getFrame().height - frame.height;
+                }
+
                 drawable.draw(graphics);
                 nextLeft += drawable.getFrame().width;
             }
@@ -128,6 +153,9 @@ public class CGStack extends CGSomeDrawable {
     
     private void vDraw(Graphics g) {
         final Graphics graphics = g;
+
+        this.nextLeft = getFrame().x;
+        this.nextTop = getFrame().y;
 
         int unallocatedHeightCount = 0;
         int contentHeight = 0;
@@ -160,21 +188,35 @@ public class CGStack extends CGSomeDrawable {
         contentHeight += defaultHeight * unallocatedHeightCount;
            
         int alignment = this.alignment.getInt();
-        if (alignment == CG.ALIGNMENT_CENTER) {
+        if ((alignment & CG.ALIGNMENT_V_CENTER) == CG.ALIGNMENT_V_CENTER) {
             this.nextTop = (getFrame().height - contentHeight) / 2;
-        } else if (alignment == CG.ALIGNMENT_TOP) {
-            this.nextTop = getFrame().y;
-        }  else if (alignment == CG.ALIGNMENT_BOTTOM) {
-            this.nextTop = getFrame().height - contentHeight;
-        } else {
+        }
+        if ((alignment & CG.ALIGNMENT_TOP) == CG.ALIGNMENT_TOP) {
             this.nextTop = getFrame().y;
         }
+        if ((alignment & CG.ALIGNMENT_BOTTOM) == CG.ALIGNMENT_BOTTOM) {
+            this.nextTop = getFrame().height - contentHeight;
+        }
+
+        final boolean isHCenter = (alignment & CG.ALIGNMENT_H_CENTER) == CG.ALIGNMENT_H_CENTER;
+        final boolean isLeft = (alignment & CG.ALIGNMENT_LEFT) == CG.ALIGNMENT_LEFT;
+        final boolean isRight = (alignment & CG.ALIGNMENT_RIGHT) == CG.ALIGNMENT_RIGHT;
         
         this.drawables.forEach(new Arr.Enumerator() {
             public void onElement(Object element) {
                 CGDrawable drawable = (CGDrawable)element;
                 CGFrame frame = drawable.getFrame();
                 frame.y = nextTop;
+
+                if (isHCenter) {
+                    frame.x = (getFrame().width - frame.width) / 2;
+                }
+                if (isLeft) {
+                    frame.x = 0;
+                }
+                if (isRight) {
+                    frame.x = getFrame().width - frame.width;
+                }
                 
                 drawable.draw(graphics);
                 nextTop += drawable.getFrame().height;
@@ -183,6 +225,61 @@ public class CGStack extends CGSomeDrawable {
     }
 
     private void zDraw(Graphics g) {
+        final Graphics graphics = g;
 
+        this.nextLeft = getFrame().x;
+        this.nextTop = getFrame().y;
+
+        for (int i = 0; i < this.drawables.getArray().length; i++) {
+            CGDrawable object = (CGDrawable)this.drawables.getArray()[i];
+            int height = object.getFrame().height;
+            int width = object.getFrame().width;
+
+            if (height == CGFrame.AUTOMATIC_DIMENSION) {
+                height = getFrame().height;
+            }
+            if (width == CGFrame.AUTOMATIC_DIMENSION) {
+                width = getFrame().width;
+            }
+        }
+
+        int alignment = this.alignment.getInt();
+        
+        final boolean isVCenter = (alignment & CG.ALIGNMENT_V_CENTER) == CG.ALIGNMENT_V_CENTER;
+        final boolean isTop = (alignment & CG.ALIGNMENT_TOP) == CG.ALIGNMENT_TOP;
+        final boolean isBottom = (alignment & CG.ALIGNMENT_BOTTOM) == CG.ALIGNMENT_BOTTOM;
+
+        final boolean isHCenter = (alignment & CG.ALIGNMENT_H_CENTER) == CG.ALIGNMENT_H_CENTER;
+        final boolean isLeft = (alignment & CG.ALIGNMENT_LEFT) == CG.ALIGNMENT_LEFT;
+        final boolean isRight = (alignment & CG.ALIGNMENT_RIGHT) == CG.ALIGNMENT_RIGHT;
+
+        this.drawables.forEach(new Arr.Enumerator() {
+            public void onElement(Object element) {
+                CGDrawable drawable = (CGDrawable)element;
+                CGFrame frame = drawable.getFrame();
+
+                if (isVCenter) {
+                    frame.y = (getFrame().height - frame.height) / 2;
+                }
+                if (isTop) {
+                    frame.y = 0;
+                }
+                if (isBottom) {
+                    frame.y = getFrame().height - frame.height;
+                }
+
+                if (isHCenter) {
+                    frame.x = (getFrame().width - frame.width) / 2;
+                }
+                if (isLeft) {
+                    frame.x = 0;
+                }
+                if (isRight) {
+                    frame.x = getFrame().width - frame.width;
+                }
+
+                drawable.draw(graphics);
+            }
+        });
     }
 }
