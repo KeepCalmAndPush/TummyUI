@@ -27,6 +27,7 @@ public interface CGDrawable {
     public CGSize intrinsicContentSize();
 
     public CGDrawable color(int colorHex);
+    public CGDrawable color(Int colorHex);
 
     public CGDrawable setFrame(Obj frame);
     public CGDrawable setFrame(CGFrame frame);
@@ -36,6 +37,10 @@ public interface CGDrawable {
     public CGDrawable setSize(CGSize size);
     public CGDrawable setSize(int width, int height);
 
+    public CGDrawable setOffset(Obj offset);
+    public CGDrawable setOffset(CGPoint offset);
+    public CGDrawable setOffset(int x, int y);
+
     public CGDrawable width(Int width);
     public CGDrawable width(int width);
 
@@ -43,10 +48,9 @@ public interface CGDrawable {
     public CGDrawable height(int height);
 
     public CGFrame getFrame();
+    public CGPoint getOffset();
 
     public CGDrawable isVisible(boolean isVisible);
-
-    public CGDrawable color(Int colorHex);
     public CGDrawable isVisible(Bool isVisible);
 }
 

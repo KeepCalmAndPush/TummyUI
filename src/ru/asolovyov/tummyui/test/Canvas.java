@@ -46,8 +46,8 @@ public class Canvas extends UIMIDlet {
     protected Displayable content() {
         //TODO сюда отлично вольется геометри ридер
         return CG.Canvas(
-                CG.ZStack(
-                new Int(CG.ALIGNMENT_BOTTOM | CG.ALIGNMENT_LEFT),
+                CG.HStack(
+                new Int(CG.ALIGNMENT_V_CENTER | CG.ALIGNMENT_LEFT),
                 
 //                new Arr(new CGDrawable[] {
 //                    CG.Rect()
@@ -63,6 +63,7 @@ public class Canvas extends UIMIDlet {
                             .width(88).height(88),
                     CG.Rect()
                             .color(0x0000FF)
+//                            .setOffset(25, 25)
                             .width(77).height(77),
                     CG.Rect()
                             .color(0xFF0000)

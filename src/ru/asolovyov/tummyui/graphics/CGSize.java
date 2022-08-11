@@ -10,6 +10,8 @@ package ru.asolovyov.tummyui.graphics;
  * @author Администратор
  */
 public final class CGSize {
+    public int width = 0, height = 0;
+    
     public static CGSize zero() {
         return new CGSize(0, 0);
     }
@@ -18,6 +20,4 @@ public final class CGSize {
         this.width = width;
         this.height = height;
     }
-
-    public int width = 0, height = 0;
 }

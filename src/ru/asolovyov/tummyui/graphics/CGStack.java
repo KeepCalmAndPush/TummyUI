@@ -145,6 +145,9 @@ public class CGStack extends CGSomeDrawable {
                     frame.y = getFrame().height - frame.height;
                 }
 
+                frame.x += drawable.getOffset().x;
+                frame.y += drawable.getOffset().y;
+
                 drawable.draw(graphics);
                 nextLeft += drawable.getFrame().width;
             }
@@ -217,6 +220,9 @@ public class CGStack extends CGSomeDrawable {
                 if (isRight) {
                     frame.x = getFrame().width - frame.width;
                 }
+
+                frame.x += drawable.getOffset().x;
+                frame.y += drawable.getOffset().y;
                 
                 drawable.draw(graphics);
                 nextTop += drawable.getFrame().height;
@@ -277,6 +283,9 @@ public class CGStack extends CGSomeDrawable {
                 if (isRight) {
                     frame.x = getFrame().width - frame.width;
                 }
+
+                frame.x += drawable.getOffset().x;
+                frame.y += drawable.getOffset().y;
 
                 drawable.draw(graphics);
             }

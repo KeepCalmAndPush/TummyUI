@@ -17,12 +17,14 @@ import ru.asolovyov.combime.common.Sink;
  */
 public abstract class CGSomeDrawable implements CGDrawable {
     protected Obj frameBinding = new Obj(CGFrame.automatic());
-    protected Obj sizeBinding;
-    protected Int widthBinding;
-    protected Int heightBinding;
+    protected Obj sizeBinding = new Obj(CGSize.zero());
+    protected Int widthBinding = new Int(CGFrame.AUTOMATIC_DIMENSION);
+    protected Int heightBinding = new Int(CGFrame.AUTOMATIC_DIMENSION);
 
-    protected Int color;
-    protected Bool isVisible;
+    protected Int color = new Int(0xFFFFFF);
+    protected Bool isVisible = new Bool(true);
+
+    protected Obj offsetBinding = new Obj(CGPoint.zero());
 
     private CGCanvas canvas;
 
@@ -100,6 +102,24 @@ public abstract class CGSomeDrawable implements CGDrawable {
         needsRelayout();
 
         return this;
+    }
+
+    public CGDrawable setOffset(Obj offset) {
+        this.offsetBinding = offset;
+        return this;
+    }
+
+    public CGDrawable setOffset(CGPoint offset) {
+        return this.setOffset(new Obj(offset));
+    }
+    
+    public CGDrawable setOffset(int x, int y) {
+        return this.setOffset(new Obj(new CGPoint(x, y)));
+    }
+
+    public CGPoint getOffset() {
+        //TODO сделать специфические ЮИ биндинги - для сайза, фрейма итп
+        return (CGPoint)this.offsetBinding.getObject();
     }
 
     public CGDrawable width(Int width) {
