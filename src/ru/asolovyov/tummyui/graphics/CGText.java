@@ -26,7 +26,7 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
         this.text = text;
         this.text.sink(new Sink() {
             protected void onValue(Object value) {
-                needsRelayout();
+                needsRelayout(getFrame());
             }
         });
     }
@@ -35,7 +35,7 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
         this.text = text;
         this.text.sink(new Sink() {
             protected void onValue(Object value) {
-                needsRelayout();
+                needsRelayout(getFrame());
             }
         });
         return this;
@@ -53,7 +53,7 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
         this.anchor = anchor;
         this.anchor.sink(new Sink() {
             protected void onValue(Object value) {
-                needsRelayout();
+                needsRedraw();
             }
         });
         return this;
@@ -86,7 +86,7 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
         this.font = font;
         this.font.sink(new Sink() {
             protected void onValue(Object value) {
-                needsRelayout();
+                needsRedraw();
             }
         });
         return this;

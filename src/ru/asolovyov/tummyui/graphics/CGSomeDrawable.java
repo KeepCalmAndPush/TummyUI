@@ -17,6 +17,12 @@ import ru.asolovyov.combime.common.Sink;
  */
 public abstract class CGSomeDrawable implements CGDrawable {
     protected Obj frameBinding = new Obj(CGFrame.automatic());
+
+    public CGSomeDrawable() {
+    }
+    // TODO сделать один фрейм общим, и при присваивании нового просто сливать в старый новые значения
+    // старый фрейм все слушают
+    // то же и с остальными
     protected Obj sizeBinding = new Obj(CGSize.zero());
     protected Int widthBinding = new Int(CGFrame.AUTOMATIC_DIMENSION);
     protected Int heightBinding = new Int(CGFrame.AUTOMATIC_DIMENSION);
@@ -37,7 +43,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     public CGDrawable setFrame(int x, int y, int width, int height) {
-        return this.setFrame(new CGFrame(x, y, width, height));
+        return this.setFrame(new Obj(new CGFrame(x, y, width, height)));
     }
 
     public CGDrawable color(Int colorHex) {
@@ -56,17 +62,22 @@ public abstract class CGSomeDrawable implements CGDrawable {
 
     public CGDrawable setFrame(Obj frame) {
         this.frameBinding = frame;
+        this.frameBinding.sink(new Sink() {
+            protected void onValue(Object value) {
+                needsRelayout(getFrame());
+            }
+        });
         return this;
     }
 
     public void needsRedraw() {
-        if (this.getCanvas() != null) {
-            this.getCanvas().repaint(getFrame());
-        }
+        this.needsRelayout(this.getFrame());
     }
 
-    public void needsRelayout() {
-        this.needsRedraw();
+    public void needsRelayout(CGFrame frame) {
+        if (this.getCanvas() != null) {
+            this.getCanvas().repaint(frame);
+        }
     }
 
     public CGFrame getFrame() {
@@ -99,13 +110,19 @@ public abstract class CGSomeDrawable implements CGDrawable {
         CGFrame frame = getFrame();
         frame.width = width;
         frame.height = height;
-        needsRelayout();
+
+        this.setFrame(frame);
 
         return this;
     }
 
     public CGDrawable setOffset(Obj offset) {
         this.offsetBinding = offset;
+        this.offsetBinding.sink(new Sink() {
+            protected void onValue(Object value) {
+                needsRelayout(getFrame());
+            }
+        });
         return this;
     }
 
@@ -134,8 +151,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
 
     public CGDrawable width(int width) {
         CGFrame frame = getFrame();
-        frame.width = width;
-        needsRelayout();
+        this.setFrame(frame);
 
         return this;
     }
@@ -153,7 +169,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
     public CGDrawable height(int height) {
         CGFrame frame = getFrame();
         frame.height = height;
-        needsRelayout();
+        this.setFrame(frame);
 
         return this;
     }
@@ -166,7 +182,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
         this.isVisible = isVisible;
         this.isVisible.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
-                needsRelayout();
+                needsRelayout(getFrame());
             }
         });
         return this;

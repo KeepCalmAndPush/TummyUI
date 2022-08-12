@@ -39,19 +39,19 @@ public class CGStack extends CGSomeDrawable {
 
         this.axis.sink(new Sink() {
             protected void onValue(Object value) {
-                needsRelayout();
+                needsRedraw();
             }
         });
 
         this.alignment.sink(new Sink() {
             protected void onValue(Object value) {
-                needsRelayout();
+                needsRedraw();
             }
         });
 
         this.drawables.sink(new Sink() {
             protected void onValue(Object value) {
-                needsRelayout();
+                needsRelayout(getFrame());
             }
         });
     }

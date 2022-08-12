@@ -18,7 +18,7 @@ public interface CGDrawable {
     public void draw(Graphics g);
 
     public void needsRedraw();
-    public void needsRelayout();
+    public void needsRelayout(CGFrame frame);
 
     public CGCanvas getCanvas();
     public CGDrawable setCanvas(CGCanvas canvas);
