@@ -41,6 +41,7 @@ public class CGCanvas extends Canvas {
             if (frame.height == CGFrame.AUTOMATIC_DIMENSION) {
                 frame.height = this.getHeight();
             }
+            content[0].needsRelayout(frame);
         }
         for (int i = 0; i < this.content.length; i++) {
             CGDrawable drawable = content[i];

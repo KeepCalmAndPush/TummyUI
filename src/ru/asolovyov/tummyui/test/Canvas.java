@@ -9,11 +9,13 @@ import javax.microedition.lcdui.Displayable;
 import ru.asolovyov.combime.bindings.Arr;
 import ru.asolovyov.combime.bindings.Bool;
 import ru.asolovyov.combime.bindings.Int;
+import ru.asolovyov.combime.common.S;
 import ru.asolovyov.threading.Clock;
 import ru.asolovyov.tummyui.forms.UIMIDlet;
 import ru.asolovyov.tummyui.graphics.CG;
 import ru.asolovyov.tummyui.graphics.CGArc;
 import ru.asolovyov.tummyui.graphics.CGDrawable;
+import ru.asolovyov.tummyui.graphics.CGFrame;
 import ru.asolovyov.tummyui.graphics.CGGeometryReader;
 import ru.asolovyov.tummyui.graphics.CGStack;
 
@@ -58,36 +60,47 @@ public class Canvas extends UIMIDlet {
     protected Displayable content() {
         //TODO сюда отлично вольется геометри ридер
         return CG.Canvas(
-                new CGGeometryReader() {
+                CG.HStack(
+                new Int(CG.ALIGNMENT_V_CENTER | CG.ALIGNMENT_LEFT),
 
-            public void onWidthChanged(int width) {
-                super.onWidthChanged(width);
-            }
+//                new Arr(new CGDrawable[] {
+//                    CG.Rect()
+//                            .color(0xFFFFFF),
+//                    CG.Rect()
+//                            .color(0x0000FF),
+//                    CG.Rect()
+//                            .color(0xFF0000),
+//                })
 
-                }
-//                CG.HStack(
-//                new Int(CG.ALIGNMENT_V_CENTER | CG.ALIGNMENT_LEFT),
-//
-////                new Arr(new CGDrawable[] {
-////                    CG.Rect()
-////                            .color(0xFFFFFF),
-////                    CG.Rect()
-////                            .color(0x0000FF),
-////                    CG.Rect()
-////                            .color(0xFF0000),
-////                })
-//
-//                    CG.Rect()
-//                            .color(0xFFFFFF)
-//                            .width(88).height(88),
-//                    CG.Rect()
-//                            .color(0x0000FF)
-////                            .setOffset(25, 25)
-//                            .width(77).height(77),
-//                    CG.Rect()
-//                            .color(0xFF0000)
-//                            .width(66).height(66)
-//                )
+                    CG.Rect()
+                            .color(0xFFFFFF)
+                            .height(48)
+                            .readGeometry(new CGDrawable.GeometryReader() {
+                                public void read(CGDrawable self, CGFrame frame) {
+                                    S.println("333333333");
+                                    self.getFrame().width = frame.width / 3;
+                                }
+                             }),
+                    CG.Rect()
+                            .color(0x0000FF)
+//                            .setOffset(25, 25)
+                            .height(77)
+                            .readGeometry(new CGDrawable.GeometryReader() {
+                                public void read(CGDrawable self, CGFrame frame) {
+                                    S.println("222222222");
+                                    self.getFrame().width = frame.width / 2;
+                                }
+                             }),
+                    CG.Rect()
+                            .color(0xFF0000)
+                            .height(66)
+                            .readGeometry(new CGDrawable.GeometryReader() {
+                                public void read(CGDrawable self, CGFrame frame) {
+                                    S.println("666666666");
+                                    self.getFrame().width = frame.width / 6;
+                                }
+                             })
+                )
 //                CG.Arc(30, 300)
 //                        .color(arcColor)
 //                        .setFrame(10, 10, 100, 100),

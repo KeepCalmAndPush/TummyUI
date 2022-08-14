@@ -213,4 +213,14 @@ public abstract class CGSomeDrawable implements CGDrawable {
     public CGSize intrinsicContentSize() {
         return getFrame().getSize();
     }
+
+    private GeometryReader geometryReader;
+    public CGDrawable readGeometry(GeometryReader reader) {
+        this.geometryReader = reader;
+        return this;
+    }
+    
+    public GeometryReader getGeometryReader() {
+        return geometryReader;
+    }
 }

@@ -8,6 +8,7 @@ package ru.asolovyov.tummyui.graphics;
 import javax.microedition.lcdui.Graphics;
 import ru.asolovyov.combime.bindings.Arr;
 import ru.asolovyov.combime.bindings.Int;
+import ru.asolovyov.combime.common.S;
 import ru.asolovyov.combime.common.Sink;
 
 /**
@@ -63,6 +64,8 @@ public class CGStack extends CGSomeDrawable {
     public void draw(Graphics g) {
         super.draw(g);
 
+        S.println("public void draw(Graphics g) {");
+
         if (this.axis.getInt() == AXIS_HORIZONTAL) {
             this.hDraw(g);
         } else if (this.axis.getInt() == AXIS_VERTICAL) {
@@ -70,6 +73,21 @@ public class CGStack extends CGSomeDrawable {
         } else if (this.axis.getInt() == AXIS_Z) {
             this.zDraw(g);
         }
+    }
+
+    private void pushFrameToChildren() {
+        CGDrawable[] drawables = (CGDrawable[]) this.drawables.getArray();
+        for (int i = 0; i < drawables.length; i++) {
+            CGDrawable drawable = drawables[i];
+            if (drawable.getGeometryReader() != null) {
+                drawable.getGeometryReader().read(drawable, getFrame());
+            }
+        }
+    }
+
+    public void needsRelayout(CGFrame frame) {
+        super.needsRelayout(frame);
+        this.pushFrameToChildren();
     }
 
     private int nextLeft = 0;

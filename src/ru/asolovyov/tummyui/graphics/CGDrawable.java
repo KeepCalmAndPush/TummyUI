@@ -15,10 +15,17 @@ import ru.asolovyov.combime.bindings.Obj;
  * @author Администратор
  */
 public interface CGDrawable {
+    public static abstract class GeometryReader {
+        public abstract void read(CGDrawable self, CGFrame frame);
+    }
+
     public void draw(Graphics g);
 
     public void needsRedraw();
     public void needsRelayout(CGFrame frame);
+
+    public CGDrawable readGeometry(GeometryReader reader);
+    public GeometryReader getGeometryReader();
 
     public CGCanvas getCanvas();
     public CGDrawable setCanvas(CGCanvas canvas);
