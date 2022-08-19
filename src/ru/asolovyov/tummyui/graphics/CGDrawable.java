@@ -9,6 +9,9 @@ import javax.microedition.lcdui.Graphics;
 import ru.asolovyov.combime.bindings.Bool;
 import ru.asolovyov.combime.bindings.Int;
 import ru.asolovyov.combime.bindings.Obj;
+import ru.asolovyov.tummyui.bindings.Frame;
+import ru.asolovyov.tummyui.bindings.Point;
+import ru.asolovyov.tummyui.bindings.Size;
 
 /**
  *
@@ -31,21 +34,14 @@ public interface CGDrawable {
     public CGDrawable setCanvas(CGCanvas canvas);
 
     public CGDrawable sizeToFit();
-    public CGSize intrinsicContentSize();
 
     public CGDrawable color(int colorHex);
     public CGDrawable color(Int colorHex);
 
-    public CGDrawable setFrame(Obj frame);
-    public CGDrawable setFrame(CGFrame frame);
+    public CGDrawable setFrame(Frame frame);
     public CGDrawable setFrame(int x, int y, int width, int height);
 
-    public CGDrawable setSize(Obj size);
-    public CGDrawable setSize(CGSize size);
-    public CGDrawable setSize(int width, int height);
-
-    public CGDrawable setOffset(Obj offset);
-    public CGDrawable setOffset(CGPoint offset);
+    public CGDrawable setOffset(Point offset);
     public CGDrawable setOffset(int x, int y);
 
     public CGDrawable width(Int width);
@@ -53,11 +49,19 @@ public interface CGDrawable {
 
     public CGDrawable height(Int height);
     public CGDrawable height(int height);
-
-    public CGFrame getFrame();
-    public CGPoint getOffset();
+    
+    public CGDrawable resizingMask(Int mask);
+    public CGDrawable resizingMask(int mask);
 
     public CGDrawable isVisible(boolean isVisible);
     public CGDrawable isVisible(Bool isVisible);
+
+    public Bool isVisible();
+    public Frame getFrame();
+    public Point getOffset();
+    public Int resizingMask();
+    public Size intrinsicContentSize();
+
+    public CGFrame getCGFrame();
 }
 

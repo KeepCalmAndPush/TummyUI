@@ -40,7 +40,7 @@ public class CGRectangle extends CGSomeStrokable {
     public void draw(Graphics g) {
         super.draw(g);
 
-        CGFrame frame = getFrame();
+        CGFrame frame = getCGFrame();
         if (frame == null) {
             return;
         }

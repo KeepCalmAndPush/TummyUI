@@ -9,7 +9,6 @@ import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
 import ru.asolovyov.combime.bindings.Bool;
 import ru.asolovyov.combime.bindings.Int;
-import ru.asolovyov.combime.bindings.Obj;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.combime.operators.timing.Debounce;
 
@@ -26,6 +25,10 @@ public class CGCanvas extends Canvas {
         return needsRepaint;
     }
 
+    private Int keyPressed = new Int(-1);
+    private Int keyReleased = new Int(-1);
+    private Int keyRepeated = new Int(-1);
+
     public CGCanvas(CGDrawable content) {
         this(new CGDrawable[] { content });
     }
@@ -34,11 +37,11 @@ public class CGCanvas extends Canvas {
         super();
         this.content = content;
         if (content.length == 1) {
-            CGFrame frame = content[0].getFrame();
-            if (frame.width == CGFrame.AUTOMATIC_DIMENSION) {
+            CGFrame frame = content[0].getCGFrame();
+            if (frame.width == CGFrame.FLEXIBLE_WIDTH) {
                 frame.width = this.getWidth();
             }
-            if (frame.height == CGFrame.AUTOMATIC_DIMENSION) {
+            if (frame.height == CGFrame.FLEXIBLE_HEIGHT) {
                 frame.height = this.getHeight();
             }
             content[0].needsRelayout(frame);

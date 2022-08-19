@@ -14,7 +14,7 @@ import javax.microedition.lcdui.Graphics;
 public class CGLine extends CGSomeStrokable {
     public void draw(Graphics g) {
         super.draw(g);
-        CGFrame frame = this.getFrame();
+        CGFrame frame = this.getCGFrame();
         g.drawLine(
                 frame.x,
                 frame.y,

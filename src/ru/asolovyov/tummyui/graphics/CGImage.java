@@ -28,7 +28,7 @@ public class CGImage extends CGSomeDrawable {
         this.image = image;
         this.image.sink(new Sink() {
             protected void onValue(Object value) {
-                CGImage.this.needsRelayout(getFrame());
+                CGImage.this.needsRelayout(getCGFrame());
             }
         });
         return this;

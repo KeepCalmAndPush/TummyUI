@@ -52,7 +52,7 @@ public class CGStack extends CGSomeDrawable {
 
         this.drawables.sink(new Sink() {
             protected void onValue(Object value) {
-                needsRelayout(getFrame());
+                needsRelayout(getCGFrame());
             }
         });
     }
@@ -80,7 +80,7 @@ public class CGStack extends CGSomeDrawable {
         for (int i = 0; i < drawables.length; i++) {
             CGDrawable drawable = drawables[i];
             if (drawable.getGeometryReader() != null) {
-                drawable.getGeometryReader().read(drawable, getFrame());
+                drawable.getGeometryReader().read(drawable, getCGFrame());
             }
         }
     }
@@ -96,14 +96,14 @@ public class CGStack extends CGSomeDrawable {
     private void hDraw(Graphics g) {
         final Graphics graphics = g;
 
-        this.nextLeft = getFrame().x;
-        this.nextTop = getFrame().y;
+        this.nextLeft = getCGFrame().x;
+        this.nextTop = getCGFrame().y;
         
         int unallocatedWidthCount = 0;
         int contentWidth = 0;
         for (int i = 0; i < this.drawables.getArray().length; i++) {
             CGDrawable object = (CGDrawable)this.drawables.getArray()[i];
-            int width = object.getFrame().width;
+            int width = object.getCGFrame().width;
             if (width != CGFrame.AUTOMATIC_DIMENSION) {
                 contentWidth += width;
             } else {
@@ -112,15 +112,15 @@ public class CGStack extends CGSomeDrawable {
         }
 
         final int defaultWidth = unallocatedWidthCount > 0
-                ? (getFrame().width - contentWidth) / unallocatedWidthCount
+                ? (getCGFrame().width - contentWidth) / unallocatedWidthCount
                 : 0;
 
         for (int i = 0; i < this.drawables.getArray().length; i++) {
             CGDrawable object = (CGDrawable)this.drawables.getArray()[i];
-            CGFrame frame = object.getFrame();
+            CGFrame frame = object.getCGFrame();
 
             if (frame.height == CGFrame.AUTOMATIC_DIMENSION) {
-                frame.height = getFrame().height;
+                frame.height = getCGFrame().height;
             }
             if (frame.width == CGFrame.AUTOMATIC_DIMENSION) {
                 frame.width = defaultWidth;
@@ -129,18 +129,18 @@ public class CGStack extends CGSomeDrawable {
 
         contentWidth += defaultWidth * unallocatedWidthCount;
 
-        this.nextLeft += getFrame().x;
+        this.nextLeft += getCGFrame().x;
 
         int alignment = this.alignment.getInt();
 
         if ((alignment & CG.ALIGNMENT_H_CENTER) == CG.ALIGNMENT_H_CENTER) {
-            this.nextLeft = (getFrame().width - contentWidth) / 2;
+            this.nextLeft = (getCGFrame().width - contentWidth) / 2;
         } 
         if ((alignment & CG.ALIGNMENT_LEFT) == CG.ALIGNMENT_LEFT) {
-            this.nextLeft = getFrame().x;
+            this.nextLeft = getCGFrame().x;
         }
         if ((alignment & CG.ALIGNMENT_RIGHT) == CG.ALIGNMENT_RIGHT) {
-            this.nextLeft = getFrame().width - contentWidth;
+            this.nextLeft = getCGFrame().width - contentWidth;
         }
 
         final boolean isVCenter = (alignment & CG.ALIGNMENT_V_CENTER) == CG.ALIGNMENT_V_CENTER;
@@ -150,24 +150,24 @@ public class CGStack extends CGSomeDrawable {
         this.drawables.forEach(new Arr.Enumerator() {
             public void onElement(Object element) {
                 CGDrawable drawable = (CGDrawable) element;
-                CGFrame frame = drawable.getFrame();
+                CGFrame frame = drawable.getCGFrame();
                 frame.x = nextLeft;
 
                 if (isVCenter) {
-                    frame.y = (getFrame().height - frame.height) / 2;
+                    frame.y = (getCGFrame().height - frame.height) / 2;
                 }
                 if (isTop) {
                     frame.y = 0;
                 }
                 if (isBottom) {
-                    frame.y = getFrame().height - frame.height;
+                    frame.y = getCGFrame().height - frame.height;
                 }
 
-                frame.x += drawable.getOffset().x;
-                frame.y += drawable.getOffset().y;
+                frame.x += drawable.getOffset().getCGPoint().x;
+                frame.y += drawable.getOffset().getCGPoint().y;
 
                 drawable.draw(graphics);
-                nextLeft += drawable.getFrame().width;
+                nextLeft += drawable.getCGFrame().width;
             }
         });
     }
@@ -175,34 +175,36 @@ public class CGStack extends CGSomeDrawable {
     private void vDraw(Graphics g) {
         final Graphics graphics = g;
 
-        this.nextLeft = getFrame().x;
-        this.nextTop = getFrame().y;
+        this.nextLeft = getCGFrame().x;
+        this.nextTop = getCGFrame().y;
 
         int unallocatedHeightCount = 0;
         int contentHeight = 0;
         for (int i = 0; i < this.drawables.getArray().length; i++) {
             CGDrawable object = (CGDrawable)this.drawables.getArray()[i];
-            int height = object.getFrame().height;
+            int height = object.getCGFrame().height;
             if (height != CGFrame.AUTOMATIC_DIMENSION) {
-                contentHeight += object.getFrame().height;
+                contentHeight += object.getCGFrame().height;
             } else {
                 unallocatedHeightCount++;
             }
         }
         
         final int defaultHeight = unallocatedHeightCount > 0
-                ? (getFrame().height - contentHeight) / unallocatedHeightCount
+                ? (getCGFrame().height - contentHeight) / unallocatedHeightCount
                 : 0;
         
         for (int i = 0; i < this.drawables.getArray().length; i++) {
             CGDrawable object = (CGDrawable)this.drawables.getArray()[i];
-            CGFrame frame = object.getFrame();
-            int height = frame.height;
-            if (height == CGFrame.AUTOMATIC_DIMENSION) {
-                frame.height = defaultHeight;
+            int mask = object.resizingMask().getInt();
+            CGFrame frame = object.getCGFrame();
+
+            if ((mask & CGFrame.FLEXIBLE_WIDTH) == CGFrame.FLEXIBLE_WIDTH) {
+                frame.width = getCGFrame().width;
             }
-            if (frame.width == CGFrame.AUTOMATIC_DIMENSION) {
-                frame.width = getFrame().width;
+
+            if ((mask & CGFrame.FLEXIBLE_HEIGHT) == CGFrame.FLEXIBLE_HEIGHT) {
+                frame.height = defaultHeight;
             }
         }
 
@@ -210,13 +212,13 @@ public class CGStack extends CGSomeDrawable {
            
         int alignment = this.alignment.getInt();
         if ((alignment & CG.ALIGNMENT_V_CENTER) == CG.ALIGNMENT_V_CENTER) {
-            this.nextTop = (getFrame().height - contentHeight) / 2;
+            this.nextTop = (getCGFrame().height - contentHeight) / 2;
         }
         if ((alignment & CG.ALIGNMENT_TOP) == CG.ALIGNMENT_TOP) {
-            this.nextTop = getFrame().y;
+            this.nextTop = getCGFrame().y;
         }
         if ((alignment & CG.ALIGNMENT_BOTTOM) == CG.ALIGNMENT_BOTTOM) {
-            this.nextTop = getFrame().height - contentHeight;
+            this.nextTop = getCGFrame().height - contentHeight;
         }
 
         final boolean isHCenter = (alignment & CG.ALIGNMENT_H_CENTER) == CG.ALIGNMENT_H_CENTER;
@@ -226,24 +228,24 @@ public class CGStack extends CGSomeDrawable {
         this.drawables.forEach(new Arr.Enumerator() {
             public void onElement(Object element) {
                 CGDrawable drawable = (CGDrawable)element;
-                CGFrame frame = drawable.getFrame();
+                CGFrame frame = drawable.getCGFrame();
                 frame.y = nextTop;
 
                 if (isHCenter) {
-                    frame.x = (getFrame().width - frame.width) / 2;
+                    frame.x = (getCGFrame().width - frame.width) / 2;
                 }
                 if (isLeft) {
                     frame.x = 0;
                 }
                 if (isRight) {
-                    frame.x = getFrame().width - frame.width;
+                    frame.x = getCGFrame().width - frame.width;
                 }
 
-                frame.x += drawable.getOffset().x;
-                frame.y += drawable.getOffset().y;
+                frame.x += drawable.getOffset().getCGPoint().x;
+                frame.y += drawable.getOffset().getCGPoint().y;
                 
                 drawable.draw(graphics);
-                nextTop += drawable.getFrame().height;
+                nextTop += drawable.getCGFrame().height;
             }
         });
     }
@@ -251,19 +253,20 @@ public class CGStack extends CGSomeDrawable {
     private void zDraw(Graphics g) {
         final Graphics graphics = g;
 
-        this.nextLeft = getFrame().x;
-        this.nextTop = getFrame().y;
+        this.nextLeft = getCGFrame().x;
+        this.nextTop = getCGFrame().y;
 
         for (int i = 0; i < this.drawables.getArray().length; i++) {
             CGDrawable object = (CGDrawable)this.drawables.getArray()[i];
-            int height = object.getFrame().height;
-            int width = object.getFrame().width;
+            int mask = object.resizingMask().getInt();
+            CGFrame frame = object.getCGFrame();
 
-            if (height == CGFrame.AUTOMATIC_DIMENSION) {
-                height = getFrame().height;
+            if ((mask & CGFrame.FLEXIBLE_WIDTH) == CGFrame.FLEXIBLE_WIDTH) {
+                frame.width = getCGFrame().width;
             }
-            if (width == CGFrame.AUTOMATIC_DIMENSION) {
-                width = getFrame().width;
+
+            if ((mask & CGFrame.FLEXIBLE_HEIGHT) == CGFrame.FLEXIBLE_HEIGHT) {
+                frame.height = getCGFrame().height;
             }
         }
 
@@ -280,30 +283,30 @@ public class CGStack extends CGSomeDrawable {
         this.drawables.forEach(new Arr.Enumerator() {
             public void onElement(Object element) {
                 CGDrawable drawable = (CGDrawable)element;
-                CGFrame frame = drawable.getFrame();
+                CGFrame frame = drawable.getCGFrame();
 
                 if (isVCenter) {
-                    frame.y = (getFrame().height - frame.height) / 2;
+                    frame.y = (getCGFrame().height - frame.height) / 2;
                 }
                 if (isTop) {
                     frame.y = 0;
                 }
                 if (isBottom) {
-                    frame.y = getFrame().height - frame.height;
+                    frame.y = getCGFrame().height - frame.height;
                 }
 
                 if (isHCenter) {
-                    frame.x = (getFrame().width - frame.width) / 2;
+                    frame.x = (getCGFrame().width - frame.width) / 2;
                 }
                 if (isLeft) {
                     frame.x = 0;
                 }
                 if (isRight) {
-                    frame.x = getFrame().width - frame.width;
+                    frame.x = getCGFrame().width - frame.width;
                 }
 
-                frame.x += drawable.getOffset().x;
-                frame.y += drawable.getOffset().y;
+                frame.x += drawable.getOffset().getCGPoint().x;
+                frame.y += drawable.getOffset().getCGPoint().y;
 
                 drawable.draw(graphics);
             }

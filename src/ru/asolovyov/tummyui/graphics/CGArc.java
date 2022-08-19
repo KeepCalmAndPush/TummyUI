@@ -8,6 +8,7 @@ package ru.asolovyov.tummyui.graphics;
 import javax.microedition.lcdui.Graphics;
 import ru.asolovyov.combime.bindings.Int;
 import ru.asolovyov.combime.common.Sink;
+import ru.asolovyov.tummyui.bindings.Point;
 
 /**
  *
@@ -40,7 +41,7 @@ public class CGArc extends CGSomeStrokable {
     public void draw(Graphics g) {
         super.draw(g);
 
-        CGFrame frame = getFrame();
+        CGFrame frame = getCGFrame();
         if (frame == null) {
             return;
         }

@@ -10,11 +10,15 @@ package ru.asolovyov.tummyui.graphics;
  * @author Администратор
  */
 public final class CGFrame {
-    // TODO сделать ресайзинг маск, а не однократно менять размеры тут
-    public final static int AUTOMATIC_DIMENSION = -1;
+    public static final int FLEXIBLE_WIDTH = 1;
+    public static final int FLEXIBLE_HEIGHT = 1 << 1;
+    public static final int FLEXIBLE_LEFT = 1 << 2;
+    public static final int FLEXIBLE_TOP = 1 << 3;
+    
+    public static final int FLEXIBLE_ALL = (1 << 4) - 1;
 
-    public static CGFrame automatic() {
-        return new CGFrame(0, 0, AUTOMATIC_DIMENSION, AUTOMATIC_DIMENSION);
+    public static CGFrame zero() {
+        return new CGFrame(0, 0, 0, 0);
     }
 
     public CGFrame(int x, int y, int width, int height) {

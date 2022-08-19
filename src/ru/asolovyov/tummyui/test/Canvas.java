@@ -78,7 +78,7 @@ public class Canvas extends UIMIDlet {
                             .readGeometry(new CGDrawable.GeometryReader() {
                                 public void read(CGDrawable self, CGFrame frame) {
                                     S.println("333333333");
-                                    self.getFrame().width = frame.width / 3;
+                                    self.getCGFrame().width = frame.width / 3;
                                 }
                              }),
                     CG.Rect()
@@ -88,7 +88,7 @@ public class Canvas extends UIMIDlet {
                             .readGeometry(new CGDrawable.GeometryReader() {
                                 public void read(CGDrawable self, CGFrame frame) {
                                     S.println("222222222");
-                                    self.getFrame().width = frame.width / 2;
+                                    self.getCGFrame().width = frame.width / 2;
                                 }
                              }),
                     CG.Rect()
@@ -97,7 +97,7 @@ public class Canvas extends UIMIDlet {
                             .readGeometry(new CGDrawable.GeometryReader() {
                                 public void read(CGDrawable self, CGFrame frame) {
                                     S.println("666666666");
-                                    self.getFrame().width = frame.width / 6;
+                                    self.getCGFrame().width = frame.width / 6;
                                 }
                              })
                 )
