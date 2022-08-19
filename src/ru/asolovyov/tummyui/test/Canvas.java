@@ -61,8 +61,19 @@ public class Canvas extends UIMIDlet {
         //TODO сюда отлично вольется геометри ридер
         return CG.Canvas(
                 CG.HStack(
-                new Int(CG.ALIGNMENT_V_CENTER | CG.ALIGNMENT_LEFT),
-
+                new Int(CG.ALIGNMENT_CENTER),
+//                    CG.Rect()
+//                            .height(132)
+//                            .resizingMask(CGFrame.FLEXIBLE_WIDTH)
+//                            .color(0xFFFFFF),
+//                    CG.Rect()
+//                            .height(88)
+//                            .resizingMask(CGFrame.FLEXIBLE_WIDTH)
+//                            .color(0x0000FF),
+//                    CG.Rect()
+//                            .height(44)
+//                            .resizingMask(CGFrame.FLEXIBLE_WIDTH)
+//                            .color(0xFF0000)
 //                new Arr(new CGDrawable[] {
 //                    CG.Rect()
 //                            .color(0xFFFFFF),
@@ -75,6 +86,7 @@ public class Canvas extends UIMIDlet {
                     CG.Rect()
                             .color(0xFFFFFF)
                             .height(48)
+                            .resizingMask(CGFrame.FLEXIBLE_ORIGIN)
                             .readGeometry(new CGDrawable.GeometryReader() {
                                 public void read(CGDrawable self, CGFrame frame) {
                                     S.println("333333333");
@@ -85,6 +97,7 @@ public class Canvas extends UIMIDlet {
                             .color(0x0000FF)
 //                            .setOffset(25, 25)
                             .height(77)
+                            .resizingMask(CGFrame.FLEXIBLE_ORIGIN)
                             .readGeometry(new CGDrawable.GeometryReader() {
                                 public void read(CGDrawable self, CGFrame frame) {
                                     S.println("222222222");
@@ -94,13 +107,14 @@ public class Canvas extends UIMIDlet {
                     CG.Rect()
                             .color(0xFF0000)
                             .height(66)
+                            .resizingMask(CGFrame.FLEXIBLE_ORIGIN)
                             .readGeometry(new CGDrawable.GeometryReader() {
                                 public void read(CGDrawable self, CGFrame frame) {
                                     S.println("666666666");
                                     self.getCGFrame().width = frame.width / 6;
                                 }
                              })
-                )
+//                )
 //                CG.Arc(30, 300)
 //                        .color(arcColor)
 //                        .setFrame(10, 10, 100, 100),
@@ -112,7 +126,7 @@ public class Canvas extends UIMIDlet {
 //                        .color(0xFF0000)
 //                        .setFrame(75, 25, 10, 10)
 //                )
-                )
+                ))
                 .color(0x00FF00);
     }
 }

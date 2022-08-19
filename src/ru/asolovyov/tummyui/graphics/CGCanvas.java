@@ -38,10 +38,11 @@ public class CGCanvas extends Canvas {
         this.content = content;
         if (content.length == 1) {
             CGFrame frame = content[0].getCGFrame();
-            if (frame.width == CGFrame.FLEXIBLE_WIDTH) {
+            int mask = content[0].resizingMask().getInt();
+            if ((mask & CGFrame.FLEXIBLE_WIDTH) == CGFrame.FLEXIBLE_WIDTH) {
                 frame.width = this.getWidth();
             }
-            if (frame.height == CGFrame.FLEXIBLE_HEIGHT) {
+            if ((mask & CGFrame.FLEXIBLE_HEIGHT) == CGFrame.FLEXIBLE_HEIGHT) {
                 frame.height = this.getHeight();
             }
             content[0].needsRelayout(frame);

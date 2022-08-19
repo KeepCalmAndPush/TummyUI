@@ -65,7 +65,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
         this.frameBinding = frame;
         this.frameBinding.sink(new Sink() {
             protected void onValue(Object value) {
-                intrinsicContentSizeBinding.setCGSize(frameBinding.getCGFrame().getSize());
+                intrinsicContentSizeBinding.setCGSize(frameBinding.getCGFrame().getCGSize());
                 needsRelayout(getCGFrame());
             }
         });

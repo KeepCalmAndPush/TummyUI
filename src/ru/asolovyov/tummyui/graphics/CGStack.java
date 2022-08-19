@@ -29,7 +29,7 @@ public class CGStack extends CGSomeDrawable {
     protected Int axis;
 
     public CGStack(Int axis, Arr drawables) {
-        this(axis, new Int(CG.ALIGNMENT_H_CENTER | CG.ALIGNMENT_V_CENTER), drawables);
+        this(axis, new Int(CG.ALIGNMENT_CENTER), drawables);
     }
 
     public CGStack(Int axis, Int alignment, Arr drawables) {
@@ -104,7 +104,9 @@ public class CGStack extends CGSomeDrawable {
         for (int i = 0; i < this.drawables.getArray().length; i++) {
             CGDrawable object = (CGDrawable)this.drawables.getArray()[i];
             int width = object.getCGFrame().width;
-            if (width != CGFrame.AUTOMATIC_DIMENSION) {
+            int mask = object.resizingMask().getInt();
+
+            if ((mask & CGFrame.FLEXIBLE_WIDTH) != CGFrame.FLEXIBLE_WIDTH) {
                 contentWidth += width;
             } else {
                 unallocatedWidthCount++;
@@ -119,11 +121,14 @@ public class CGStack extends CGSomeDrawable {
             CGDrawable object = (CGDrawable)this.drawables.getArray()[i];
             CGFrame frame = object.getCGFrame();
 
-            if (frame.height == CGFrame.AUTOMATIC_DIMENSION) {
-                frame.height = getCGFrame().height;
-            }
-            if (frame.width == CGFrame.AUTOMATIC_DIMENSION) {
+            int mask = object.resizingMask().getInt();
+
+            if ((mask & CGFrame.FLEXIBLE_WIDTH) == CGFrame.FLEXIBLE_WIDTH) {
                 frame.width = defaultWidth;
+            }
+
+            if ((mask & CGFrame.FLEXIBLE_HEIGHT) == CGFrame.FLEXIBLE_HEIGHT) {
+                frame.height = getCGFrame().height;
             }
         }
 
@@ -151,16 +156,25 @@ public class CGStack extends CGSomeDrawable {
             public void onElement(Object element) {
                 CGDrawable drawable = (CGDrawable) element;
                 CGFrame frame = drawable.getCGFrame();
-                frame.x = nextLeft;
 
-                if (isVCenter) {
-                    frame.y = (getCGFrame().height - frame.height) / 2;
+                int mask = drawable.resizingMask().getInt();
+                final boolean hasFlexibleX = (mask & CGFrame.FLEXIBLE_X) == CGFrame.FLEXIBLE_X;
+                final boolean hasFlexibleY = (mask & CGFrame.FLEXIBLE_Y) == CGFrame.FLEXIBLE_Y;
+
+                if (hasFlexibleX) {
+                    frame.x = nextLeft;
                 }
-                if (isTop) {
-                    frame.y = 0;
-                }
-                if (isBottom) {
-                    frame.y = getCGFrame().height - frame.height;
+
+                if (hasFlexibleY) {
+                    if (isVCenter) {
+                        frame.y = (getCGFrame().height - frame.height) / 2;
+                    }
+                    if (isTop) {
+                        frame.y = 0;
+                    }
+                    if (isBottom) {
+                        frame.y = getCGFrame().height - frame.height;
+                    }
                 }
 
                 frame.x += drawable.getOffset().getCGPoint().x;
@@ -182,8 +196,9 @@ public class CGStack extends CGSomeDrawable {
         int contentHeight = 0;
         for (int i = 0; i < this.drawables.getArray().length; i++) {
             CGDrawable object = (CGDrawable)this.drawables.getArray()[i];
-            int height = object.getCGFrame().height;
-            if (height != CGFrame.AUTOMATIC_DIMENSION) {
+            int mask = object.resizingMask().getInt();
+
+            if ((mask & CGFrame.FLEXIBLE_HEIGHT) != CGFrame.FLEXIBLE_HEIGHT) {
                 contentHeight += object.getCGFrame().height;
             } else {
                 unallocatedHeightCount++;
@@ -224,23 +239,32 @@ public class CGStack extends CGSomeDrawable {
         final boolean isHCenter = (alignment & CG.ALIGNMENT_H_CENTER) == CG.ALIGNMENT_H_CENTER;
         final boolean isLeft = (alignment & CG.ALIGNMENT_LEFT) == CG.ALIGNMENT_LEFT;
         final boolean isRight = (alignment & CG.ALIGNMENT_RIGHT) == CG.ALIGNMENT_RIGHT;
-        
+
         this.drawables.forEach(new Arr.Enumerator() {
             public void onElement(Object element) {
                 CGDrawable drawable = (CGDrawable)element;
                 CGFrame frame = drawable.getCGFrame();
-                frame.y = nextTop;
 
-                if (isHCenter) {
-                    frame.x = (getCGFrame().width - frame.width) / 2;
-                }
-                if (isLeft) {
-                    frame.x = 0;
-                }
-                if (isRight) {
-                    frame.x = getCGFrame().width - frame.width;
+                int mask = drawable.resizingMask().getInt();
+                final boolean hasFlexibleX = (mask & CGFrame.FLEXIBLE_X) == CGFrame.FLEXIBLE_X;
+                final boolean hasFlexibleY = (mask & CGFrame.FLEXIBLE_Y) == CGFrame.FLEXIBLE_Y;
+                
+                if (hasFlexibleX) {
+                    if (isHCenter) {
+                        frame.x = (getCGFrame().width - frame.width) / 2;
+                    }
+                    if (isLeft) {
+                        frame.x = 0;
+                    }
+                    if (isRight) {
+                        frame.x = getCGFrame().width - frame.width;
+                    }
                 }
 
+                if (hasFlexibleY) {
+                    frame.y = nextTop;
+                }
+                
                 frame.x += drawable.getOffset().getCGPoint().x;
                 frame.y += drawable.getOffset().getCGPoint().y;
                 
@@ -285,24 +309,32 @@ public class CGStack extends CGSomeDrawable {
                 CGDrawable drawable = (CGDrawable)element;
                 CGFrame frame = drawable.getCGFrame();
 
-                if (isVCenter) {
-                    frame.y = (getCGFrame().height - frame.height) / 2;
-                }
-                if (isTop) {
-                    frame.y = 0;
-                }
-                if (isBottom) {
-                    frame.y = getCGFrame().height - frame.height;
+                int mask = drawable.resizingMask().getInt();
+                final boolean hasFlexibleX = (mask & CGFrame.FLEXIBLE_X) == CGFrame.FLEXIBLE_X;
+                final boolean hasFlexibleY = (mask & CGFrame.FLEXIBLE_Y) == CGFrame.FLEXIBLE_Y;
+
+                if (hasFlexibleY) {
+                    if (isVCenter) {
+                        frame.y = (getCGFrame().height - frame.height) / 2;
+                    }
+                    if (isTop) {
+                        frame.y = 0;
+                    }
+                    if (isBottom) {
+                        frame.y = getCGFrame().height - frame.height;
+                    }
                 }
 
-                if (isHCenter) {
-                    frame.x = (getCGFrame().width - frame.width) / 2;
-                }
-                if (isLeft) {
-                    frame.x = 0;
-                }
-                if (isRight) {
-                    frame.x = getCGFrame().width - frame.width;
+                if (hasFlexibleX) {
+                    if (isHCenter) {
+                        frame.x = (getCGFrame().width - frame.width) / 2;
+                    }
+                    if (isLeft) {
+                        frame.x = 0;
+                    }
+                    if (isRight) {
+                        frame.x = getCGFrame().width - frame.width;
+                    }
                 }
 
                 frame.x += drawable.getOffset().getCGPoint().x;
