@@ -6,18 +6,13 @@
 package ru.asolovyov.tummyui.test;
 
 import javax.microedition.lcdui.Displayable;
-import ru.asolovyov.combime.bindings.Arr;
 import ru.asolovyov.combime.bindings.Bool;
 import ru.asolovyov.combime.bindings.Int;
-import ru.asolovyov.combime.common.S;
 import ru.asolovyov.threading.Clock;
 import ru.asolovyov.tummyui.forms.UIMIDlet;
 import ru.asolovyov.tummyui.graphics.CG;
-import ru.asolovyov.tummyui.graphics.CGArc;
 import ru.asolovyov.tummyui.graphics.CGDrawable;
-import ru.asolovyov.tummyui.graphics.CGFrame;
-import ru.asolovyov.tummyui.graphics.CGGeometryReader;
-import ru.asolovyov.tummyui.graphics.CGStack;
+import ru.asolovyov.tummyui.graphics.CGText;
 
 /**
  *
@@ -58,10 +53,37 @@ public class Canvas extends UIMIDlet {
     }
     
     protected Displayable content() {
-        //TODO сюда отлично вольется геометри ридер
+        // TODO управление памятью,
+        // TODO отписка от подписок,
+        // TODO синканье сабжекты
+        // TODO Не заменять новыми сабжектами, а синкать в текущие
         return CG.Canvas(
-                CG.HStack(
+                CG.VStack(
                 new Int(CG.ALIGNMENT_CENTER),
+                
+                CG.Text("Hello")
+                .handleKeyboard(new CGDrawable.KeyboardHandler() {
+                    public void keyPressed(CGDrawable self, int keyCode) {
+                        ((CGText)self).text("PRESSED: " + keyCode);
+                    }
+                })
+                .color(0xFF0000),
+                        
+                CG.Text("Ololo")
+                .handleKeyboard(new CGDrawable.KeyboardHandler() {
+                    public void keyReleased(CGDrawable self, int keyCode) {
+                        ((CGText)self).text("RELEASED: " + keyCode);
+                    }
+                })
+                .color(0x00FF00),
+
+                CG.Text("Trololo")
+                .handleKeyboard(new CGDrawable.KeyboardHandler() {
+                    public void keyRepeated(CGDrawable self, int keyCode) {
+                        ((CGText)self).text("REPEATED: " + keyCode);
+                    }
+                })
+                .color(0x0000FF)
 //                    CG.Rect()
 //                            .height(132)
 //                            .resizingMask(CGFrame.FLEXIBLE_WIDTH)
@@ -83,37 +105,37 @@ public class Canvas extends UIMIDlet {
 //                            .color(0xFF0000),
 //                })
 
-                    CG.Rect()
-                            .color(0xFFFFFF)
-                            .height(48)
-                            .resizingMask(CGFrame.FLEXIBLE_ORIGIN)
-                            .readGeometry(new CGDrawable.GeometryReader() {
-                                public void read(CGDrawable self, CGFrame frame) {
-                                    S.println("333333333");
-                                    self.getCGFrame().width = frame.width / 3;
-                                }
-                             }),
-                    CG.Rect()
-                            .color(0x0000FF)
-//                            .setOffset(25, 25)
-                            .height(77)
-                            .resizingMask(CGFrame.FLEXIBLE_ORIGIN)
-                            .readGeometry(new CGDrawable.GeometryReader() {
-                                public void read(CGDrawable self, CGFrame frame) {
-                                    S.println("222222222");
-                                    self.getCGFrame().width = frame.width / 2;
-                                }
-                             }),
-                    CG.Rect()
-                            .color(0xFF0000)
-                            .height(66)
-                            .resizingMask(CGFrame.FLEXIBLE_ORIGIN)
-                            .readGeometry(new CGDrawable.GeometryReader() {
-                                public void read(CGDrawable self, CGFrame frame) {
-                                    S.println("666666666");
-                                    self.getCGFrame().width = frame.width / 6;
-                                }
-                             })
+//                    CG.Rect()
+//                            .color(0xFFFFFF)
+//                            .height(48)
+//                            .resizingMask(CGFrame.FLEXIBLE_ORIGIN)
+//                            .readGeometry(new CGDrawable.GeometryReader() {
+//                                public void read(CGDrawable self, CGFrame frame) {
+//                                    S.println("333333333");
+//                                    self.getCGFrame().width = frame.width / 3;
+//                                }
+//                             }),
+//                    CG.Rect()
+//                            .color(0x0000FF)
+////                            .setOffset(25, 25)
+//                            .height(77)
+//                            .resizingMask(CGFrame.FLEXIBLE_ORIGIN)
+//                            .readGeometry(new CGDrawable.GeometryReader() {
+//                                public void read(CGDrawable self, CGFrame frame) {
+//                                    S.println("222222222");
+//                                    self.getCGFrame().width = frame.width / 2;
+//                                }
+//                             }),
+//                    CG.Rect()
+//                            .color(0xFF0000)
+//                            .height(66)
+//                            .resizingMask(CGFrame.FLEXIBLE_ORIGIN)
+//                            .readGeometry(new CGDrawable.GeometryReader() {
+//                                public void read(CGDrawable self, CGFrame frame) {
+//                                    S.println("666666666");
+//                                    self.getCGFrame().width = frame.width / 6;
+//                                }
+//                             })
 //                )
 //                CG.Arc(30, 300)
 //                        .color(arcColor)
@@ -127,6 +149,6 @@ public class Canvas extends UIMIDlet {
 //                        .setFrame(75, 25, 10, 10)
 //                )
                 ))
-                .color(0x00FF00);
+                .color(0x00AABB);
     }
 }

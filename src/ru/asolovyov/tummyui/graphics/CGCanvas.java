@@ -10,6 +10,7 @@ import javax.microedition.lcdui.Graphics;
 import ru.asolovyov.combime.bindings.Bool;
 import ru.asolovyov.combime.bindings.Int;
 import ru.asolovyov.combime.common.Sink;
+import ru.asolovyov.combime.operators.sequence.Drop;
 import ru.asolovyov.combime.operators.timing.Debounce;
 
 /**
@@ -25,9 +26,9 @@ public class CGCanvas extends Canvas {
         return needsRepaint;
     }
 
-    private Int keyPressed = new Int(-1);
-    private Int keyReleased = new Int(-1);
-    private Int keyRepeated = new Int(-1);
+    private Int keyPressed = (Int) new Int(null).to(new Drop(1));
+    private Int keyReleased = (Int) new Int(null).to(new Drop(1));
+    private Int keyRepeated = (Int) new Int(null).to(new Drop(1));
 
     public CGCanvas(CGDrawable content) {
         this(new CGDrawable[] { content });
@@ -88,6 +89,33 @@ public class CGCanvas extends Canvas {
             }
         });
         return this;
+    }
+
+    protected void keyPressed(int keyCode) {
+        super.keyPressed(keyCode);
+        this.getKeyPressed().setInt(keyCode);
+    }
+
+    protected void keyReleased(int keyCode) {
+        super.keyReleased(keyCode);
+        this.getKeyReleased().setInt(keyCode);
+    }
+
+    protected void keyRepeated(int keyCode) {
+        super.keyRepeated(keyCode);
+        this.getKeyRepeated().setInt(keyCode);
+    }
+    
+    public Int getKeyPressed() {
+        return keyPressed;
+    }
+
+    public Int getKeyReleased() {
+        return keyReleased;
+    }
+
+    public Int getKeyRepeated() {
+        return keyRepeated;
     }
 }
 

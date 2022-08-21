@@ -344,4 +344,15 @@ public class CGStack extends CGSomeDrawable {
             }
         });
     }
+
+    public CGDrawable setCanvas(CGCanvas canvas) {
+        super.setCanvas(canvas);
+        this.drawables.forEach(new Arr.Enumerator() {
+            public void onElement(Object element) {
+                CGDrawable drawable = (CGDrawable)element;
+                drawable.setCanvas(CGStack.this.getCanvas());
+            }
+        });
+        return this;
+    }
 }

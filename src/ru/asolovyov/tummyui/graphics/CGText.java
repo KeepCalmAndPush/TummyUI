@@ -17,11 +17,11 @@ import ru.asolovyov.combime.common.Sink;
  * @author Администратор
  */
 public class CGText extends CGSomeDrawable implements CGFontSupporting {
-    private Str text;
-    private Obj font;
-    private Int anchor;
+    private Str text = new Str("");
+    private Obj font = new Obj(Font.getDefaultFont());
+    private Int anchor = new Int(Graphics.LEFT | Graphics.TOP);
 
-    CGText(Str text) {
+    public CGText(Str text) {
         super();
         this.text = text;
         this.text.sink(new Sink() {
@@ -32,23 +32,28 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
     }
 
     public CGText text(Str text) {
-        this.text = text;
-        this.text.sink(new Sink() {
+        text.sink(new Sink() {
             protected void onValue(Object value) {
-                needsRelayout(getCGFrame());
+                CGText.this.text.sendValue(value);
             }
         });
         return this;
     }
 
     public CGText text(String text) {
-        return this.text(new Str(text));
+        this.text.setString(text);
+        return this;
     }
 
     public CGText anchor(int anchor) {
         return this.anchor(new Int(anchor));
     }
 
+    /**
+     * anchor point must be one of the horizontal constants
+     * (LEFT, HCENTER, RIGHT) combined with one of the vertical constants
+     * (TOP, BASELINE, BOTTOM)
+     */
     public CGText anchor(Int anchor) {
         this.anchor = anchor;
         this.anchor.sink(new Sink() {
@@ -60,11 +65,7 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
     }
 
     private int getAnchor() {
-        if (this.anchor != null) {
-            return this.anchor.getInt();
-        }
-
-        return Graphics.HCENTER;
+        return this.anchor.getInt();
     }
 
     public Str text() {
@@ -93,9 +94,6 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
     }
 
     private Font getFont() {
-        if (this.font != null) {
-            return (Font)this.font.getObject();
-        }
-        return null;
+        return (Font)this.font.getObject();
     }
 }

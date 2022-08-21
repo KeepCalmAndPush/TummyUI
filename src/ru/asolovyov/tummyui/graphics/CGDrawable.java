@@ -22,6 +22,12 @@ public interface CGDrawable {
         public abstract void read(CGDrawable self, CGFrame frame);
     }
 
+    public static class KeyboardHandler {
+        public void keyPressed(CGDrawable self, int keyCode) { }
+        public void keyReleased(CGDrawable self, int keyCode) { }
+        public void keyRepeated(CGDrawable self, int keyCode) { }
+    }
+
     public void draw(Graphics g);
 
     public void needsRedraw();
@@ -29,6 +35,9 @@ public interface CGDrawable {
 
     public CGDrawable readGeometry(GeometryReader reader);
     public GeometryReader getGeometryReader();
+
+    public CGDrawable handleKeyboard(KeyboardHandler handler);
+    public KeyboardHandler getKeyboardHandler();
 
     public CGCanvas getCanvas();
     public CGDrawable setCanvas(CGCanvas canvas);

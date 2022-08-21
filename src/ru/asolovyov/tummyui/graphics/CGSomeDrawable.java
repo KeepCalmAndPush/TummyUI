@@ -77,7 +77,6 @@ public abstract class CGSomeDrawable implements CGDrawable {
         return this;
     }
 
-
     public void needsRedraw() {
         this.needsRelayout(this.getCGFrame());
     }
@@ -199,8 +198,8 @@ public abstract class CGSomeDrawable implements CGDrawable {
 
     public CGDrawable setCanvas(CGCanvas canvas) {
         this.canvas = canvas;
+        this.startHandlingKeyboard();
         canvas.needsRepaint().setBool(true);
-
         return this;
     }
     
@@ -224,5 +223,46 @@ public abstract class CGSomeDrawable implements CGDrawable {
     
     public GeometryReader getGeometryReader() {
         return geometryReader;
+    }
+
+    private KeyboardHandler keyboardHandler;
+    public CGDrawable handleKeyboard(KeyboardHandler handler) {
+        this.keyboardHandler = handler;
+        this.startHandlingKeyboard();
+        return this;
+    }
+    
+    public KeyboardHandler getKeyboardHandler() {
+        return this.keyboardHandler;
+    }
+
+    private void startHandlingKeyboard() {
+        if (this.keyboardHandler == null || this.canvas == null) {
+            return;
+        }
+        
+        this.canvas.getKeyPressed().sink(new Sink() {
+            protected void onValue(Object value) {
+                keyboardHandler.keyPressed(
+                        CGSomeDrawable.this,
+                        CGSomeDrawable.this.canvas.getKeyPressed().getInt());
+            }
+        });
+
+        this.canvas.getKeyReleased().sink(new Sink() {
+            protected void onValue(Object value) {
+                keyboardHandler.keyReleased(
+                        CGSomeDrawable.this,
+                        CGSomeDrawable.this.canvas.getKeyReleased().getInt());
+            }
+        });
+
+        this.canvas.getKeyRepeated().sink(new Sink() {
+            protected void onValue(Object value) {
+                keyboardHandler.keyRepeated(
+                        CGSomeDrawable.this,
+                        CGSomeDrawable.this.canvas.getKeyRepeated().getInt());
+            }
+        });
     }
 }
