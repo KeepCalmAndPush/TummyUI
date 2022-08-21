@@ -20,7 +20,7 @@ import ru.asolovyov.combime.operators.timing.Debounce;
 
 public class CGCanvas extends Canvas {
     private CGDrawable[] content;
-    private Int color;
+    private Int backgroundColor;
     private Bool needsRepaint = new Bool(false);
     protected Bool needsRepaint() {
         return needsRepaint;
@@ -52,7 +52,7 @@ public class CGCanvas extends Canvas {
             CGDrawable drawable = content[i];
             drawable.setCanvas(this);
         }
-        this.color(0);
+        this.backgroundColor(0);
         this.needsRepaint.to(new Debounce(33)).sink(new Sink() {
             protected void onValue(Object value) {
                 repaint();
@@ -69,7 +69,7 @@ public class CGCanvas extends Canvas {
     }
 
     protected void paint(Graphics g) {
-        g.setColor(this.color.getInt());
+        g.setColor(this.backgroundColor.getInt());
         g.fillRect(0, 0, this.getWidth(), this.getHeight());
         for (int i = 0; i < this.content.length; i++) {
             CGDrawable drawable = content[i];
@@ -77,13 +77,13 @@ public class CGCanvas extends Canvas {
         }
     }
 
-    public CGCanvas color(int colorHex) {
-        return this.color(new Int(colorHex));
+    public CGCanvas backgroundColor(int colorHex) {
+        return this.backgroundColor(new Int(colorHex));
     }
 
-    public CGCanvas color(Int colorHex) {
-        this.color = colorHex;
-        this.color.sink(new Sink() {
+    public CGCanvas backgroundColor(Int backgroundColorHex) {
+        this.backgroundColor = backgroundColorHex;
+        this.backgroundColor.sink(new Sink() {
             protected void onValue(Object value) {
                 repaint();
             }

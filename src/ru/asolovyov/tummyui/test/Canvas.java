@@ -67,7 +67,7 @@ public class Canvas extends UIMIDlet {
                         ((CGText)self).text("PRESSED: " + keyCode);
                     }
                 })
-                .color(0xFF0000),
+                .backgroundColor(0xFF0000),
                         
                 CG.Text("Ololo")
                 .handleKeyboard(new CGDrawable.KeyboardHandler() {
@@ -75,7 +75,7 @@ public class Canvas extends UIMIDlet {
                         ((CGText)self).text("RELEASED: " + keyCode);
                     }
                 })
-                .color(0x00FF00),
+                .backgroundColor(0x00FF00),
 
                 CG.Text("Trololo")
                 .handleKeyboard(new CGDrawable.KeyboardHandler() {
@@ -83,7 +83,7 @@ public class Canvas extends UIMIDlet {
                         ((CGText)self).text("REPEATED: " + keyCode);
                     }
                 })
-                .color(0x0000FF)
+                .backgroundColor(0x0000FF)
 //                    CG.Rect()
 //                            .height(132)
 //                            .resizingMask(CGFrame.FLEXIBLE_WIDTH)
@@ -149,6 +149,6 @@ public class Canvas extends UIMIDlet {
 //                        .setFrame(75, 25, 10, 10)
 //                )
                 ))
-                .color(0x00AABB);
+                .backgroundColor(0x00AABB);
     }
 }

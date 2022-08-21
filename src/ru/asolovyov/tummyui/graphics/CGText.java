@@ -11,6 +11,7 @@ import ru.asolovyov.combime.bindings.Int;
 import ru.asolovyov.combime.bindings.Obj;
 import ru.asolovyov.combime.bindings.Str;
 import ru.asolovyov.combime.common.Sink;
+import ru.asolovyov.tummyui.bindings.Point;
 
 /**
  *
@@ -31,12 +32,9 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
         });
     }
 
+    // TODO бэграунд колор для текстовых полей
     public CGText text(Str text) {
-        text.sink(new Sink() {
-            protected void onValue(Object value) {
-                CGText.this.text.sendValue(value);
-            }
-        });
+        text.route(this.text);
         return this;
     }
 
@@ -55,12 +53,7 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
      * (TOP, BASELINE, BOTTOM)
      */
     public CGText anchor(Int anchor) {
-        this.anchor = anchor;
-        this.anchor.sink(new Sink() {
-            protected void onValue(Object value) {
-                needsRedraw();
-            }
-        });
+        anchor.route(this.anchor);
         return this;
     }
 
@@ -84,12 +77,7 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
     }
 
     public CGFontSupporting font(Obj font) {
-        this.font = font;
-        this.font.sink(new Sink() {
-            protected void onValue(Object value) {
-                needsRedraw();
-            }
-        });
+        font.route(this.font);
         return this;
     }
 

@@ -31,10 +31,13 @@ public abstract class CGSomeDrawable implements CGDrawable {
     protected Int heightBinding = new Int(0);
     protected Int resizingMaskBinding = new Int(CGFrame.FLEXIBLE_ALL);
 
-    protected Int color = new Int(0xFFFFFF);
+    protected Int backgroundColor = new Int(0xFFFFFF);
     protected Bool isVisible = new Bool(true);
 
     protected Point offsetBinding = new Point(CGPoint.zero());
+    protected Point contentOffsetBinding = new Point(CGPoint.zero());
+    protected Point contentInsetBinding = new Point(CGPoint.zero());
+    
     protected Size intrinsicContentSizeBinding = new Size(CGSize.zero());
 
     private CGCanvas canvas;
@@ -43,17 +46,17 @@ public abstract class CGSomeDrawable implements CGDrawable {
         g.setColor(this.getColor());
     }
 
-    public CGDrawable color(int colorHex) {
-        return this.color(new Int(colorHex));
+    public CGDrawable backgroundColor(int colorHex) {
+        return this.backgroundColor(new Int(colorHex));
     }
 
     public CGDrawable setFrame(int x, int y, int width, int height) {
         return this.setFrame(new Frame(new CGFrame(x, y, width, height)));
     }
 
-    public CGDrawable color(Int colorHex) {
-        this.color = colorHex;
-        this.color.sink(new Sink() {
+    public CGDrawable backgroundColor(Int backgroundColorHex) {
+        this.backgroundColor = backgroundColorHex;
+        this.backgroundColor.sink(new Sink() {
             protected void onValue(Object value) {
                 needsRedraw();
             }
@@ -96,10 +99,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     protected int getColor() {
-        if (color != null) {
-           return color.getInt();
-        }
-        return 0x00000000;
+        return backgroundColor.getInt();
     }
 
     public CGDrawable setOffset(Point offset) {
@@ -112,16 +112,6 @@ public abstract class CGSomeDrawable implements CGDrawable {
         return this;
     }
     
-    public CGDrawable setOffset(int x, int y) {
-        this.offsetBinding.setCGPoint(new CGPoint(x, y));
-        return this;
-    }
-
-    public Point getOffset() {
-        //TODO сделать специфические ЮИ биндинги - для сайза, фрейма итп
-        return this.offsetBinding;
-    }
-
     public CGDrawable width(Int width) {
         this.widthBinding = width;
         this.widthBinding.sink(new Sink() {
@@ -265,4 +255,42 @@ public abstract class CGSomeDrawable implements CGDrawable {
             }
         });
     }
+
+    public CGDrawable setOffset(int x, int y) {
+        this.offsetBinding.setCGPoint(new CGPoint(x, y));
+        return this;
+    }
+
+    public Point getOffset() {
+        return this.offsetBinding;
+    }
+
+    public CGDrawable setContentOffset(Point offset) {
+        offset.route(this.contentOffsetBinding);
+        return this;
+    }
+
+    public CGDrawable setContentOffset(int x, int y) {
+        this.contentOffsetBinding.setCGPoint(new CGPoint(x, y));
+        return this;
+    }
+
+    public CGDrawable setContentInset(Point inset) {
+        inset.route(this.contentInsetBinding);
+        return this;
+    }
+
+    public CGDrawable setContentInset(int x, int y) {
+        this.contentInsetBinding.setCGPoint(new CGPoint(x, y));
+        return this;
+    }
+
+    public Point getContentOffset() {
+        return this.contentOffsetBinding;
+    }
+
+    public Point getContentInset() {
+        return this.contentInsetBinding;
+    }
+
 }
