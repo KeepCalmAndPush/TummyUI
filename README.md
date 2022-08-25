@@ -3,8 +3,4 @@ Declarative UI framework for Java ME powered phones. Inspired by Apple's SwiftUI
 
 Due to limitations of the MIDP 1.0 is split into two parts: UI-part, to build forms with standard components only, and CG-part, providing custom drawing capabilities and inplementing your own controls. Layout in CG is done via stacks: HStack, VStack, ZStack. Also you may specify raw frames if you feel like to.
 
-
-
-![лллл](https://user-images.githubusercontent.com/13520824/186642927-be51c67d-8e9b-4d9d-a244-0e1fe15e62bb.png)
-
 ![22123123123](https://user-images.githubusercontent.com/13520824/186643006-10f1084d-e90d-49e6-a34b-7cf41b3f83e2.png)
