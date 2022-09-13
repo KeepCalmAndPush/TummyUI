@@ -9,6 +9,7 @@ import javax.microedition.lcdui.Graphics;
 import ru.asolovyov.combime.bindings.Bool;
 import ru.asolovyov.combime.bindings.Int;
 import ru.asolovyov.tummyui.bindings.Frame;
+import ru.asolovyov.tummyui.bindings.Insets;
 import ru.asolovyov.tummyui.bindings.Point;
 import ru.asolovyov.tummyui.bindings.Size;
 
@@ -55,8 +56,8 @@ public interface CGDrawable {
     public CGDrawable setContentOffset(Point offset);
     public CGDrawable setContentOffset(int x, int y);
 
-    public CGDrawable setContentInset(Point offset);
-    public CGDrawable setContentInset(int x, int y);
+    public CGDrawable setContentInset(Insets inset);
+    public CGDrawable setContentInset(int top, int left, int bottom, int right);
 
     public CGDrawable width(Int width);
     public CGDrawable width(int width);
@@ -74,7 +75,7 @@ public interface CGDrawable {
     public Frame getFrame();
     public Point getOffset();
     public Point getContentOffset();
-    public Point getContentInset();
+    public Insets getContentInset();
     public Int resizingMask();
     public Size intrinsicContentSize();
 

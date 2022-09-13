@@ -55,7 +55,7 @@ public class Canvas extends UIMIDlet {
     protected Displayable content() {
         // TODO управление памятью,
         // TODO отписка от подписок,
-        // TODO синканье сабжекты
+        // TODO синканье сабжектов
         // TODO Не заменять новыми сабжектами, а синкать в текущие
         return CG.Canvas(
                 CG.VStack(
@@ -67,6 +67,7 @@ public class Canvas extends UIMIDlet {
                         ((CGText)self).text("PRESSED: " + keyCode);
                     }
                 })
+                .height(80).width(200)
                 .backgroundColor(0xFF0000),
                         
                 CG.Text("Ololo")
@@ -75,6 +76,7 @@ public class Canvas extends UIMIDlet {
                         ((CGText)self).text("RELEASED: " + keyCode);
                     }
                 })
+                .height(80).width(200)
                 .backgroundColor(0x00FF00),
 
                 CG.Text("Trololo")
@@ -83,6 +85,7 @@ public class Canvas extends UIMIDlet {
                         ((CGText)self).text("REPEATED: " + keyCode);
                     }
                 })
+                .height(80).width(200)
                 .backgroundColor(0x0000FF)
 //                    CG.Rect()
 //                            .height(132)

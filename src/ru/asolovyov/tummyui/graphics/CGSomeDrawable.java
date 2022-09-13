@@ -10,6 +10,7 @@ import ru.asolovyov.combime.bindings.Bool;
 import ru.asolovyov.combime.bindings.Int;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.tummyui.bindings.Frame;
+import ru.asolovyov.tummyui.bindings.Insets;
 import ru.asolovyov.tummyui.bindings.Point;
 import ru.asolovyov.tummyui.bindings.Size;
 
@@ -36,7 +37,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
 
     protected Point offsetBinding = new Point(CGPoint.zero());
     protected Point contentOffsetBinding = new Point(CGPoint.zero());
-    protected Point contentInsetBinding = new Point(CGPoint.zero());
+    protected Insets contentInsetBinding = new Insets(CGInsets.zero());
     
     protected Size intrinsicContentSizeBinding = new Size(CGSize.zero());
 
@@ -275,13 +276,13 @@ public abstract class CGSomeDrawable implements CGDrawable {
         return this;
     }
 
-    public CGDrawable setContentInset(Point inset) {
+    public CGDrawable setContentInset(Insets inset) {
         inset.route(this.contentInsetBinding);
         return this;
     }
 
-    public CGDrawable setContentInset(int x, int y) {
-        this.contentInsetBinding.setCGPoint(new CGPoint(x, y));
+    public CGDrawable setContentInset(int top, int left, int bottom, int right) {
+        this.contentInsetBinding.setCGInsets(new CGInsets(top, left, bottom, right));
         return this;
     }
 
@@ -289,8 +290,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
         return this.contentOffsetBinding;
     }
 
-    public Point getContentInset() {
+    public Insets getContentInset() {
         return this.contentInsetBinding;
     }
-
 }

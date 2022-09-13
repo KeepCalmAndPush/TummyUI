@@ -11,7 +11,6 @@ import ru.asolovyov.combime.bindings.Int;
 import ru.asolovyov.combime.bindings.Obj;
 import ru.asolovyov.combime.bindings.Str;
 import ru.asolovyov.combime.common.Sink;
-import ru.asolovyov.tummyui.bindings.Point;
 
 /**
  *
