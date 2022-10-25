@@ -20,6 +20,7 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
     private Str text = new Str("");
     private Obj font = new Obj(Font.getDefaultFont());
     private Int anchor = new Int(Graphics.LEFT | Graphics.TOP);
+    private Int textColor = new Int(0x000000);
 
     public CGText(Str text) {
         super();
@@ -27,6 +28,12 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
         this.text.sink(new Sink() {
             protected void onValue(Object value) {
                 needsRelayout(getCGFrame());
+            }
+        });
+
+        this.textColor.sink(new Sink() {
+            protected void onValue(Object value) {
+                needsRedraw();
             }
         });
     }
@@ -68,6 +75,7 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
         super.draw(g);
         g.setFont(getFont());
         CGFrame frame = getCGFrame();
+        g.setColor(this.textColor.getInt());
         g.drawString(text.getString(), frame.x, frame.y, this.getAnchor());
     }
 
@@ -82,5 +90,20 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
 
     private Font getFont() {
         return (Font)this.font.getObject();
+    }
+
+    public CGFontSupporting textColor(int textColorHex) {
+        this.textColor.setInt(textColorHex);
+        return this;
+    }
+
+    public CGFontSupporting textColor(Int textColorHex) {
+        this.textColor = textColorHex;
+        this.textColor.sink(new Sink() {
+            protected void onValue(Object value) {
+                needsRedraw();
+            }
+        });
+        return this;
     }
 }

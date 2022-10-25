@@ -12,6 +12,8 @@ import ru.asolovyov.threading.Clock;
 import ru.asolovyov.tummyui.forms.UIMIDlet;
 import ru.asolovyov.tummyui.graphics.CG;
 import ru.asolovyov.tummyui.graphics.CGDrawable;
+import ru.asolovyov.tummyui.graphics.CGFrame;
+import ru.asolovyov.tummyui.graphics.CGSize;
 import ru.asolovyov.tummyui.graphics.CGText;
 
 /**
@@ -51,16 +53,37 @@ public class Canvas extends UIMIDlet {
             }
         });
     }
+
+    // TODO Сделать чтобы все вьюхи двигали контент внутри себя: то есть уважали контент инсеты
     
     protected Displayable content() {
         // TODO управление памятью,
         // TODO отписка от подписок,
         // TODO синканье сабжектов
-        // TODO Не заменять новыми сабжектами, а синкать в текущие
+        // НЕТ ЭТО ХЕРОВАЯ ИДЕЯ TODO Не заменять новыми сабжектами, а синкать в текущие
         return CG.Canvas(
-                CG.VStack(
+                CG.HStack(
                 new Int(CG.ALIGNMENT_CENTER),
-                
+                CG.Text("TEXT")
+                .textColor(0xFF0000)
+                .backgroundColor(0x00FF00)
+                .strokeColor(0x0000FF)
+                .cornerRaduis(new CGSize(20, 20))
+                .height(88).width(100)
+//                    CG.Rect()
+//                            .height(230).width(30)
+//                            .resizingMask(CGFrame.FLEXIBLE_WIDTH)
+//                            .backgroundColor(0xFFFFFF),
+//                    CG.Rect()
+//                             .height(130).width(30)
+//                            .resizingMask(CGFrame.FLEXIBLE_WIDTH)
+//                            .backgroundColor(0x0000FF),
+//                    CG.Rect()
+//                             .height(30).width(30)
+//                            .resizingMask(CGFrame.FLEXIBLE_WIDTH)
+//                            .backgroundColor(0xFF0000)
+
+                /*  Вертикальный скроллящийся стэк
                 CG.Text("Hello")
                 .handleKeyboard(new CGDrawable.KeyboardHandler() {
                     public void keyPressed(CGDrawable self, int keyCode) {
@@ -87,6 +110,8 @@ public class Canvas extends UIMIDlet {
                 })
                 .height(80).width(200)
                 .backgroundColor(0x0000FF)
+
+                        */
 //                    CG.Rect()
 //                            .height(132)
 //                            .resizingMask(CGFrame.FLEXIBLE_WIDTH)
@@ -152,6 +177,6 @@ public class Canvas extends UIMIDlet {
 //                        .setFrame(75, 25, 10, 10)
 //                )
                 ))
-                .backgroundColor(0x00AABB);
+                .backgroundColor(0xFF69B4);
     }
 }

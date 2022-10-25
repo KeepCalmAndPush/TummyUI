@@ -6,9 +6,11 @@
 package ru.asolovyov.tummyui.graphics;
 
 import javax.microedition.lcdui.Graphics;
+import ru.asolovyov.combime.api.IPublisher;
 import ru.asolovyov.combime.bindings.Bool;
 import ru.asolovyov.combime.bindings.Int;
 import ru.asolovyov.combime.common.Sink;
+import ru.asolovyov.combime.publishers.Publisher;
 import ru.asolovyov.tummyui.bindings.Frame;
 import ru.asolovyov.tummyui.bindings.Insets;
 import ru.asolovyov.tummyui.bindings.Point;
@@ -19,32 +21,74 @@ import ru.asolovyov.tummyui.bindings.Size;
  * @author Администратор
  */
 public abstract class CGSomeDrawable implements CGDrawable {
-    
-
     public CGSomeDrawable() {
+//        Publisher.combineLatest(new IPublisher[] {
+//            frameBinding, widthBinding, heightBinding,
+//            resizingMaskBinding, backgroundColor, strokeColor,
+//            isVisible, offsetBinding, contentOffsetBinding,
+//            contentInsetBinding, cornerRadiusBinding, intrinsicContentSizeBinding
+//        }).sink(new Sink() {
+//
+//            protected void onValue(Object value) {
+//                needsRedraw();
+//            }
+//
+//        });
     }
-    // TODO сделать один фрейм общим, и при присваивании нового просто сливать в старый новые значения
-    // старый фрейм все слушают
-    // то же и с остальными
+
     protected Frame frameBinding = new Frame(CGFrame.zero());
     
     protected Int widthBinding = new Int(0);
     protected Int heightBinding = new Int(0);
     protected Int resizingMaskBinding = new Int(CGFrame.FLEXIBLE_ALL);
 
-    protected Int backgroundColor = new Int(0xFFFFFF);
+    protected Int backgroundColor = new Int(-1);
+    protected Int strokeColor = new Int(-1);
+    protected Int strokeStyle;
     protected Bool isVisible = new Bool(true);
 
     protected Point offsetBinding = new Point(CGPoint.zero());
     protected Point contentOffsetBinding = new Point(CGPoint.zero());
     protected Insets contentInsetBinding = new Insets(CGInsets.zero());
+    protected Size cornerRadiusBinding = new Size(CGSize.zero());
     
     protected Size intrinsicContentSizeBinding = new Size(CGSize.zero());
 
     private CGCanvas canvas;
 
     public void draw(Graphics g) {
-        g.setColor(this.getColor());
+        CGFrame frame = getCGFrame();
+        if (frame == null) {
+            return;
+        }
+
+        int backgroundColor = this.getBackgroundColor();
+        if (backgroundColor != -1) {
+            g.setColor(backgroundColor);
+            g.fillRoundRect(
+                frame.x,
+                frame.y,
+                frame.width,
+                frame.height,
+                getCornerRadius().width,
+                getCornerRadius().height
+                );
+        }
+
+        int strokeColor = this.getStrokeColor();
+        if (strokeColor != -1) {
+            g.setStrokeStyle(this.getStrokeStyle());
+            g.setColor(strokeColor);
+
+            g.drawRoundRect(
+                frame.x,
+                frame.y,
+                frame.width,
+                frame.height,
+                getCornerRadius().width,
+                getCornerRadius().height
+                );
+        }
     }
 
     public CGDrawable backgroundColor(int colorHex) {
@@ -99,8 +143,12 @@ public abstract class CGSomeDrawable implements CGDrawable {
         return this.frameBinding.getCGFrame();
     }
 
-    protected int getColor() {
+    protected int getBackgroundColor() {
         return backgroundColor.getInt();
+    }
+
+    protected int getStrokeColor() {
+        return strokeColor.getInt();
     }
 
     public CGDrawable setOffset(Point offset) {
@@ -292,5 +340,61 @@ public abstract class CGSomeDrawable implements CGDrawable {
 
     public Insets getContentInset() {
         return this.contentInsetBinding;
+    }
+
+    public CGDrawable stroke(int strokeStyle) {
+        return this.stroke(new Int(strokeStyle));
+    }
+
+    public CGDrawable stroke(Int strokeStyle) {
+        this.strokeStyle = strokeStyle;
+        this.strokeStyle.sink(new Sink() {
+            protected void onValue(Object value) {
+                needsRedraw();
+            }
+        });
+        return this;
+    }
+    
+    protected int getStrokeStyle() {
+        if (strokeStyle != null) {
+           return strokeStyle.getInt();
+        }
+        return Graphics.SOLID;
+    }
+
+    public CGDrawable cornerRaduis(CGSize cornerRadius) {
+        return this.cornerRaduis(new Size(cornerRadius));
+    }
+
+    public CGDrawable cornerRaduis(Size cornerRadiusBinding) {
+        this.cornerRadiusBinding = cornerRadiusBinding;
+        this.cornerRadiusBinding.sink(new Sink() {
+            protected void onValue(Object value) {
+                needsRedraw();
+            }
+        });
+        return this;
+    }
+
+    public CGSize getCornerRadius() {
+        if (this.cornerRadiusBinding != null) {
+            return this.cornerRadiusBinding.getCGSize();
+        }
+        return CGSize.zero();
+    }
+
+    public CGDrawable strokeColor(int strokeColorHex) {
+        return this.strokeColor(new Int(strokeColorHex));
+    }
+
+    public CGDrawable strokeColor(Int strokeColorHex) {
+        this.strokeColor = strokeColorHex;
+        this.strokeColor.sink(new Sink() {
+            protected void onValue(Object value) {
+                needsRedraw();
+            }
+        });
+        return this;
     }
 }

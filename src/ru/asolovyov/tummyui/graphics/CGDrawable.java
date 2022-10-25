@@ -30,6 +30,9 @@ public interface CGDrawable {
 
     public void draw(Graphics g);
 
+    public CGDrawable stroke(int strokeStyle);
+    public CGDrawable stroke(Int strokeStyle);
+
     public void needsRedraw();
     public void needsRelayout(CGFrame frame);
 
@@ -46,6 +49,9 @@ public interface CGDrawable {
 
     public CGDrawable backgroundColor(int backgroundColorHex);
     public CGDrawable backgroundColor(Int backgroundColorHex);
+    
+    public CGDrawable strokeColor(int strokeColorHex);
+    public CGDrawable strokeColor(Int strokeColorHex);
 
     public CGDrawable setFrame(Frame frame);
     public CGDrawable setFrame(int x, int y, int width, int height);
@@ -58,6 +64,9 @@ public interface CGDrawable {
 
     public CGDrawable setContentInset(Insets inset);
     public CGDrawable setContentInset(int top, int left, int bottom, int right);
+
+    public CGDrawable cornerRaduis(CGSize cornerRadius);
+    public CGDrawable cornerRaduis(Size cornerRadiusBinding);
 
     public CGDrawable width(Int width);
     public CGDrawable width(int width);
@@ -78,6 +87,7 @@ public interface CGDrawable {
     public Insets getContentInset();
     public Int resizingMask();
     public Size intrinsicContentSize();
+    public CGSize getCornerRadius();
 
     public CGFrame getCGFrame();
 }

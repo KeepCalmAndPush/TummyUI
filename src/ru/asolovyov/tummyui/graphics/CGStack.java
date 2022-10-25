@@ -29,9 +29,9 @@ public class CGStack extends CGSomeDrawable {
     public final static int AXIS_VERTICAL = 1;
     public final static int AXIS_Z = 2;
 
-    protected Arr drawables;
-    protected Int alignment;
-    protected Int axis;
+    protected Arr drawables = new Arr(new CGDrawable[]{});
+    protected Int alignment = new Int(CG.ALIGNMENT_LEFT);
+    protected Int axis = new Int(AXIS_HORIZONTAL);
 
     protected Size contentSize = new Size(0, 0);
 
@@ -91,9 +91,9 @@ public class CGStack extends CGSomeDrawable {
     }
 
     private void pushFrameToChildren() {
-        CGDrawable[] drawables = (CGDrawable[]) this.drawables.getArray();
-        for (int i = 0; i < drawables.length; i++) {
-            CGDrawable drawable = drawables[i];
+        CGDrawable[] drawables_ = (CGDrawable[]) this.drawables.getArray();
+        for (int i = 0; i < drawables_.length; i++) {
+            CGDrawable drawable = drawables_[i];
             if (drawable.getGeometryReader() != null) {
                 drawable.getGeometryReader().read(drawable, getCGFrame());
             }
@@ -160,6 +160,11 @@ public class CGStack extends CGSomeDrawable {
 
                 frame.x += drawable.getOffset().getCGPoint().x;
                 frame.y += drawable.getOffset().getCGPoint().y;
+
+                frame.x -= getContentOffset().getCGPoint().x;
+                frame.y -= getContentOffset().getCGPoint().y;
+
+                S.println("Will draw " + frame.x + ", " + frame.y + "; " + frame.width + ", " + frame.height);
 
                 drawable.draw(graphics);
                 nextLeft += drawable.getCGFrame().width;

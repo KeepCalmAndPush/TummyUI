@@ -14,7 +14,7 @@ import ru.asolovyov.tummyui.bindings.Point;
  *
  * @author Администратор
  */
-public class CGArc extends CGSomeStrokable {
+public class CGArc extends CGSomeDrawable {
     private Int startAngleBinding;
     private Int endAngleBinding;
 
