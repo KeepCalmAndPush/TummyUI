@@ -19,7 +19,7 @@ import ru.asolovyov.combime.common.Sink;
 public class CGText extends CGSomeDrawable implements CGFontSupporting {
     private Str text = new Str("");
     private Obj font = new Obj(Font.getDefaultFont());
-    private Int anchor = new Int(Graphics.LEFT | Graphics.TOP);
+    private Int anchor = new Int(CG.CENTER);
     private Int textColor = new Int(0x000000);
 
     public CGText(Str text) {
@@ -37,8 +37,7 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
             }
         });
     }
-
-    // TODO бэграунд колор для текстовых полей
+    
     public CGText text(Str text) {
         text.route(this.text);
         return this;
@@ -52,12 +51,7 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
     public CGText anchor(int anchor) {
         return this.anchor(new Int(anchor));
     }
-
-    /**
-     * anchor point must be one of the horizontal constants
-     * (LEFT, HCENTER, RIGHT) combined with one of the vertical constants
-     * (TOP, BASELINE, BOTTOM)
-     */
+    
     public CGText anchor(Int anchor) {
         anchor.route(this.anchor);
         return this;
@@ -73,10 +67,34 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
 
     public void draw(Graphics g) {
         super.draw(g);
-        g.setFont(getFont());
         CGFrame frame = getCGFrame();
+        if (frame == null) {
+            return;
+        }
+        g.setFont(getFont());
         g.setColor(this.textColor.getInt());
-        g.drawString(text.getString(), frame.x, frame.y, this.getAnchor());
+
+        String text = this.text.getString();
+
+        CGSize textSize = CG.sizeOfString(text, this.getFont(), frame.getCGSize());
+        int textX = frame.x;
+        int textY = frame.y;
+
+        int anchor = this.getAnchor();
+        if (CG.isBitSet(anchor, CG.HCENTER)) {
+            textX += (frame.width - textSize.width) / 2;
+        }
+        if (CG.isBitSet(anchor, CG.VCENTER)) {
+            textY += (frame.height - textSize.height) / 2;
+        }
+        if (CG.isBitSet(anchor, CG.RIGHT)) {
+            textX += (frame.width - textSize.width);
+        }
+        if (CG.isBitSet(anchor, CG.BOTTOM)) {
+            textY += (frame.height - textSize.height);
+        }
+
+        g.drawString(text, textX, textY, 0);
     }
 
     public CGFontSupporting font(Font font) {

@@ -55,15 +55,16 @@ public class Canvas extends UIMIDlet {
     }
 
     // TODO Сделать чтобы все вьюхи двигали контент внутри себя: то есть уважали контент инсеты
-    
+    //  TODO  анкор текста это полная фигня, надо перевести на свои алайменты
+    // TODO УПРАВЛЕНИЕ ПРОКРУТКОЙ!
     protected Displayable content() {
         // TODO управление памятью,
         // TODO отписка от подписок,
         // TODO синканье сабжектов
-        // НЕТ ЭТО ХЕРОВАЯ ИДЕЯ TODO Не заменять новыми сабжектами, а синкать в текущие
+        // НЕТ ЭТО ХЕРОВАЯ ИДЕЯ Не заменять новыми сабжектами, а синкать в текущие
         return CG.Canvas(
                 CG.HStack(
-                new Int(CG.ALIGNMENT_CENTER),
+                new Int(CG.CENTER),
                 CG.Text("TEXT")
                 .textColor(0xFF0000)
                 .backgroundColor(0x00FF00)

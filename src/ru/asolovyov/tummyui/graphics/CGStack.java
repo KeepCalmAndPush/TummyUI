@@ -30,7 +30,7 @@ public class CGStack extends CGSomeDrawable {
     public final static int AXIS_Z = 2;
 
     protected Arr drawables = new Arr(new CGDrawable[]{});
-    protected Int alignment = new Int(CG.ALIGNMENT_LEFT);
+    protected Int alignment = new Int(CG.LEFT);
     protected Int axis = new Int(AXIS_HORIZONTAL);
 
     protected Size contentSize = new Size(0, 0);
@@ -40,7 +40,7 @@ public class CGStack extends CGSomeDrawable {
     }
 
     public CGStack(Int axis, Arr drawables) {
-        this(axis, new Int(CG.ALIGNMENT_CENTER), drawables);
+        this(axis, new Int(CG.CENTER), drawables);
     }
 
     public CGStack(Int axis, Int alignment, Arr drawables) {
@@ -119,19 +119,19 @@ public class CGStack extends CGSomeDrawable {
         int alignmentInt = this.alignment.getInt();
         int contentWidth = updateContentSizeAndApplyMasksToChildren().width;
 
-        if ((alignmentInt & CG.ALIGNMENT_H_CENTER) == CG.ALIGNMENT_H_CENTER) {
+        if ((alignmentInt & CG.HCENTER) == CG.HCENTER) {
             this.nextLeft = (getCGFrame().width - contentWidth) / 2;
         } 
-        if ((alignmentInt & CG.ALIGNMENT_LEFT) == CG.ALIGNMENT_LEFT) {
+        if ((alignmentInt & CG.LEFT) == CG.LEFT) {
             this.nextLeft = getCGFrame().x;
         }
-        if ((alignmentInt & CG.ALIGNMENT_RIGHT) == CG.ALIGNMENT_RIGHT) {
+        if ((alignmentInt & CG.RIGHT) == CG.RIGHT) {
             this.nextLeft = getCGFrame().width - contentWidth;
         }
 
-        final boolean isVCenter = (alignmentInt & CG.ALIGNMENT_V_CENTER) == CG.ALIGNMENT_V_CENTER;
-        final boolean isTop = (alignmentInt & CG.ALIGNMENT_TOP) == CG.ALIGNMENT_TOP;
-        final boolean isBottom = (alignmentInt & CG.ALIGNMENT_BOTTOM) == CG.ALIGNMENT_BOTTOM;
+        final boolean isVCenter = (alignmentInt & CG.VCENTER) == CG.VCENTER;
+        final boolean isTop = (alignmentInt & CG.TOP) == CG.TOP;
+        final boolean isBottom = (alignmentInt & CG.BOTTOM) == CG.BOTTOM;
 
         this.drawables.forEach(new Arr.Enumerator() {
             public void onElement(Object element) {
@@ -181,19 +181,19 @@ public class CGStack extends CGSomeDrawable {
         int alignmentInt = this.alignment.getInt();
         int contentHeight = updateContentSizeAndApplyMasksToChildren().height;
 
-        if (Mask.isSet(alignmentInt, CG.ALIGNMENT_V_CENTER)) {
+        if (Mask.isSet(alignmentInt, CG.VCENTER)) {
             this.nextTop = (getCGFrame().height - contentHeight) / 2;
         }
-        if (Mask.isSet(alignmentInt, CG.ALIGNMENT_TOP)) {
+        if (Mask.isSet(alignmentInt, CG.TOP)) {
             this.nextTop = getCGFrame().y;
         }
-        if (Mask.isSet(alignmentInt, CG.ALIGNMENT_BOTTOM)) {
+        if (Mask.isSet(alignmentInt, CG.BOTTOM)) {
             this.nextTop = getCGFrame().height - contentHeight;
         }
 
-        final boolean isHCenter = Mask.isSet(alignmentInt, CG.ALIGNMENT_H_CENTER);
-        final boolean isLeft = Mask.isSet(alignmentInt, CG.ALIGNMENT_LEFT);
-        final boolean isRight = Mask.isSet(alignmentInt, CG.ALIGNMENT_RIGHT);
+        final boolean isHCenter = Mask.isSet(alignmentInt, CG.HCENTER);
+        final boolean isLeft = Mask.isSet(alignmentInt, CG.LEFT);
+        final boolean isRight = Mask.isSet(alignmentInt, CG.RIGHT);
 
         this.drawables.forEach(new Arr.Enumerator() {
             public void onElement(Object element) {
@@ -258,13 +258,13 @@ public class CGStack extends CGSomeDrawable {
 
         int alignmentInt = this.alignment.getInt();
         
-        final boolean isVCenter = (alignmentInt & CG.ALIGNMENT_V_CENTER) == CG.ALIGNMENT_V_CENTER;
-        final boolean isTop = (alignmentInt & CG.ALIGNMENT_TOP) == CG.ALIGNMENT_TOP;
-        final boolean isBottom = (alignmentInt & CG.ALIGNMENT_BOTTOM) == CG.ALIGNMENT_BOTTOM;
+        final boolean isVCenter = (alignmentInt & CG.VCENTER) == CG.VCENTER;
+        final boolean isTop = (alignmentInt & CG.TOP) == CG.TOP;
+        final boolean isBottom = (alignmentInt & CG.BOTTOM) == CG.BOTTOM;
 
-        final boolean isHCenter = (alignmentInt & CG.ALIGNMENT_H_CENTER) == CG.ALIGNMENT_H_CENTER;
-        final boolean isLeft = (alignmentInt & CG.ALIGNMENT_LEFT) == CG.ALIGNMENT_LEFT;
-        final boolean isRight = (alignmentInt & CG.ALIGNMENT_RIGHT) == CG.ALIGNMENT_RIGHT;
+        final boolean isHCenter = (alignmentInt & CG.HCENTER) == CG.HCENTER;
+        final boolean isLeft = (alignmentInt & CG.LEFT) == CG.LEFT;
+        final boolean isRight = (alignmentInt & CG.RIGHT) == CG.RIGHT;
 
         this.drawables.forEach(new Arr.Enumerator() {
             public void onElement(Object element) {

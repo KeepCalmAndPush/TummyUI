@@ -5,6 +5,7 @@
 
 package ru.asolovyov.tummyui.graphics;
 
+import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Image;
 import ru.asolovyov.combime.bindings.Arr;
 import ru.asolovyov.combime.bindings.Bool;
@@ -17,15 +18,31 @@ import ru.asolovyov.combime.bindings.Str;
  * @author Администратор
  */
 public class CG {
-    //TODO возможно алайменты надо сделать маской
-    public final static int ALIGNMENT_H_CENTER = 1;
-    public final static int ALIGNMENT_V_CENTER = 1 << 1;
-    public final static int ALIGNMENT_LEFT = 1 << 2;
-    public final static int ALIGNMENT_RIGHT = 1 << 3;
-    public final static int ALIGNMENT_TOP = 1 << 4;
-    public final static int ALIGNMENT_BOTTOM = 1 << 5;
+    public final static int HCENTER = 1;
+    public final static int VCENTER = 1 << 1;
+    public final static int LEFT = 1 << 2;
+    public final static int RIGHT = 1 << 3;
+    public final static int TOP = 1 << 4;
+    public final static int BOTTOM = 1 << 5;
 
-    public final static int ALIGNMENT_CENTER = ALIGNMENT_H_CENTER | ALIGNMENT_V_CENTER;
+    public final static int CENTER = HCENTER | VCENTER;
+
+    public static boolean isBitSet(int mask, int bit) {
+        return (mask & bit) == bit;
+    }
+
+    public static CGSize sizeOfString(String string, Font font, CGSize constrainedSize) {
+        int width = font.stringWidth(string);
+        int numberOfLines = width / constrainedSize.width;
+        if (width % constrainedSize.width > 0) {
+            numberOfLines += 1;
+        }
+
+        width = Math.min(width, constrainedSize.width);
+        int height = font.getHeight() * numberOfLines;
+
+        return new CGSize(width, height);
+    }
     
     public static CGArc Arc(int startAngle, int endAngle) {
         return new CGArc()
