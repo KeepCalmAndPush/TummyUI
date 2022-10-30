@@ -20,4 +20,13 @@ public final class CGPoint {
         this.x = x;
         this.y = y;
     }
+
+    public CGPoint(CGPoint point) {
+        this.x = point.x;
+        this.y = point.y;
+    }
+
+    public CGPoint copy() {
+        return new CGPoint(this);
+    }
 }

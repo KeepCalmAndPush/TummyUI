@@ -54,23 +54,28 @@ public class Canvas extends UIMIDlet {
         });
     }
 
+    
+    // TODO запилить движок анимаций: сделать здоровенный метод в CG, типа animate(delay, duration, view, frame, bgcolor, strokeColor, cornerRadius, inset итп)
+    // TODO сделать DisplayLink, это таймер который тикает раз в 33мс. В методе анимейт создавать объект анимации, который сушает дисплейЛинк и на каждый тик
+    // меняет переданные параметры на некоторую дельту = дюрейщен/33
+
     // TODO Сделать чтобы все вьюхи двигали контент внутри себя: то есть уважали контент инсеты
-    //  TODO  анкор текста это полная фигня, надо перевести на свои алайменты
-    // TODO УПРАВЛЕНИЕ ПРОКРУТКОЙ!
+    // TODO Перенос текста!
     protected Displayable content() {
         // TODO управление памятью,
         // TODO отписка от подписок,
-        // TODO синканье сабжектов
-        // НЕТ ЭТО ХЕРОВАЯ ИДЕЯ Не заменять новыми сабжектами, а синкать в текущие
         return CG.Canvas(
-                CG.HStack(
+                CG.VStack(
                 new Int(CG.CENTER),
-                CG.Text("TEXT")
+
+                
+            CG.Text("Increases the capacityofthisvector, if necessary, to ensure that it can hold at least the number of components specified by the minimum capacity argument. ")
                 .textColor(0xFF0000)
                 .backgroundColor(0x00FF00)
                 .strokeColor(0x0000FF)
                 .cornerRaduis(new CGSize(20, 20))
                 .height(88).width(100)
+                
 //                    CG.Rect()
 //                            .height(230).width(30)
 //                            .resizingMask(CGFrame.FLEXIBLE_WIDTH)
@@ -84,35 +89,34 @@ public class Canvas extends UIMIDlet {
 //                            .resizingMask(CGFrame.FLEXIBLE_WIDTH)
 //                            .backgroundColor(0xFF0000)
 
-                /*  Вертикальный скроллящийся стэк
-                CG.Text("Hello")
-                .handleKeyboard(new CGDrawable.KeyboardHandler() {
-                    public void keyPressed(CGDrawable self, int keyCode) {
-                        ((CGText)self).text("PRESSED: " + keyCode);
-                    }
-                })
-                .height(80).width(200)
-                .backgroundColor(0xFF0000),
-                        
-                CG.Text("Ololo")
-                .handleKeyboard(new CGDrawable.KeyboardHandler() {
-                    public void keyReleased(CGDrawable self, int keyCode) {
-                        ((CGText)self).text("RELEASED: " + keyCode);
-                    }
-                })
-                .height(80).width(200)
-                .backgroundColor(0x00FF00),
+               
+//                CG.Text("Hello")
+//                .handleKeyboard(new CGDrawable.KeyboardHandler() {
+//                    public void keyPressed(CGDrawable self, int keyCode) {
+//                        ((CGText)self).text("PRESSED: " + keyCode);
+//                    }
+//                })
+//                .height(80).width(200)
+//                .backgroundColor(0xFF0000),
+//
+//                CG.Text("Ololo")
+//                .handleKeyboard(new CGDrawable.KeyboardHandler() {
+//                    public void keyReleased(CGDrawable self, int keyCode) {
+//                        ((CGText)self).text("RELEASED: " + keyCode);
+//                    }
+//                })
+//                .height(80).width(200)
+//                .backgroundColor(0x00FF00),
+//
+//                CG.Text("Trololo")
+//                .handleKeyboard(new CGDrawable.KeyboardHandler() {
+//                    public void keyRepeated(CGDrawable self, int keyCode) {
+//                        ((CGText)self).text("REPEATED: " + keyCode);
+//                    }
+//                })
+//                .height(80).width(200)
+//                .backgroundColor(0x0000FF)
 
-                CG.Text("Trololo")
-                .handleKeyboard(new CGDrawable.KeyboardHandler() {
-                    public void keyRepeated(CGDrawable self, int keyCode) {
-                        ((CGText)self).text("REPEATED: " + keyCode);
-                    }
-                })
-                .height(80).width(200)
-                .backgroundColor(0x0000FF)
-
-                        */
 //                    CG.Rect()
 //                            .height(132)
 //                            .resizingMask(CGFrame.FLEXIBLE_WIDTH)

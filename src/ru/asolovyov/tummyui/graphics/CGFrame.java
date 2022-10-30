@@ -31,6 +31,18 @@ public final class CGFrame {
         this.height = height;
     }
 
+    public CGFrame(CGFrame frame) {
+        super();
+        this.x = frame.x;
+        this.y = frame.y;
+        this.width = frame.width;
+        this.height = frame.height;
+    }
+
+    public CGFrame copy() {
+        return new CGFrame(this);
+    }
+
     public int x = 0,
         y = 0,
         width = 0,

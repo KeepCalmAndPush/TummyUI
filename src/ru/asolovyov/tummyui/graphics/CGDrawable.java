@@ -30,6 +30,8 @@ public interface CGDrawable {
 
     public void draw(Graphics g);
 
+    public void animate(int durationMillis, Runnable animations);
+
     public CGDrawable stroke(int strokeStyle);
     public CGDrawable stroke(Int strokeStyle);
 

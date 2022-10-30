@@ -20,4 +20,13 @@ public final class CGSize {
         this.width = width;
         this.height = height;
     }
+
+    public CGSize(CGSize size) {
+        this.width = size.width;
+        this.height = size.height;
+    }
+
+    public CGSize copy() {
+        return new CGSize(this);
+    }
 }

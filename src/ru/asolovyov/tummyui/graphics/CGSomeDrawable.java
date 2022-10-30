@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package ru.asolovyov.tummyui.graphics;
 
 import javax.microedition.lcdui.Graphics;
@@ -21,39 +20,34 @@ import ru.asolovyov.tummyui.bindings.Size;
  * @author Администратор
  */
 public abstract class CGSomeDrawable implements CGDrawable {
+
     public CGSomeDrawable() {
-//        Publisher.combineLatest(new IPublisher[] {
-//            frameBinding, widthBinding, heightBinding,
-//            resizingMaskBinding, backgroundColor, strokeColor,
-//            isVisible, offsetBinding, contentOffsetBinding,
-//            contentInsetBinding, cornerRadiusBinding, intrinsicContentSizeBinding
-//        }).sink(new Sink() {
-//
+//        this.contentOffsetBinding.sink(new Sink() {
 //            protected void onValue(Object value) {
-//                needsRedraw();
+//                needsRelayout(getCGFrame());
 //            }
+//        });
 //
+//        this.contentInsetBinding.sink(new Sink() {
+//            protected void onValue(Object value) {
+//                needsRelayout(getCGFrame());
+//            }
 //        });
     }
 
     protected Frame frameBinding = new Frame(CGFrame.zero());
-    
     protected Int widthBinding = new Int(0);
     protected Int heightBinding = new Int(0);
     protected Int resizingMaskBinding = new Int(CGFrame.FLEXIBLE_ALL);
-
     protected Int backgroundColor = new Int(-1);
     protected Int strokeColor = new Int(-1);
     protected Int strokeStyle;
     protected Bool isVisible = new Bool(true);
-
     protected Point offsetBinding = new Point(CGPoint.zero());
     protected Point contentOffsetBinding = new Point(CGPoint.zero());
     protected Insets contentInsetBinding = new Insets(CGInsets.zero());
     protected Size cornerRadiusBinding = new Size(CGSize.zero());
-    
     protected Size intrinsicContentSizeBinding = new Size(CGSize.zero());
-
     private CGCanvas canvas;
 
     public void draw(Graphics g) {
@@ -66,13 +60,12 @@ public abstract class CGSomeDrawable implements CGDrawable {
         if (backgroundColor != -1) {
             g.setColor(backgroundColor);
             g.fillRoundRect(
-                frame.x,
-                frame.y,
-                frame.width,
-                frame.height,
-                getCornerRadius().width,
-                getCornerRadius().height
-                );
+                    frame.x,
+                    frame.y,
+                    frame.width,
+                    frame.height,
+                    getCornerRadius().width,
+                    getCornerRadius().height);
         }
 
         int strokeColor = this.getStrokeColor();
@@ -81,13 +74,12 @@ public abstract class CGSomeDrawable implements CGDrawable {
             g.setColor(strokeColor);
 
             g.drawRoundRect(
-                frame.x,
-                frame.y,
-                frame.width,
-                frame.height,
-                getCornerRadius().width,
-                getCornerRadius().height
-                );
+                    frame.x,
+                    frame.y,
+                    frame.width,
+                    frame.height,
+                    getCornerRadius().width,
+                    getCornerRadius().height);
         }
     }
 
@@ -102,16 +94,18 @@ public abstract class CGSomeDrawable implements CGDrawable {
     public CGDrawable backgroundColor(Int backgroundColorHex) {
         this.backgroundColor = backgroundColorHex;
         this.backgroundColor.sink(new Sink() {
+
             protected void onValue(Object value) {
                 needsRedraw();
             }
         });
         return this;
     }
-    
+
     public CGDrawable setFrame(Frame frame) {
         this.frameBinding = frame;
         this.frameBinding.sink(new Sink() {
+
             protected void onValue(Object value) {
                 intrinsicContentSizeBinding.setCGSize(frameBinding.getCGFrame().getCGSize());
                 needsRelayout(getCGFrame());
@@ -154,16 +148,18 @@ public abstract class CGSomeDrawable implements CGDrawable {
     public CGDrawable setOffset(Point offset) {
         this.offsetBinding = offset;
         this.offsetBinding.sink(new Sink() {
+
             protected void onValue(Object value) {
                 needsRelayout(getCGFrame());
             }
         });
         return this;
     }
-    
+
     public CGDrawable width(Int width) {
         this.widthBinding = width;
         this.widthBinding.sink(new Sink() {
+
             protected void onValue(Object value) {
                 width(widthBinding.getInt());
             }
@@ -182,6 +178,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
     public CGDrawable height(Int height) {
         this.heightBinding = height;
         this.heightBinding.sink(new Sink() {
+
             protected void onValue(Object value) {
                 height(heightBinding.getInt());
             }
@@ -204,6 +201,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
     public CGDrawable resizingMask(Int mask) {
         this.resizingMaskBinding = mask;
         this.resizingMaskBinding.sink(new Sink() {
+
             protected void onValue(Object value) {
                 needsRelayout(getCGFrame());
             }
@@ -224,6 +222,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
     public CGDrawable isVisible(Bool isVisible) {
         this.isVisible = isVisible;
         this.isVisible.removeDuplicates().sink(new Sink() {
+
             protected void onValue(Object value) {
                 needsRelayout(getCGFrame());
             }
@@ -241,7 +240,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
         canvas.needsRepaint().setBool(true);
         return this;
     }
-    
+
     public CGCanvas getCanvas() {
         return canvas;
     }
@@ -253,24 +252,24 @@ public abstract class CGSomeDrawable implements CGDrawable {
     public Size intrinsicContentSize() {
         return this.intrinsicContentSizeBinding;
     }
-
     private GeometryReader geometryReader;
+
     public CGDrawable readGeometry(GeometryReader reader) {
         this.geometryReader = reader;
         return this;
     }
-    
+
     public GeometryReader getGeometryReader() {
         return geometryReader;
     }
-
     private KeyboardHandler keyboardHandler;
+
     public CGDrawable handleKeyboard(KeyboardHandler handler) {
         this.keyboardHandler = handler;
         this.startHandlingKeyboard();
         return this;
     }
-    
+
     public KeyboardHandler getKeyboardHandler() {
         return this.keyboardHandler;
     }
@@ -279,8 +278,9 @@ public abstract class CGSomeDrawable implements CGDrawable {
         if (this.keyboardHandler == null || this.canvas == null) {
             return;
         }
-        
+
         this.canvas.getKeyPressed().sink(new Sink() {
+
             protected void onValue(Object value) {
                 keyboardHandler.keyPressed(
                         CGSomeDrawable.this,
@@ -289,6 +289,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
         });
 
         this.canvas.getKeyReleased().sink(new Sink() {
+
             protected void onValue(Object value) {
                 keyboardHandler.keyReleased(
                         CGSomeDrawable.this,
@@ -297,6 +298,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
         });
 
         this.canvas.getKeyRepeated().sink(new Sink() {
+
             protected void onValue(Object value) {
                 keyboardHandler.keyRepeated(
                         CGSomeDrawable.this,
@@ -315,7 +317,13 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     public CGDrawable setContentOffset(Point offset) {
-        offset.route(this.contentOffsetBinding);
+        this.contentOffsetBinding = offset;
+        this.contentOffsetBinding.sink(new Sink() {
+
+            protected void onValue(Object value) {
+                needsRelayout(getCGFrame());
+            }
+        });
         return this;
     }
 
@@ -325,7 +333,13 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     public CGDrawable setContentInset(Insets inset) {
-        inset.route(this.contentInsetBinding);
+        this.contentInsetBinding = inset;
+        this.contentInsetBinding.sink(new Sink() {
+
+            protected void onValue(Object value) {
+                needsRelayout(getCGFrame());
+            }
+        });
         return this;
     }
 
@@ -349,16 +363,17 @@ public abstract class CGSomeDrawable implements CGDrawable {
     public CGDrawable stroke(Int strokeStyle) {
         this.strokeStyle = strokeStyle;
         this.strokeStyle.sink(new Sink() {
+
             protected void onValue(Object value) {
                 needsRedraw();
             }
         });
         return this;
     }
-    
+
     protected int getStrokeStyle() {
         if (strokeStyle != null) {
-           return strokeStyle.getInt();
+            return strokeStyle.getInt();
         }
         return Graphics.SOLID;
     }
@@ -370,6 +385,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
     public CGDrawable cornerRaduis(Size cornerRadiusBinding) {
         this.cornerRadiusBinding = cornerRadiusBinding;
         this.cornerRadiusBinding.sink(new Sink() {
+
             protected void onValue(Object value) {
                 needsRedraw();
             }
@@ -391,10 +407,27 @@ public abstract class CGSomeDrawable implements CGDrawable {
     public CGDrawable strokeColor(Int strokeColorHex) {
         this.strokeColor = strokeColorHex;
         this.strokeColor.sink(new Sink() {
+
             protected void onValue(Object value) {
                 needsRedraw();
             }
         });
         return this;
+    }
+
+    public void animate(int durationMillis, Runnable animations) {
+        final int backgroundColor = this.getBackgroundColor();
+        final int strokeColor = this.getStrokeColor();
+
+        final CGFrame frame = this.getCGFrame().copy();
+        final CGPoint offset = this.getOffset().getCGPoint().copy();
+
+        final CGPoint contentOffset = this.getContentOffset().getCGPoint().copy();
+        final CGInsets contentInset = this.getContentInset().getCGInsets().copy();
+        final CGSize cornerRadius = this.getCornerRadius().copy();
+
+        animations.run();
+
+        // TODO посчитать дельты!
     }
 }

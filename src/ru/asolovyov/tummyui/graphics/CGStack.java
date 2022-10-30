@@ -13,6 +13,7 @@ import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.tummyui.bindings.Size;
 import java.lang.Math.*;
 import javax.microedition.lcdui.Canvas;
+import ru.asolovyov.threading.DispatchQueue;
 import ru.asolovyov.tummyui.data.List;
 import ru.asolovyov.tummyui.data.Mask;
 
@@ -34,6 +35,8 @@ public class CGStack extends CGSomeDrawable {
     protected Int axis = new Int(AXIS_HORIZONTAL);
 
     protected Size contentSize = new Size(0, 0);
+
+    private List repeatedKeys = new List();
 
     public Size contentSize() {
         return contentSize;
@@ -66,12 +69,6 @@ public class CGStack extends CGSomeDrawable {
                 needsRelayout(getCGFrame());
             }
         });
-
-        this.contentOffsetBinding.sink(new Sink() {
-            protected void onValue(Object value) {
-                needsRelayout(getCGFrame());
-            }
-        });
     }
 
     public Int axis() {
@@ -91,6 +88,8 @@ public class CGStack extends CGSomeDrawable {
     }
 
     private void pushFrameToChildren() {
+        S.print(this.drawables);
+        
         CGDrawable[] drawables_ = (CGDrawable[]) this.drawables.getArray();
         for (int i = 0; i < drawables_.length; i++) {
             CGDrawable drawable = drawables_[i];
@@ -309,7 +308,10 @@ public class CGStack extends CGSomeDrawable {
 
     public CGDrawable setCanvas(CGCanvas canvas) {
         super.setCanvas(canvas);
-        this.subscribeToKeyCodes();
+        
+        this.subscribeToKeyPressed();
+        this.subscribeToKeyReleased();
+
         this.drawables.forEach(new Arr.Enumerator() {
             public void onElement(Object element) {
                 CGDrawable drawable = (CGDrawable)element;
@@ -319,7 +321,7 @@ public class CGStack extends CGSomeDrawable {
         return this;
     }
 
-    private void subscribeToKeyCodes() {
+    private void subscribeToKeyPressed() {
         CGCanvas canvas = this.getCanvas();
         final Int keyPublisher = canvas.getKeyPressed();
         keyPublisher.sink(new Sink() {
@@ -328,53 +330,88 @@ public class CGStack extends CGSomeDrawable {
                 super.onValue(value);
 
                 int keyCode = keyPublisher.getInt();
-                CGInsets contentInset = contentInsetBinding.getCGInsets();
+                moveContentByKeyPress(keyCode);
+                final Integer keyCodeInteger = new Integer(keyCode);
+                repeatedKeys.removeElement(keyCodeInteger);
+                repeatedKeys.addElement(keyCodeInteger);
 
-                CGPoint contentOffset = contentOffsetBinding.getCGPoint();
-                CGSize contentSize = contentSize().getCGSize();
-
-                if (contentSize.height > getCGFrame().height) {
-                    S.println("contentSize.height > getCGFrame().height");
-                    int extent = contentSize.height - getCGFrame().height;
-
-                    if (keyCode == -1) {//t
-                        S.println("keyCode == Canvas.UP");
-                        contentOffset.y = Math.max(
-                                contentOffset.y - 5,
-                                -(extent - contentInset.top)
-                                );
+                keyRepeatQueue.async(2*CG.FRAME_MILLIS, new Runnable() {
+                    public void run() {
+                        scheduleKeyRepeatedHandling(keyCodeInteger);
                     }
-                    else if (keyCode == -2) {//b
-                        S.println("keyCode == Canvas.DOWN");
-                        contentOffset.y = Math.min(
-                                contentOffset.y + 5,
-                                extent + contentInset.bottom
-                                );
-                    }
+                });
+            }
+        });
+    }
+    
+    private void moveContentByKeyPress(int keyCode) {
+        CGInsets contentInset = contentInsetBinding.getCGInsets();
+
+        CGPoint contentOffset = contentOffsetBinding.getCGPoint();
+        CGSize contentSize = contentSize().getCGSize();
+
+        if (contentSize.height > getCGFrame().height) {
+            S.println("contentSize.height > getCGFrame().height");
+            int extent = contentSize.height - getCGFrame().height;
+
+            if (keyCode == -1) {//t
+                S.println("keyCode == Canvas.UP");
+                contentOffset.y = Math.max(
+                        contentOffset.y - 5,
+                        -(extent - contentInset.top));
+            } else if (keyCode == -2) {//b
+                S.println("keyCode == Canvas.DOWN");
+                contentOffset.y = Math.min(
+                        contentOffset.y + 5,
+                        extent + contentInset.bottom);
+            }
+        }
+
+        if (contentSize.width > getCGFrame().width) {
+            S.println("contentSize.width > getCGFrame().width");
+            int extent = contentSize.width - getCGFrame().width;
+            if (keyCode == -3) {//l
+                S.println("Canvas.LEFT");
+                contentOffset.x = Math.max(
+                        contentOffset.x - 5,
+                        -(extent + contentInset.left));
+            } else if (keyCode == -4) { //r
+                S.println("keyCode == Canvas.RIGHT");
+                contentOffset.x = Math.min(
+                        contentOffset.x + 5,
+                        extent + contentInset.right);
+            }
+        }
+
+        S.println("\nCONTENT OFFSET NOW: " + contentOffset.x + "; " + contentOffset.y + "\n");
+
+        contentOffsetBinding.setCGPoint(contentOffset);
+    }
+
+
+    private DispatchQueue keyRepeatQueue = new DispatchQueue(120);
+
+    private void scheduleKeyRepeatedHandling(final Integer keyCode) {
+        this.keyRepeatQueue.async(CG.FRAME_MILLIS, new Runnable() {
+            public void run() {
+                if (repeatedKeys.contains(keyCode)) {
+                    moveContentByKeyPress(keyCode.intValue());
+                    scheduleKeyRepeatedHandling(keyCode);
                 }
+            }
+        });
+    }
 
-                if (contentSize.width > getCGFrame().width) {
-                    S.println("contentSize.width > getCGFrame().width");
-                    int extent = contentSize.width - getCGFrame().width;
-                    if(keyCode == -3) {//l
-                         S.println("Canvas.LEFT");
-                        contentOffset.x = Math.max(
-                                contentOffset.x - 5,
-                                -(extent + contentInset.left)
-                                );
-                    }
-                    else if(keyCode == -4) { //r
-                        S.println("keyCode == Canvas.RIGHT");
-                        contentOffset.x = Math.min(
-                                contentOffset.x + 5,
-                                extent + contentInset.right
-                                );
-                    }
-                }
+    private void subscribeToKeyReleased() {
+        CGCanvas canvas = this.getCanvas();
+        final Int keyPublisher = canvas.getKeyReleased();
+        keyPublisher.sink(new Sink() {
+            protected void onValue(Object value) {
+                S.println("PRESS RELEASED: " + value);
+                super.onValue(value);
 
-                S.println("\nCONTENT OFFSET NOW: " + contentOffset.x + "; " + contentOffset.y + "\n");
-
-                contentOffsetBinding.setCGPoint(contentOffset);
+                Integer keyCode = new Integer(keyPublisher.getInt());
+                repeatedKeys.removeElement(keyCode);
             }
         });
     }

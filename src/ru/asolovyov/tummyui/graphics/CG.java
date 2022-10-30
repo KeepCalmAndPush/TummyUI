@@ -18,6 +18,9 @@ import ru.asolovyov.combime.bindings.Str;
  * @author Администратор
  */
 public class CG {
+    public final static int FPS = 30;
+    public final static int FRAME_MILLIS = 1000 / FPS;
+
     public final static int HCENTER = 1;
     public final static int VCENTER = 1 << 1;
     public final static int LEFT = 1 << 2;
@@ -29,19 +32,6 @@ public class CG {
 
     public static boolean isBitSet(int mask, int bit) {
         return (mask & bit) == bit;
-    }
-
-    public static CGSize sizeOfString(String string, Font font, CGSize constrainedSize) {
-        int width = font.stringWidth(string);
-        int numberOfLines = width / constrainedSize.width;
-        if (width % constrainedSize.width > 0) {
-            numberOfLines += 1;
-        }
-
-        width = Math.min(width, constrainedSize.width);
-        int height = font.getHeight() * numberOfLines;
-
-        return new CGSize(width, height);
     }
     
     public static CGArc Arc(int startAngle, int endAngle) {
@@ -177,5 +167,60 @@ public class CG {
 
     public static CGStack ZStack(Int alignment, CGDrawable d1, CGDrawable d2, CGDrawable d3, CGDrawable d4, CGDrawable d5) {
         return new CGStack(new Int(CGStack.AXIS_Z), alignment, new Arr(new CGDrawable[] {d1, d2, d3, d4, d5}));
+    }
+
+    public static CGSize sizeOfString(String text, Font font, CGSize constrainedSize) {
+        int width = 0;
+        int height = 0;
+
+        final int maxWidth = constrainedSize.width;
+        final int maxHeight = constrainedSize.height;
+
+        int lineStartPosition = 0;
+        int previousDelimiterPosition = 0;
+        int previousChunkWidth = 0;
+
+        /* the index of the first occurrence of the object argument in this vector at position index */
+
+        final int lineHeight = font.getHeight();
+
+        final char[] delimiters = new char[]{ '\n', '-', ' ', '+', '/', '*', '&', ';', '.', ',' };
+
+        throughText: for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            for (int j = 0; j < delimiters.length; j++) {
+                char d = delimiters[j];
+                if (c == d || i == text.length() - 1) {
+                    int endIndex = i;
+                    if (c == d && c != ' ') {
+                        endIndex += 1;
+                    }
+                    String chunk = text.substring(lineStartPosition, endIndex);
+
+                    int chunkWidth = font.stringWidth(chunk);
+
+                    if (chunkWidth > maxWidth) {
+                        lineStartPosition = previousDelimiterPosition + 1;
+                        previousDelimiterPosition = i;
+
+                        if (height + lineHeight > maxHeight) {
+                            break throughText;
+                        }
+
+                        width = Math.max(chunkWidth, width);
+                        width = Math.min(width, maxWidth);
+
+                        height += lineHeight;
+                        continue throughText;
+                    } else {
+                        previousDelimiterPosition = i;
+                    }
+                }
+            }
+        }
+
+        height = Math.min(height, maxHeight);
+
+        return new CGSize(width, height);
     }
 }

@@ -10,6 +10,7 @@ import javax.microedition.lcdui.Graphics;
 import ru.asolovyov.combime.bindings.Int;
 import ru.asolovyov.combime.bindings.Obj;
 import ru.asolovyov.combime.bindings.Str;
+import ru.asolovyov.combime.common.S;
 import ru.asolovyov.combime.common.Sink;
 
 /**
@@ -76,7 +77,9 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
 
         String text = this.text.getString();
 
-        CGSize textSize = CG.sizeOfString(text, this.getFont(), frame.getCGSize());
+        Font font = this.getFont();
+
+        CGSize textSize = CG.sizeOfString(text, font, frame.getCGSize());
         int textX = frame.x;
         int textY = frame.y;
 
@@ -94,7 +97,76 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
             textY += (frame.height - textSize.height);
         }
 
-        g.drawString(text, textX, textY, 0);
+        char[] delimiters = new char[]{ '\n', '-', ' ', '+', '/', '*', '&', ';', '.', ',' };
+
+        int lineStartIndex = 0;
+        int previousDelimiterIndex = 0;
+
+        int lineHeight = font.getHeight();
+        int mWidth = font.stringWidth("M");
+
+        int height = 0;
+
+        S.println(text);
+
+        throughText: for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            for (int j = 0; j < delimiters.length; j++) {
+                char d = delimiters[j];
+                if (c == d || i == text.length() - 1) {
+                    int endIndex = i;
+                    if (c == d && c != ' ') {
+                        endIndex += 1;
+                    }
+
+                    String chunk = text.substring(lineStartIndex, endIndex);
+                    int chunkWidth = font.stringWidth(chunk);
+
+                    S.println("FOUND A CHUNK '" + chunk + "' WIDTH: " + chunkWidth + (chunkWidth <= textSize.width ? " OK" : " FAIL"));
+
+                    if (chunkWidth > textSize.width) {
+                        S.println("WILL TRACK BACK! PREV DELIM: " + previousDelimiterIndex);
+                        String lastChunk = "";
+                        int lastChunkWidth = 0;
+
+                        if (height + lineHeight >= textSize.height) {
+                            for (int k = lineStartIndex; k < i; k++) {
+                                String chunkToEllipsis = text.substring(lineStartIndex, k);
+                                S.println("............WILL ELLIPS: " + chunkToEllipsis);
+                                chunkWidth = font.stringWidth(chunkToEllipsis);
+                                if (chunkWidth > (textSize.width - mWidth)) {
+                                    break;
+                                }
+
+                                lastChunk = chunkToEllipsis;
+                                lastChunkWidth = chunkWidth;
+                            }
+
+                            g.drawString(lastChunk, textX, textY + height, 0);
+                            g.drawString("…", textX +lastChunkWidth, textY + height, 0);
+
+                            break throughText;
+                        }
+
+                        S.println("WILL CUT FORM " + lineStartIndex + " TO " + previousDelimiterIndex);
+                        String toPrint = text.substring(lineStartIndex, previousDelimiterIndex);
+                        S.println("WILL PRINT " + toPrint);
+                        
+                        g.drawString(toPrint, textX, textY + height, 0);
+
+                        height += lineHeight;
+
+                        lineStartIndex = previousDelimiterIndex + 1;
+
+                        //10 14 23 26 31
+                        S.println("NEW LINE STARTED AT: " + lineStartIndex);
+                        continue throughText;
+                    } else {
+                        previousDelimiterIndex = i;
+                    }
+                }
+            }
+        }
     }
 
     public CGFontSupporting font(Font font) {

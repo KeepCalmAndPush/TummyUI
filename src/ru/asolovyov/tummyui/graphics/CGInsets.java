@@ -22,6 +22,18 @@ public class CGInsets {
         this.right = right;
     }
 
+    public CGInsets(CGInsets insets) {
+        super();
+        this.top = insets.top;
+        this.left = insets.left;
+        this.bottom = insets.bottom;
+        this.right = insets.right;
+    }
+
+    public CGInsets copy() {
+        return new CGInsets(this);
+    }
+
     public int top = 0,
         left = 0,
         bottom = 0,
