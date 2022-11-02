@@ -69,7 +69,7 @@ public class Canvas extends UIMIDlet {
                 new Int(CG.CENTER),
 
                 
-            CG.Text("Increases the capacityofthisvector, if necessary, to ensure that it can hold at least the number of components specified by the minimum capacity argument. ")
+            CG.Text("0123456789qwertyuiopasdfghjklzxcvbnm")
                 .textColor(0xFF0000)
                 .backgroundColor(0x00FF00)
                 .strokeColor(0x0000FF)

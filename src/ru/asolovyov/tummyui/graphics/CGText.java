@@ -109,13 +109,38 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
 
         S.println(text);
 
-        throughText: for (int i = 0; i < text.length(); i++) {
-            char c = text.charAt(i);
+
+        throughText: for (int characterIndex = 0; characterIndex < text.length(); characterIndex++) {
+            char currentCharacter = text.charAt(characterIndex);
             for (int j = 0; j < delimiters.length; j++) {
-                char d = delimiters[j];
-                if (c == d || i == text.length() - 1) {
-                    int endIndex = i;
-                    if (c == d && c != ' ') {
+                char delimiter = delimiters[j];
+                if (currentCharacter == delimiter || characterIndex == text.length() - 1) {
+
+                }
+        }
+
+        // TODO чот говно. И считалка размера тоже.
+        // надо просто идти посимвольно и мерить ширину
+        // нашли делиметер - запомнили
+        // уперлись в конец строки - откатились либо до предыдущего делиметра,
+        // если он не равен началу строки, либо просто обрезали строку и перенесли нас ледующую
+        // тогда делимитер - это последний символ текущей строки
+        throughText: for (int characterIndex = 0; characterIndex < text.length(); characterIndex++) {
+            char currentCharacter = text.charAt(characterIndex);
+
+            /*
+             * NEW LINE STARTED AT: 10
+FOUND A CHUNK 'the capacityofthisvector,' WIDTH: 200 FAIL
+WILL TRACK BACK! PREV DELIM: 9
+WILL CUT FORM 10 TO 9
+TRACE: <at java.lang.StringIndexOutOfBoundsException>, Exception caught in Display class
+java.lang.StringIndexOutOfBoundsException
+             */
+            for (int j = 0; j < delimiters.length; j++) {
+                char delimiter = delimiters[j];
+                if (currentCharacter == delimiter || characterIndex == text.length() - 1) {
+                    int endIndex = characterIndex;
+                    if (currentCharacter == delimiter && currentCharacter != ' ') {
                         endIndex += 1;
                     }
 
@@ -130,7 +155,7 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
                         int lastChunkWidth = 0;
 
                         if (height + lineHeight >= textSize.height) {
-                            for (int k = lineStartIndex; k < i; k++) {
+                            for (int k = lineStartIndex; k < characterIndex; k++) {
                                 String chunkToEllipsis = text.substring(lineStartIndex, k);
                                 S.println("............WILL ELLIPS: " + chunkToEllipsis);
                                 chunkWidth = font.stringWidth(chunkToEllipsis);
@@ -148,6 +173,34 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
                             break throughText;
                         }
 
+                        if (lineStartIndex >= previousDelimiterIndex) {
+                            for (int k = lineStartIndex; k < characterIndex; k++) {
+                                String chunkToEllipsis = text.substring(lineStartIndex, k);
+                                S.println("............WILL ELLIPS: " + chunkToEllipsis);
+                                chunkWidth = font.stringWidth(chunkToEllipsis);
+                                if (chunkWidth > textSize.width) {
+                                    
+
+
+                                    S.println("WILL CUT FORM " + lineStartIndex + " TO " + (k - 1));
+                        String toPrint = text.substring(lineStartIndex, k - 1);
+                        S.println("WILL PRINT " + toPrint);
+
+                        g.drawString(toPrint, textX, textY + height, 0);
+
+                        height += lineHeight;
+
+                        lineStartIndex = k;
+
+                        //10 14 23 26 31
+                        S.println("NEW LINE STARTED AT: " + lineStartIndex);
+
+                                    
+                                }
+                            }
+                            continue throughText;
+                        }
+
                         S.println("WILL CUT FORM " + lineStartIndex + " TO " + previousDelimiterIndex);
                         String toPrint = text.substring(lineStartIndex, previousDelimiterIndex);
                         S.println("WILL PRINT " + toPrint);
@@ -162,7 +215,7 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
                         S.println("NEW LINE STARTED AT: " + lineStartIndex);
                         continue throughText;
                     } else {
-                        previousDelimiterIndex = i;
+                        previousDelimiterIndex = characterIndex;
                     }
                 }
             }
