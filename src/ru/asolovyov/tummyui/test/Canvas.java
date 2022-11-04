@@ -67,14 +67,14 @@ public class Canvas extends UIMIDlet {
         return CG.Canvas(
                 CG.VStack(
                 new Int(CG.CENTER),
-
                 
-            CG.Text("0123456789qwertyuiopasdfghjklzxcvbnm")
+            CG.Text("Привет\nПышу\nи не грусти\n:)")
+                .alignment(CG.BOTTOM | CG.RIGHT)//Сделать чтобы все вьюхи двигали контент внутри себя: то есть уважали контент инсеты
                 .textColor(0xFF0000)
                 .backgroundColor(0x00FF00)
                 .strokeColor(0x0000FF)
                 .cornerRaduis(new CGSize(20, 20))
-                .height(88).width(100)
+                .height(120).width(100)
                 
 //                    CG.Rect()
 //                            .height(230).width(30)

@@ -6,12 +6,15 @@
 package ru.asolovyov.tummyui.graphics;
 
 import javax.microedition.lcdui.Font;
+import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import ru.asolovyov.combime.bindings.Arr;
 import ru.asolovyov.combime.bindings.Bool;
 import ru.asolovyov.combime.bindings.Int;
 import ru.asolovyov.combime.bindings.Obj;
 import ru.asolovyov.combime.bindings.Str;
+import ru.asolovyov.combime.common.S;
+import ru.asolovyov.tummyui.data.List;
 
 /**
  *
@@ -21,12 +24,12 @@ public class CG {
     public final static int FPS = 30;
     public final static int FRAME_MILLIS = 1000 / FPS;
 
-    public final static int HCENTER = 1;
-    public final static int VCENTER = 1 << 1;
-    public final static int LEFT = 1 << 2;
-    public final static int RIGHT = 1 << 3;
-    public final static int TOP = 1 << 4;
-    public final static int BOTTOM = 1 << 5;
+    public final static int HCENTER = Graphics.HCENTER;
+    public final static int VCENTER = Graphics.VCENTER;
+    public final static int LEFT = Graphics.LEFT;
+    public final static int RIGHT = Graphics.RIGHT;
+    public final static int TOP = Graphics.TOP;
+    public final static int BOTTOM = Graphics.BOTTOM;
 
     public final static int CENTER = HCENTER | VCENTER;
 
@@ -169,58 +172,81 @@ public class CG {
         return new CGStack(new Int(CGStack.AXIS_Z), alignment, new Arr(new CGDrawable[] {d1, d2, d3, d4, d5}));
     }
 
-    public static CGSize sizeOfString(String text, Font font, CGSize constrainedSize) {
-        int width = 0;
-        int height = 0;
+    public static class MultilineText {
+        int width, height;
+        boolean shouldAddEllipsis = false;
+        List lines = new List();
+    }
+
+    public static MultilineText makeMultilineText(String text, Font font, CGSize constrainedSize) {
+        MultilineText instructions = new MultilineText();
 
         final int maxWidth = constrainedSize.width;
         final int maxHeight = constrainedSize.height;
 
-        int lineStartPosition = 0;
-        int previousDelimiterPosition = 0;
-        int previousChunkWidth = 0;
+        char[] delimiters = new char[]{ '\n', '-', ' ', '+', '/', '*', '&', ';', '.', ',' };
 
-        /* the index of the first occurrence of the object argument in this vector at position index */
+        int lineStartIndex = 0;
+        int latestDelimiterIndex = 0;
 
-        final int lineHeight = font.getHeight();
+        int lineHeight = font.getHeight();
 
-        final char[] delimiters = new char[]{ '\n', '-', ' ', '+', '/', '*', '&', ';', '.', ',' };
+        S.println(text);
 
-        throughText: for (int i = 0; i < text.length(); i++) {
-            char c = text.charAt(i);
-            for (int j = 0; j < delimiters.length; j++) {
-                char d = delimiters[j];
-                if (c == d || i == text.length() - 1) {
-                    int endIndex = i;
-                    if (c == d && c != ' ') {
-                        endIndex += 1;
-                    }
-                    String chunk = text.substring(lineStartPosition, endIndex);
+        for (int characterIndex = 0; characterIndex < text.length(); characterIndex++) {
+            char currentCharacter = text.charAt(characterIndex);
 
-                    int chunkWidth = font.stringWidth(chunk);
-
-                    if (chunkWidth > maxWidth) {
-                        lineStartPosition = previousDelimiterPosition + 1;
-                        previousDelimiterPosition = i;
-
-                        if (height + lineHeight > maxHeight) {
-                            break throughText;
-                        }
-
-                        width = Math.max(chunkWidth, width);
-                        width = Math.min(width, maxWidth);
-
-                        height += lineHeight;
-                        continue throughText;
-                    } else {
-                        previousDelimiterPosition = i;
-                    }
-                }
+            boolean isDelimiter = S.contains(currentCharacter, delimiters);
+            if (isDelimiter) {
+                latestDelimiterIndex = characterIndex;
             }
+
+            int length = characterIndex - lineStartIndex;
+            int currentWidth = font.substringWidth(text, lineStartIndex, length);
+
+            boolean isLastCharacter = characterIndex == text.length() - 1;
+            boolean isNewLine = currentCharacter == '\n';
+
+            if (currentWidth <= maxWidth && !isLastCharacter && !isNewLine) {
+                continue;
+            }
+
+            if (isLastCharacter) {
+                latestDelimiterIndex = characterIndex + 1;
+            } else if(latestDelimiterIndex <= lineStartIndex) {
+                latestDelimiterIndex = characterIndex - 1;
+            }
+
+            instructions.shouldAddEllipsis = (instructions.height + 2 * lineHeight > maxHeight) && !isLastCharacter;
+            if (instructions.shouldAddEllipsis) {
+                latestDelimiterIndex -= 1;
+            }
+
+            String substringToDraw = text.substring(lineStartIndex, latestDelimiterIndex);
+            instructions.height = Math.min(instructions.height + lineHeight, maxHeight);
+            
+            if (instructions.shouldAddEllipsis) {
+                substringToDraw += "…";
+            }
+
+            int substringWidth = font.stringWidth(substringToDraw);
+            instructions.width = Math.max(substringWidth, instructions.width);
+            instructions.width = Math.min(instructions.width, maxWidth);
+
+            instructions.lines.addElement(substringToDraw);
+
+            if (instructions.shouldAddEllipsis) {
+                break;
+            }
+            
+            lineStartIndex = latestDelimiterIndex + 1;
         }
 
-        height = Math.min(height, maxHeight);
+        return instructions;
+    }
 
-        return new CGSize(width, height);
+    public static CGSize stringSize(String text, Font font, CGSize constrainedSize) {
+        MultilineText multilineText = CG.makeMultilineText(text, font, constrainedSize);
+        return new CGSize(multilineText.width, multilineText.height);
     }
 }
