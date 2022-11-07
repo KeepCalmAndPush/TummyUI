@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package ru.asolovyov.tummyui.graphics;
+package ru.asolovyov.tummyui.graphics.views;
 
 import javax.microedition.lcdui.Graphics;
 import ru.asolovyov.combime.bindings.Arr;
@@ -12,10 +12,13 @@ import ru.asolovyov.combime.common.S;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.tummyui.bindings.Size;
 import java.lang.Math.*;
-import javax.microedition.lcdui.Canvas;
 import ru.asolovyov.threading.DispatchQueue;
 import ru.asolovyov.tummyui.data.List;
-import ru.asolovyov.tummyui.data.Mask;
+import ru.asolovyov.tummyui.graphics.CG;
+import ru.asolovyov.tummyui.graphics.CGFrame;
+import ru.asolovyov.tummyui.graphics.CGInsets;
+import ru.asolovyov.tummyui.graphics.CGPoint;
+import ru.asolovyov.tummyui.graphics.CGSize;
 
 /**
  *
@@ -118,28 +121,28 @@ public class CGStack extends CGSomeDrawable {
         int alignmentInt = this.alignment.getInt();
         int contentWidth = updateContentSizeAndApplyMasksToChildren().width;
 
-        if ((alignmentInt & CG.HCENTER) == CG.HCENTER) {
+        if (CG.isBitSet(alignmentInt,CG.HCENTER)) {
             this.nextLeft = (getCGFrame().width - contentWidth) / 2;
         } 
-        if ((alignmentInt & CG.LEFT) == CG.LEFT) {
+        if (CG.isBitSet(alignmentInt,CG.LEFT)) {
             this.nextLeft = getCGFrame().x;
         }
-        if ((alignmentInt & CG.RIGHT) == CG.RIGHT) {
+        if (CG.isBitSet(alignmentInt,CG.RIGHT)) {
             this.nextLeft = getCGFrame().width - contentWidth;
         }
 
-        final boolean isVCenter = (alignmentInt & CG.VCENTER) == CG.VCENTER;
-        final boolean isTop = (alignmentInt & CG.TOP) == CG.TOP;
-        final boolean isBottom = (alignmentInt & CG.BOTTOM) == CG.BOTTOM;
+        final boolean isVCenter = CG.isBitSet(alignmentInt, CG.VCENTER);
+        final boolean isTop = CG.isBitSet(alignmentInt, CG.TOP);
+        final boolean isBottom = CG.isBitSet(alignmentInt, CG.BOTTOM);
 
         this.drawables.forEach(new Arr.Enumerator() {
             public void onElement(Object element) {
                 CGDrawable drawable = (CGDrawable) element;
-                CGFrame frame = drawable.getCGFrame();
+                CGFrame frame = drawable.intrinsicAwareFrame();
 
                 int mask = drawable.resizingMask().getInt();
-                final boolean hasFlexibleX = (mask & CGFrame.FLEXIBLE_X) == CGFrame.FLEXIBLE_X;
-                final boolean hasFlexibleY = (mask & CGFrame.FLEXIBLE_Y) == CGFrame.FLEXIBLE_Y;
+                final boolean hasFlexibleX = CG.isBitSet(mask, CGFrame.FLEXIBLE_X);
+                final boolean hasFlexibleY = CG.isBitSet(mask, CGFrame.FLEXIBLE_Y);
 
                 if (hasFlexibleX) {
                     frame.x = nextLeft;
@@ -157,16 +160,18 @@ public class CGStack extends CGSomeDrawable {
                     }
                 }
 
-                frame.x += drawable.getOffset().getCGPoint().x;
-                frame.y += drawable.getOffset().getCGPoint().y;
+                frame.x += drawable.getOrigin().getCGPoint().x;
+                frame.y += drawable.getOrigin().getCGPoint().y;
 
                 frame.x -= getContentOffset().getCGPoint().x;
                 frame.y -= getContentOffset().getCGPoint().y;
 
+                drawable.setOrigin(frame.x, frame.y);
+
                 S.println("Will draw " + frame.x + ", " + frame.y + "; " + frame.width + ", " + frame.height);
 
                 drawable.draw(graphics);
-                nextLeft += drawable.getCGFrame().width;
+                nextLeft += drawable.intrinsicAwareFrame().width;
             }
         });
     }
@@ -180,28 +185,28 @@ public class CGStack extends CGSomeDrawable {
         int alignmentInt = this.alignment.getInt();
         int contentHeight = updateContentSizeAndApplyMasksToChildren().height;
 
-        if (Mask.isSet(alignmentInt, CG.VCENTER)) {
+        if (CG.isBitSet(alignmentInt, CG.VCENTER)) {
             this.nextTop = (getCGFrame().height - contentHeight) / 2;
         }
-        if (Mask.isSet(alignmentInt, CG.TOP)) {
+        if (CG.isBitSet(alignmentInt, CG.TOP)) {
             this.nextTop = getCGFrame().y;
         }
-        if (Mask.isSet(alignmentInt, CG.BOTTOM)) {
+        if (CG.isBitSet(alignmentInt, CG.BOTTOM)) {
             this.nextTop = getCGFrame().height - contentHeight;
         }
 
-        final boolean isHCenter = Mask.isSet(alignmentInt, CG.HCENTER);
-        final boolean isLeft = Mask.isSet(alignmentInt, CG.LEFT);
-        final boolean isRight = Mask.isSet(alignmentInt, CG.RIGHT);
+        final boolean isHCenter = CG.isBitSet(alignmentInt, CG.HCENTER);
+        final boolean isLeft = CG.isBitSet(alignmentInt, CG.LEFT);
+        final boolean isRight = CG.isBitSet(alignmentInt, CG.RIGHT);
 
         this.drawables.forEach(new Arr.Enumerator() {
             public void onElement(Object element) {
                 CGDrawable drawable = (CGDrawable)element;
-                CGFrame frame = drawable.getCGFrame();
+                CGFrame frame = drawable.intrinsicAwareFrame();
 
                 int mask = drawable.resizingMask().getInt();
-                final boolean hasFlexibleX = Mask.isSet(mask, CGFrame.FLEXIBLE_X);
-                final boolean hasFlexibleY = Mask.isSet(mask, CGFrame.FLEXIBLE_Y);
+                final boolean hasFlexibleX = CG.isBitSet(mask, CGFrame.FLEXIBLE_X);
+                final boolean hasFlexibleY = CG.isBitSet(mask, CGFrame.FLEXIBLE_Y);
                 
                 if (hasFlexibleX) {
                     if (isHCenter) {
@@ -219,16 +224,18 @@ public class CGStack extends CGSomeDrawable {
                     frame.y = nextTop;
                 }
                 
-                frame.x += drawable.getOffset().getCGPoint().x;
-                frame.y += drawable.getOffset().getCGPoint().y;
+                frame.x += drawable.getOrigin().getCGPoint().x;
+                frame.y += drawable.getOrigin().getCGPoint().y;
 
                 frame.x -= getContentOffset().getCGPoint().x;
                 frame.y -= getContentOffset().getCGPoint().y;
 
                 S.println("Will draw " + frame.x + ", " + frame.y + "; " + frame.width + ", " + frame.height);
+
+                drawable.setOrigin(frame.x, frame.y);
                 
                 drawable.draw(graphics);
-                nextTop += drawable.getCGFrame().height;
+                nextTop += drawable.intrinsicAwareFrame().height;
             }
         });
 
@@ -244,35 +251,35 @@ public class CGStack extends CGSomeDrawable {
         for (int i = 0; i < this.drawables.getArray().length; i++) {
             CGDrawable object = (CGDrawable)this.drawables.getArray()[i];
             int mask = object.resizingMask().getInt();
-            CGFrame frame = object.getCGFrame();
+            CGFrame frame = object.intrinsicAwareFrame();
 
-            if ((mask & CGFrame.FLEXIBLE_WIDTH) == CGFrame.FLEXIBLE_WIDTH) {
+            if (CG.isBitSet(mask, CGFrame.FLEXIBLE_WIDTH)) {
                 frame.width = getCGFrame().width;
             }
 
-            if ((mask & CGFrame.FLEXIBLE_HEIGHT) == CGFrame.FLEXIBLE_HEIGHT) {
+            if (CG.isBitSet(mask,  CGFrame.FLEXIBLE_HEIGHT)) {
                 frame.height = getCGFrame().height;
             }
         }
 
         int alignmentInt = this.alignment.getInt();
         
-        final boolean isVCenter = (alignmentInt & CG.VCENTER) == CG.VCENTER;
-        final boolean isTop = (alignmentInt & CG.TOP) == CG.TOP;
-        final boolean isBottom = (alignmentInt & CG.BOTTOM) == CG.BOTTOM;
+        final boolean isVCenter = CG.isBitSet(alignmentInt, CG.VCENTER);
+        final boolean isTop = CG.isBitSet(alignmentInt, CG.TOP);
+        final boolean isBottom = CG.isBitSet(alignmentInt, CG.BOTTOM);
 
-        final boolean isHCenter = (alignmentInt & CG.HCENTER) == CG.HCENTER;
-        final boolean isLeft = (alignmentInt & CG.LEFT) == CG.LEFT;
-        final boolean isRight = (alignmentInt & CG.RIGHT) == CG.RIGHT;
+        final boolean isHCenter = CG.isBitSet(alignmentInt, CG.HCENTER);
+        final boolean isLeft = CG.isBitSet(alignmentInt, CG.LEFT);
+        final boolean isRight = CG.isBitSet(alignmentInt, CG.RIGHT);
 
         this.drawables.forEach(new Arr.Enumerator() {
             public void onElement(Object element) {
                 CGDrawable drawable = (CGDrawable)element;
-                CGFrame frame = drawable.getCGFrame();
+                CGFrame frame = drawable.intrinsicAwareFrame();
 
                 int mask = drawable.resizingMask().getInt();
-                final boolean hasFlexibleX = (mask & CGFrame.FLEXIBLE_X) == CGFrame.FLEXIBLE_X;
-                final boolean hasFlexibleY = (mask & CGFrame.FLEXIBLE_Y) == CGFrame.FLEXIBLE_Y;
+                final boolean hasFlexibleX = CG.isBitSet(mask, CGFrame.FLEXIBLE_X);
+                final boolean hasFlexibleY = CG.isBitSet(mask, CGFrame.FLEXIBLE_Y);
 
                 if (hasFlexibleY) {
                     if (isVCenter) {
@@ -298,8 +305,10 @@ public class CGStack extends CGSomeDrawable {
                     }
                 }
 
-                frame.x += drawable.getOffset().getCGPoint().x;
-                frame.y += drawable.getOffset().getCGPoint().y;
+                frame.x += drawable.getOrigin().getCGPoint().x;
+                frame.y += drawable.getOrigin().getCGPoint().y;
+
+                drawable.setOrigin(frame.x, frame.y);
 
                 drawable.draw(graphics);
             }
@@ -429,6 +438,7 @@ public class CGStack extends CGSomeDrawable {
 
         int thisWidth = this.getCGFrame().width;
         int thisHeight = this.getCGFrame().height;
+        
         int maxWidth = 0;
         int maxHeight = 0;
 
@@ -438,8 +448,8 @@ public class CGStack extends CGSomeDrawable {
             CGDrawable object = (CGDrawable)drawables[i];
             int mask = object.resizingMask().getInt();
 
-            boolean hasFlexibleWidth = Mask.isSet(mask, CGFrame.FLEXIBLE_WIDTH);
-            boolean hasFlexibleHeight = Mask.isSet(mask, CGFrame.FLEXIBLE_HEIGHT);
+            boolean hasFlexibleWidth = CG.isBitSet(mask, CGFrame.FLEXIBLE_WIDTH);
+            boolean hasFlexibleHeight = CG.isBitSet(mask, CGFrame.FLEXIBLE_HEIGHT);
 
             if (hasFlexibleWidth) {
                 dynamicWidthChildren.addElement(object);
@@ -449,16 +459,16 @@ public class CGStack extends CGSomeDrawable {
                 dynamicHeightChildren.addElement(object);
             }
 
-            int childWidth = object.getCGFrame().width;
-            int childHeight = object.getCGFrame().height;
+            int childWidth = object.intrinsicAwareFrame().width;
+            int childHeight = object.intrinsicAwareFrame().height;
             
             if (axis == AXIS_HORIZONTAL) {
-                if (childWidth == 0 && hasFlexibleWidth) {
+                if (childWidth == CG.VALUE_NOT_SET && hasFlexibleWidth) {
                     unallocatedWidthCount++;
                 }
                 contentWidth += childWidth;
             } else if (axis == AXIS_VERTICAL) {
-                if (childHeight == 0 && hasFlexibleHeight) {
+                if (childHeight == CG.VALUE_NOT_SET && hasFlexibleHeight) {
                     unallocatedHeightCount++;
                 }
                 contentHeight += childHeight;
@@ -487,30 +497,36 @@ public class CGStack extends CGSomeDrawable {
             }
         }
 
+        // TODO внутри контейнера конструировать фрейм отталкиваясь от интринсика, ориджина, ширины и высоты
+        // а вот сама вьюха пусть рисует себя по тому фрейму, который ей даден
+
         for (int i = 0; i < drawables.length; i++) {
             CGDrawable object = (CGDrawable)drawables[i];
             int mask = object.resizingMask().getInt();
-            CGFrame frame = object.getCGFrame();
+            CGFrame frame = object.intrinsicAwareFrame();
 
             if (axis == AXIS_VERTICAL) {
-                if (frame.width == 0 && Mask.isSet(mask, CGFrame.FLEXIBLE_WIDTH)) {
+                if (frame.width == CG.VALUE_NOT_SET && CG.isBitSet(mask, CGFrame.FLEXIBLE_WIDTH)) {
                     frame.width = defaultWidth;
                 }
 
-                if (frame.height == 0 && Mask.isSet(mask, CGFrame.FLEXIBLE_HEIGHT)) {
+                if (frame.height == CG.VALUE_NOT_SET && CG.isBitSet(mask, CGFrame.FLEXIBLE_HEIGHT)) {
                     frame.height = defaultHeight;
                 }
             }
 
             if (axis == AXIS_HORIZONTAL) {
-                if (frame.width == 0 && Mask.isSet(mask, CGFrame.FLEXIBLE_WIDTH)) {
+                if (frame.width == CG.VALUE_NOT_SET && CG.isBitSet(mask, CGFrame.FLEXIBLE_WIDTH)) {
                     frame.width = defaultWidth;
                 }
 
-                if (frame.height == 0 && Mask.isSet(mask, CGFrame.FLEXIBLE_HEIGHT)) {
+                if (frame.height == CG.VALUE_NOT_SET && CG.isBitSet(mask, CGFrame.FLEXIBLE_HEIGHT)) {
                     frame.height = defaultHeight;
                 }
             }
+
+            object.width(frame.width);
+            object.height(frame.height);
 
             maxWidth = Math.max(maxWidth, frame.width);
             maxHeight = Math.max(maxHeight, frame.height);

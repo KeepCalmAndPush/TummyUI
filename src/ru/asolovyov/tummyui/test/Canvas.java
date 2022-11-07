@@ -6,15 +6,16 @@
 package ru.asolovyov.tummyui.test;
 
 import javax.microedition.lcdui.Displayable;
+import javax.microedition.lcdui.Image;
 import ru.asolovyov.combime.bindings.Bool;
 import ru.asolovyov.combime.bindings.Int;
 import ru.asolovyov.threading.Clock;
 import ru.asolovyov.tummyui.forms.UIMIDlet;
 import ru.asolovyov.tummyui.graphics.CG;
-import ru.asolovyov.tummyui.graphics.CGDrawable;
+import ru.asolovyov.tummyui.graphics.views.CGDrawable;
 import ru.asolovyov.tummyui.graphics.CGFrame;
 import ru.asolovyov.tummyui.graphics.CGSize;
-import ru.asolovyov.tummyui.graphics.CGText;
+import ru.asolovyov.tummyui.graphics.views.CGText;
 
 /**
  *
@@ -60,21 +61,42 @@ public class Canvas extends UIMIDlet {
     // меняет переданные параметры на некоторую дельту = дюрейщен/33
 
     // TODO Сделать чтобы все вьюхи двигали контент внутри себя: то есть уважали контент инсеты
-    // TODO Перенос текста!
+
+     //TODO ЗАЕБЕНИТЬ СПЕЙСИНГ!
     protected Displayable content() {
         // TODO управление памятью,
         // TODO отписка от подписок,
         return CG.Canvas(
                 CG.VStack(
-                new Int(CG.CENTER),
-                
-            CG.Text("Привет\nПышу\nи не грусти\n:)")
-                .alignment(CG.BOTTOM | CG.RIGHT)//Сделать чтобы все вьюхи двигали контент внутри себя: то есть уважали контент инсеты
+                new Int(CG.TOP | CG.RIGHT),
+
+//            CG.Image("res/spok.png"),
+            //.height(90).width(101),
+            
+            CG.Text("Если будет много текста")
+                //Сделать чтобы все вьюхи двигали контент внутри себя: то есть уважали контент инсеты
                 .textColor(0xFF0000)
                 .backgroundColor(0x00FF00)
                 .strokeColor(0x0000FF)
                 .cornerRaduis(new CGSize(20, 20))
-                .height(120).width(100)
+                .width(100),
+
+          CG.Text("он просто обрежется многоточием")
+                //Сделать чтобы все вьюхи двигали контент внутри себя: то есть уважали контент инсеты
+                .textColor(0xFF0000)
+                .backgroundColor(0x00FF00)
+                .strokeColor(0x0000FF)
+                .cornerRaduis(new CGSize(20, 20))
+                .width(100),
+
+         CG.Text("как будто так и надо")
+                //Сделать чтобы все вьюхи двигали контент внутри себя: то есть уважали контент инсеты
+                .textColor(0xFF0000)
+                .backgroundColor(0x00FF00)
+                .strokeColor(0x0000FF)
+                .cornerRaduis(new CGSize(20, 20))
+                .width(100)
+//                .height(70).width(100)
                 
 //                    CG.Rect()
 //                            .height(230).width(30)
@@ -150,7 +172,7 @@ public class Canvas extends UIMIDlet {
 //                             }),
 //                    CG.Rect()
 //                            .color(0x0000FF)
-////                            .setOffset(25, 25)
+////                            .setOrigin(25, 25)
 //                            .height(77)
 //                            .resizingMask(CGFrame.FLEXIBLE_ORIGIN)
 //                            .readGeometry(new CGDrawable.GeometryReader() {
@@ -182,6 +204,6 @@ public class Canvas extends UIMIDlet {
 //                        .setFrame(75, 25, 10, 10)
 //                )
                 ))
-                .backgroundColor(0xFF69B4);
+                .backgroundColor(0xFFFFFF);
     }
 }

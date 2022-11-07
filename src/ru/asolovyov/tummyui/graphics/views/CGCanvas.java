@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package ru.asolovyov.tummyui.graphics;
+package ru.asolovyov.tummyui.graphics.views;
 
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
@@ -12,6 +12,8 @@ import ru.asolovyov.combime.bindings.Int;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.combime.operators.sequence.Drop;
 import ru.asolovyov.combime.operators.timing.Debounce;
+import ru.asolovyov.tummyui.graphics.CG;
+import ru.asolovyov.tummyui.graphics.CGFrame;
 
 /**
  *
@@ -22,7 +24,7 @@ public class CGCanvas extends Canvas {
     private CGDrawable[] content;
     private Int backgroundColor;
     private Bool needsRepaint = new Bool(false);
-    protected Bool needsRepaint() {
+    public Bool needsRepaint() {
         return needsRepaint;
     }
 
@@ -40,10 +42,10 @@ public class CGCanvas extends Canvas {
         if (content.length == 1) {
             CGFrame frame = content[0].getCGFrame();
             int mask = content[0].resizingMask().getInt();
-            if ((mask & CGFrame.FLEXIBLE_WIDTH) == CGFrame.FLEXIBLE_WIDTH) {
+            if (CG.isBitSet(mask, CGFrame.FLEXIBLE_WIDTH)) {
                 frame.width = this.getWidth();
             }
-            if ((mask & CGFrame.FLEXIBLE_HEIGHT) == CGFrame.FLEXIBLE_HEIGHT) {
+            if (CG.isBitSet(mask, CGFrame.FLEXIBLE_HEIGHT)) {
                 frame.height = this.getHeight();
             }
             content[0].needsRelayout(frame);

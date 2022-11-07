@@ -3,8 +3,9 @@
  * and open the template in the editor.
  */
 
-package ru.asolovyov.tummyui.graphics;
+package ru.asolovyov.tummyui.graphics.views;
 
+import ru.asolovyov.tummyui.graphics.views.CGDrawable;
 import javax.microedition.lcdui.Font;
 import ru.asolovyov.combime.bindings.Int;
 import ru.asolovyov.combime.bindings.Obj;

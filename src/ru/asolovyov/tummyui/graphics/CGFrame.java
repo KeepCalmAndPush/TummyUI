@@ -59,4 +59,21 @@ public final class CGFrame {
     public int maxX() {
         return this.x + this.width;
     }
+
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj instanceof CGFrame) {
+            CGFrame frame = (CGFrame)obj;
+            return (x == frame.x) && (y == frame.y) && (width == frame.width) && (height == frame.height);
+        }
+        return false;
+    }
+
+    public int hashCode() {
+        return ("x"+x+"y"+y+"width"+width+"height"+height).hashCode();
+    }
+
+    
 }

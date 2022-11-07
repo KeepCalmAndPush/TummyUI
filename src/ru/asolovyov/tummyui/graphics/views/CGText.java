@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package ru.asolovyov.tummyui.graphics;
+package ru.asolovyov.tummyui.graphics.views;
 
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
@@ -11,7 +11,11 @@ import ru.asolovyov.combime.bindings.Int;
 import ru.asolovyov.combime.bindings.Obj;
 import ru.asolovyov.combime.bindings.Str;
 import ru.asolovyov.combime.common.Sink;
+import ru.asolovyov.tummyui.bindings.Size;
+import ru.asolovyov.tummyui.graphics.CG;
 import ru.asolovyov.tummyui.graphics.CG.MultilineText;
+import ru.asolovyov.tummyui.graphics.CGFrame;
+import ru.asolovyov.tummyui.graphics.CGSize;
 
 /**
  *
@@ -20,27 +24,23 @@ import ru.asolovyov.tummyui.graphics.CG.MultilineText;
 public class CGText extends CGSomeDrawable implements CGFontSupporting {
     private Str text = new Str("");
     private Obj font = new Obj(Font.getDefaultFont());
-    private Int anchor = new Int(CG.CENTER);
+    private Int anchor = new Int(CG.TOP | CG.LEFT);
     private Int textColor = new Int(0x000000);
 
     public CGText(Str text) {
         super();
-        this.text = text;
-        this.text.sink(new Sink() {
-            protected void onValue(Object value) {
-                needsRelayout(getCGFrame());
-            }
-        });
-
-        this.textColor.sink(new Sink() {
-            protected void onValue(Object value) {
-                needsRedraw();
-            }
-        });
+        //TODO подписаться на остальное
+        this.text(text);
+        this.textColor(textColor);
     }
     
     public CGText text(Str text) {
-        text.route(this.text);
+        this.text = text;
+        this.text.sink(new Sink() {
+            protected void onValue(Object value) {
+                updateIntrinsicContentSize();
+            }
+        });
         return this;
     }
 
@@ -50,15 +50,15 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
     }
 
     public CGText alignment(int anchor) {
-        return this.anchor(new Int(anchor));
+        return this.alignment(new Int(anchor));
     }
     
-    public CGText anchor(Int anchor) {
+    public CGText alignment(Int anchor) {
         anchor.route(this.anchor);
         return this;
     }
 
-    private int getAnchor() {
+    private int getAlignment() {
         return this.anchor.getInt();
     }
 
@@ -68,7 +68,7 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
 
     public void draw(Graphics g) {
         super.draw(g);
-        CGFrame frame = getCGFrame();
+        CGFrame frame = intrinsicAwareFrame();
         if (frame == null) {
             return;
         }
@@ -77,12 +77,12 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
 
         String text = this.text.getString();
         Font font = this.getFont();
-        int anchor = this.getAnchor();
+        int anchor = this.getAlignment();
 
         MultilineText multilineText = CG.makeMultilineText(text, font, frame.getCGSize());
         
         int lineHeight = font.getHeight();
-        for ( int i = 0; i < multilineText.lines.size(); i++) {
+        for (int i = 0; i < multilineText.lines.size(); i++) {
             String line = (String) multilineText.lines.elementAt(i);
             int lineWidth = font.stringWidth(line);
             int textY = frame.y + i * lineHeight;
@@ -130,5 +130,36 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
             }
         });
         return this;
+    }
+
+    public CGDrawable sizeToFit() {
+        int width = this.getWidth();
+        
+        if (this.getWidth() != CG.VALUE_NOT_SET) {
+            width = this.getFont().getHeight();
+        }
+
+        CGSize size = CG.stringSize(this.text.getString(), this.getFont(), new CGSize(width, Integer.MAX_VALUE));
+        this.width(size.width);
+        this.height(size.height);
+        
+        return this;
+    }
+
+    protected void updateIntrinsicContentSize() {
+        super.updateIntrinsicContentSize();
+        String text = this.text.getString();
+        
+        CGSize size = getCGFrame().copy().getCGSize();
+        Font font = getFont();
+
+        if (size.width <= 0) {
+            size.height = font.getHeight();
+            size.width = font.stringWidth(text);
+        } else {
+            size.height = CG.stringSize(text, font, new CGSize(size.width, Integer.MAX_VALUE)).height;
+        }
+
+        intrinsicContentSizeBinding.setCGSize(size);
     }
 }

@@ -5,6 +5,16 @@
 
 package ru.asolovyov.tummyui.graphics;
 
+import ru.asolovyov.tummyui.graphics.views.CGIf;
+import ru.asolovyov.tummyui.graphics.views.CGDrawable;
+import ru.asolovyov.tummyui.graphics.views.CGText;
+import ru.asolovyov.tummyui.graphics.views.CGImage;
+import ru.asolovyov.tummyui.graphics.views.CGRectangle;
+import ru.asolovyov.tummyui.graphics.views.CGArc;
+import ru.asolovyov.tummyui.graphics.views.CGCanvas;
+import ru.asolovyov.tummyui.graphics.views.CGStack;
+import ru.asolovyov.tummyui.graphics.views.CGLine;
+import java.io.IOException;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
@@ -23,6 +33,8 @@ import ru.asolovyov.tummyui.data.List;
 public class CG {
     public final static int FPS = 30;
     public final static int FRAME_MILLIS = 1000 / FPS;
+
+    public final static int VALUE_NOT_SET = Integer.MIN_VALUE;
 
     public final static int HCENTER = Graphics.HCENTER;
     public final static int VCENTER = Graphics.VCENTER;
@@ -50,6 +62,17 @@ public class CG {
     public static CGImage Image(Image image) {
         return new CGImage()
                 .image(new Obj(image));
+    }
+
+    public static CGImage Image(String path) {
+        Image image = null;
+        try {
+            image = Image.createImage(path);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+        return Image(image);
     }
 
     public static CGLine Line() {
@@ -173,9 +196,9 @@ public class CG {
     }
 
     public static class MultilineText {
-        int width, height;
-        boolean shouldAddEllipsis = false;
-        List lines = new List();
+        public int width, height;
+        public boolean shouldAddEllipsis = false;
+        public List lines = new List();
     }
 
     public static MultilineText makeMultilineText(String text, Font font, CGSize constrainedSize) {

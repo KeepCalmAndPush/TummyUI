@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package ru.asolovyov.tummyui.graphics;
+package ru.asolovyov.tummyui.graphics.views;
 
 import javax.microedition.lcdui.Graphics;
 import ru.asolovyov.combime.bindings.Bool;

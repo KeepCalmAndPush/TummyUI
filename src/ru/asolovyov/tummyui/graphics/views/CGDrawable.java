@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package ru.asolovyov.tummyui.graphics;
+package ru.asolovyov.tummyui.graphics.views;
 
 import javax.microedition.lcdui.Graphics;
 import ru.asolovyov.combime.bindings.Bool;
@@ -12,6 +12,8 @@ import ru.asolovyov.tummyui.bindings.Frame;
 import ru.asolovyov.tummyui.bindings.Insets;
 import ru.asolovyov.tummyui.bindings.Point;
 import ru.asolovyov.tummyui.bindings.Size;
+import ru.asolovyov.tummyui.graphics.CGFrame;
+import ru.asolovyov.tummyui.graphics.CGSize;
 
 /**
  *
@@ -58,8 +60,8 @@ public interface CGDrawable {
     public CGDrawable setFrame(Frame frame);
     public CGDrawable setFrame(int x, int y, int width, int height);
 
-    public CGDrawable setOffset(Point offset);
-    public CGDrawable setOffset(int x, int y);
+    public CGDrawable setOrigin(Point offset);
+    public CGDrawable setOrigin(int x, int y);
 
     public CGDrawable setContentOffset(Point offset);
     public CGDrawable setContentOffset(int x, int y);
@@ -83,14 +85,26 @@ public interface CGDrawable {
     public CGDrawable isVisible(Bool isVisible);
 
     public Bool isVisible();
-    public Frame getFrame();
-    public Point getOffset();
+
+    //TODO возможно нам не нужен фрейм. Надо Оффсет переименовать в ориджин. А фрейм будет не для самосоятотельного задания пользоватем.
+    //фрейм заполняем в стеках и прочих контейнерах на основании вычислений/интринсиков.
+    //тогда если у нас не заданы видс/хайт, то пляшем от интринскика/вычислений
+    
+    public Point getOrigin();
+
+    public int getWidth();
+    public int getHeight();
+
     public Point getContentOffset();
     public Insets getContentInset();
+
     public Int resizingMask();
+
     public Size intrinsicContentSize();
     public CGSize getCornerRadius();
 
+    //public Frame getFrame();
     public CGFrame getCGFrame();
+    public CGFrame intrinsicAwareFrame();
 }
 
