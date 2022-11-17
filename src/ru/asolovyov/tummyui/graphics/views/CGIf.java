@@ -41,7 +41,7 @@ public class CGIf extends CGSomeDrawable {
         return super.setCanvas(canvas);
     }
 
-
+    //TODO Хитрая обработка инсетов и офсетов
     public void draw(Graphics g) {
         super.draw(g);
         if(this.conditionBinding.getBool()) {

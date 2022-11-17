@@ -50,12 +50,15 @@ public interface CGDrawable {
     public CGDrawable setCanvas(CGCanvas canvas);
 
     public CGDrawable sizeToFit();
+    
+    public CGDrawable color(int backgroundColorHex);
+    public CGDrawable color(Int backgroundColorHex);
 
     public CGDrawable backgroundColor(int backgroundColorHex);
     public CGDrawable backgroundColor(Int backgroundColorHex);
     
-    public CGDrawable strokeColor(int strokeColorHex);
-    public CGDrawable strokeColor(Int strokeColorHex);
+    public CGDrawable borderColor(int borderColorHex);
+    public CGDrawable borderColor(Int borderColorHex);
 
     public CGDrawable setFrame(Frame frame);
     public CGDrawable setFrame(int x, int y, int width, int height);
@@ -85,8 +88,8 @@ public interface CGDrawable {
     public CGDrawable isVisible(Bool isVisible);
 
     public Bool isVisible();
-
-    //TODO возможно нам не нужен фрейм. Надо Оффсет переименовать в ориджин. А фрейм будет не для самосоятотельного задания пользоватем.
+    
+    //TODO возможно нам не нужен фрейм. Он будет не для самосоятотельного задания пользоватем.
     //фрейм заполняем в стеках и прочих контейнерах на основании вычислений/интринсиков.
     //тогда если у нас не заданы видс/хайт, то пляшем от интринскика/вычислений
     
@@ -95,6 +98,7 @@ public interface CGDrawable {
     public int getWidth();
     public int getHeight();
 
+    //TODO Вертать не публишер, а примитив
     public Point getContentOffset();
     public Insets getContentInset();
 
@@ -102,8 +106,7 @@ public interface CGDrawable {
 
     public Size intrinsicContentSize();
     public CGSize getCornerRadius();
-
-    //public Frame getFrame();
+    
     public CGFrame getCGFrame();
     public CGFrame intrinsicAwareFrame();
 }

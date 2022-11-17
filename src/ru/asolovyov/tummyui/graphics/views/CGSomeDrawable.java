@@ -26,20 +26,6 @@ public abstract class CGSomeDrawable implements CGDrawable {
 
     public CGSomeDrawable() {
         super();
-//        this.contentOffsetBinding.sink(new Sink() {
-//            protected void onValue(Object value) {
-//                needsRelayout(getCGFrame());
-//            }
-//        });
-//
-//        this.contentInsetBinding.sink(new Sink() {
-//            protected void onValue(Object value) {
-//                needsRelayout(getCGFrame());
-//            }
-//        });
-
-        //TODO подписаться на остальное
-        
     }
 
     protected Frame frameBinding = new Frame(CGFrame.zero());
@@ -52,8 +38,10 @@ public abstract class CGSomeDrawable implements CGDrawable {
 
     protected Int resizingMaskBinding = new Int(CGFrame.FLEXIBLE_ALL);
 
+    protected Int color = new Int(CG.VALUE_NOT_SET);
     protected Int backgroundColor = new Int(CG.VALUE_NOT_SET);
-    protected Int strokeColor = new Int(CG.VALUE_NOT_SET);
+
+    protected Int borderColor = new Int(CG.VALUE_NOT_SET);
     protected Int strokeStyle = new Int(Graphics.SOLID);
 
     protected Point contentOffsetBinding = new Point(CGPoint.zero());
@@ -62,6 +50,9 @@ public abstract class CGSomeDrawable implements CGDrawable {
 
     protected Bool isVisible = new Bool(true);
     private CGCanvas canvas;
+
+    private KeyboardHandler keyboardHandler;
+    private GeometryReader geometryReader;
 
     public void draw(Graphics g) {
         CGFrame frame = intrinsicAwareFrame();
@@ -81,11 +72,10 @@ public abstract class CGSomeDrawable implements CGDrawable {
                     getCornerRadius().height);
         }
 
-        int strokeColor = this.getStrokeColor();
-        if (strokeColor != CG.VALUE_NOT_SET) {
+        int borderColor = this.getBorderColor();
+        if (borderColor != CG.VALUE_NOT_SET) {
             g.setStrokeStyle(this.getStrokeStyle());
-            g.setColor(strokeColor);
-
+            g.setColor(borderColor);
             g.drawRoundRect(
                     frame.x,
                     frame.y,
@@ -138,6 +128,20 @@ public abstract class CGSomeDrawable implements CGDrawable {
         return this;
     }
 
+    public CGDrawable color(int colorHex) {
+        return this.color(new Int(colorHex));
+    }
+
+    public CGDrawable color(Int backgroundColorHex) {
+        this.color = backgroundColorHex;
+        this.color.removeDuplicates().sink(new Sink() {
+            protected void onValue(Object value) {
+                needsRedraw();
+            }
+        });
+        return this;
+    }
+
     public void needsRedraw() {
         this.needsRelayout(this.getCGFrame());
     }
@@ -158,8 +162,11 @@ public abstract class CGSomeDrawable implements CGDrawable {
 
     public CGFrame intrinsicAwareFrame() {
         CGFrame frame = this.getCGFrame().copy();
-        frame.width = this.intrinsicContentSize().getCGSize().width;
-        frame.height = this.intrinsicContentSize().getCGSize().height;
+        CGSize size = this.intrinsicContentSize().getCGSize();
+        CGInsets insets = this.contentInsetBinding.getCGInsets();
+
+        frame.width = size.width + insets.left + insets.right;
+        frame.height = size.height + insets.top + insets.bottom;
         
         return frame;
     }
@@ -180,12 +187,16 @@ public abstract class CGSomeDrawable implements CGDrawable {
         return canvas;
     }
 
+    protected int getColor() {
+        return color.getInt();
+    }
+
     protected int getBackgroundColor() {
         return backgroundColor.getInt();
     }
 
-    protected int getStrokeColor() {
-        return strokeColor.getInt();
+    protected int getBorderColor() {
+        return borderColor.getInt();
     }
 
     public CGDrawable setOrigin(Point origin) {
@@ -292,8 +303,6 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     protected void updateIntrinsicContentSize() { }
-    
-    private GeometryReader geometryReader;
 
     public CGDrawable readGeometry(GeometryReader reader) {
         this.geometryReader = reader;
@@ -303,8 +312,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
     public GeometryReader getGeometryReader() {
         return geometryReader;
     }
-    private KeyboardHandler keyboardHandler;
-
+    
     public CGDrawable handleKeyboard(KeyboardHandler handler) {
         this.keyboardHandler = handler;
         this.startHandlingKeyboard();
@@ -431,13 +439,13 @@ public abstract class CGSomeDrawable implements CGDrawable {
         return CGSize.zero();
     }
 
-    public CGDrawable strokeColor(int strokeColorHex) {
-        return this.strokeColor(new Int(strokeColorHex));
+    public CGDrawable borderColor(int borderColorHex) {
+        return this.borderColor(new Int(borderColorHex));
     }
 
-    public CGDrawable strokeColor(Int strokeColorHex) {
-        this.strokeColor = strokeColorHex;
-        this.strokeColor.removeDuplicates().sink(new Sink() {
+    public CGDrawable borderColor(Int borderColorHex) {
+        this.borderColor = borderColorHex;
+        this.borderColor.removeDuplicates().sink(new Sink() {
 
             protected void onValue(Object value) {
                 needsRedraw();
@@ -448,7 +456,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
 
     public void animate(int durationMillis, Runnable animations) {
         final int backgroundColor = this.getBackgroundColor();
-        final int strokeColor = this.getStrokeColor();
+        final int strokeColor = this.getBorderColor();
 
         final CGFrame frame = this.getCGFrame().copy();
         final CGPoint origin = this.getOrigin().getCGPoint().copy();

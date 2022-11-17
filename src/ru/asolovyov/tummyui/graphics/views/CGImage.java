@@ -11,6 +11,7 @@ import ru.asolovyov.combime.bindings.Obj;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.tummyui.bindings.Size;
 import ru.asolovyov.tummyui.graphics.CGFrame;
+import ru.asolovyov.tummyui.graphics.CGInsets;
 
 /**
  *
@@ -45,7 +46,13 @@ public class CGImage extends CGSomeDrawable {
         super.draw(g);
         CGFrame frame = frameBinding.getCGFrame().copy();
         Image originalImage = (Image)this.image.getObject();
-        g.drawImage(originalImage, frame.x, frame.y, 0);
+
+        CGInsets insets = this.contentInsetBinding.getCGInsets();
+        g.drawImage(
+                originalImage,
+                frame.x + insets.left,
+                frame.y + insets.top, 0
+                );
     }
 
     public Size intrinsicContentSize() {

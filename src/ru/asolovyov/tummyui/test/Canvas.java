@@ -56,11 +56,14 @@ public class Canvas extends UIMIDlet {
     }
 
     
-    // TODO запилить движок анимаций: сделать здоровенный метод в CG, типа animate(delay, duration, view, frame, bgcolor, strokeColor, cornerRadius, inset итп)
+    // TODO запилить движок анимаций: сделать здоровенный метод в CG, типа animate(delay, duration, view, frame, bgcolor, borderColor, cornerRadius, inset итп)
     // TODO сделать DisplayLink, это таймер который тикает раз в 33мс. В методе анимейт создавать объект анимации, который сушает дисплейЛинк и на каждый тик
     // меняет переданные параметры на некоторую дельту = дюрейщен/33
 
     // TODO Сделать чтобы все вьюхи двигали контент внутри себя: то есть уважали контент инсеты
+    //   Лайны, круги и прочие примитивы тоже должны сдвигаться относительно инсетов внутрь
+
+    // TODO  СДЕЛАТЬ ЦГ-ФОР-ИЧ вьюху
 
      //TODO ЗАЕБЕНИТЬ СПЕЙСИНГ!
     protected Displayable content() {
@@ -75,25 +78,25 @@ public class Canvas extends UIMIDlet {
             
             CG.Text("Если будет много текста")
                 //Сделать чтобы все вьюхи двигали контент внутри себя: то есть уважали контент инсеты
-                .textColor(0xFF0000)
+                .color(0xFF0000)
                 .backgroundColor(0x00FF00)
-                .strokeColor(0x0000FF)
+                .borderColor(0x0000FF)
                 .cornerRaduis(new CGSize(20, 20))
                 .width(100),
 
           CG.Text("он просто обрежется многоточием")
                 //Сделать чтобы все вьюхи двигали контент внутри себя: то есть уважали контент инсеты
-                .textColor(0xFF0000)
+                .color(0xFF0000)
                 .backgroundColor(0x00FF00)
-                .strokeColor(0x0000FF)
+                .borderColor(0x0000FF)
                 .cornerRaduis(new CGSize(20, 20))
                 .width(100),
 
          CG.Text("как будто так и надо")
                 //Сделать чтобы все вьюхи двигали контент внутри себя: то есть уважали контент инсеты
-                .textColor(0xFF0000)
+                .color(0xFF0000)
                 .backgroundColor(0x00FF00)
-                .strokeColor(0x0000FF)
+                .borderColor(0x0000FF)
                 .cornerRaduis(new CGSize(20, 20))
                 .width(100)
 //                .height(70).width(100)
@@ -203,7 +206,9 @@ public class Canvas extends UIMIDlet {
 //                        .color(0xFF0000)
 //                        .setFrame(75, 25, 10, 10)
 //                )
-                ))
+                )
+                .setContentInset(10, 10, 10, 10) // TODO инсет внутри стека не работает
+                )
                 .backgroundColor(0xFFFFFF);
     }
 }

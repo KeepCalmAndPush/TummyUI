@@ -9,7 +9,9 @@ import javax.microedition.lcdui.Graphics;
 import ru.asolovyov.combime.bindings.Int;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.tummyui.bindings.Point;
+import ru.asolovyov.tummyui.graphics.CG;
 import ru.asolovyov.tummyui.graphics.CGFrame;
+import ru.asolovyov.tummyui.graphics.CGInsets;
 
 /**
  *
@@ -47,13 +49,33 @@ public class CGArc extends CGSomeDrawable {
             return;
         }
 
-        g.fillArc(
-                frame.x,
-                frame.y,
-                frame.width,
-                frame.height,
+        CGInsets insets = this.contentInsetBinding.getCGInsets();
+
+        int fillColor = this.getColor();
+        if (fillColor != CG.VALUE_NOT_SET) {
+            g.setColor(fillColor);
+            g.fillArc(
+                frame.x + insets.left,
+                frame.y + insets.top,
+                frame.width - insets.left - insets.right,
+                frame.height - insets.top - insets.bottom,
                 startAngleBinding.getInt(),
                 endAngleBinding.getInt()
                 );
+        }
+
+        int color = this.getColor();
+        if (color != CG.VALUE_NOT_SET) {
+            g.setColor(color);
+            g.setStrokeStyle(this.getStrokeStyle());
+            g.drawArc(
+                frame.x + insets.left,
+                frame.y + insets.top,
+                frame.width - insets.left - insets.right,
+                frame.height - insets.top - insets.bottom,
+                startAngleBinding.getInt(),
+                endAngleBinding.getInt()
+                );
+        }
     }
 }
