@@ -87,17 +87,17 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
         for (int i = 0; i < multilineText.lines.size(); i++) {
             String line = (String) multilineText.lines.elementAt(i);
             int lineWidth = font.stringWidth(line);
-            int textY = frame.y + i * lineHeight + contentInset.top;
+            int textY = frame.y + i * lineHeight;
             int textX = frame.x + contentInset.left;
 
             if (CG.isBitSet(anchor, CG.VCENTER)) {
-                textY += (frame.height - multilineText.height) / 2;
+                textY += (frame.height - multilineText.height) / 2 + contentInset.top - contentInset.bottom;
             } else if (CG.isBitSet(anchor, CG.BOTTOM)) {
                 textY += (frame.height - multilineText.height);
             }
 
             if (CG.isBitSet(anchor, CG.HCENTER)) {
-                textX += (frame.width - lineWidth) / 2;
+                textX += (frame.width - lineWidth) / 2 - contentInset.right;
             } else if (CG.isBitSet(anchor, CG.RIGHT)) {
                 textX += (frame.width - lineWidth);
             }

@@ -105,6 +105,7 @@ public class Canvas extends UIMIDlet {
                         int style = ((Integer)viewModel).intValue();
 
                         return CG.Text("Текст")
+                                .alignment(CG.CENTER)
                                 .font(Font.getFont(Font.FACE_PROPORTIONAL, style, Font.SIZE_LARGE))
                                 .color(0xFF0000)
                                 .backgroundColor(0x00FF00)
