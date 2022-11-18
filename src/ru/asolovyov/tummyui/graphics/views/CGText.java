@@ -125,7 +125,7 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
     }
 
     public CGDrawable sizeToFit() {
-        int width = this.getWidth();
+        int width = this.getHeight();
         
         if (this.getWidth() != CG.VALUE_NOT_SET) {
             width = this.getFont().getHeight();
@@ -135,8 +135,8 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
 
         CGInsets insets = this.contentInsetBinding.getCGInsets();
 
-        this.width(size.width + insets.left + insets.right);
-        this.height(size.height + insets.top + insets.bottom);
+        this.width(size.width + insets.horizontal());
+        this.height(size.height + insets.vertical());
         
         return this;
     }
@@ -146,6 +146,9 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
         String text = this.text.getString();
         
         CGSize size = getCGFrame().copy().getCGSize();
+        size.width -= getContentInset().getCGInsets().horizontal();
+        size.height -= getContentInset().getCGInsets().vertical();
+
         Font font = getFont();
 
         if (size.width <= 0) {

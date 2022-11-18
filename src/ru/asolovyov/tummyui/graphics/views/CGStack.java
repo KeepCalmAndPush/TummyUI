@@ -12,6 +12,7 @@ import ru.asolovyov.combime.common.S;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.tummyui.bindings.Size;
 import java.lang.Math.*;
+import ru.asolovyov.combime.operators.mapping.Map;
 import ru.asolovyov.threading.DispatchQueue;
 import ru.asolovyov.tummyui.data.List;
 import ru.asolovyov.tummyui.graphics.CG;
@@ -37,12 +38,41 @@ public class CGStack extends CGSomeDrawable {
     protected Int alignment = new Int(CG.LEFT);
     protected Int axis = new Int(AXIS_HORIZONTAL);
 
+    protected Arr models = new Arr(new Object[]{});
+    protected DrawableFactory factory;
+
     protected Size contentSize = new Size(0, 0);
 
     private List repeatedKeys = new List();
 
     public Size contentSize() {
         return contentSize;
+    }
+
+    public CGStack(int axis, Object[] models, DrawableFactory factory) {
+        this(new Int(axis), new Int(CG.CENTER), new Arr(models), factory);
+    }
+
+    public CGStack(Int axis, Arr models, DrawableFactory factory) {
+        this(axis, new Int(CG.CENTER), models, factory);
+    }
+
+    public CGStack(Int axis, Int alignment, Arr models, DrawableFactory factory) {
+        this(axis, alignment, new Arr(new CGDrawable[]{}));
+        this.factory = factory;
+        this.models = models;
+        this.models.to(new Map() {
+            public Object mapValue(Object value) {
+                Object[] models = (Object[])value;
+                CGDrawable[] drawables = new CGDrawable[models.length];
+                for (int i = 0; i < models.length; i++) {
+                    Object model = models[i];
+                    CGDrawable drawable = CGStack.this.factory.itemFor(model);
+                    drawables[i] = drawable;
+                }
+                return drawables;
+            }
+        }).route(drawables);
     }
 
     public CGStack(Int axis, Arr drawables) {
@@ -119,19 +149,17 @@ public class CGStack extends CGSomeDrawable {
         this.nextLeft = thisFrame.x + contentInsets.left;
         this.nextTop = thisFrame.y + contentInsets.top;
 
-        this.nextLeft += thisFrame.x;
-
         int alignmentInt = this.alignment.getInt();
         int contentWidth = updateContentSizeAndApplyMasksToChildren().width;
 
         if (CG.isBitSet(alignmentInt,CG.HCENTER)) {
-            this.nextLeft = (thisFrame.width - contentWidth) / 2;
+            this.nextLeft = (thisFrame.width - contentWidth) / 2 + contentInsets.left - contentInsets.right;
         } 
         if (CG.isBitSet(alignmentInt,CG.LEFT)) {
-            this.nextLeft = thisFrame.x;
+            this.nextLeft = thisFrame.x + contentInsets.left;
         }
         if (CG.isBitSet(alignmentInt,CG.RIGHT)) {
-            this.nextLeft = thisFrame.width - contentWidth;
+            this.nextLeft = thisFrame.width - contentWidth - contentInsets.right;
         }
 
         final boolean isVCenter = CG.isBitSet(alignmentInt, CG.VCENTER);
@@ -143,6 +171,8 @@ public class CGStack extends CGSomeDrawable {
                 CGDrawable drawable = (CGDrawable) element;
                 CGFrame frame = drawable.intrinsicAwareFrame();
 
+                CGInsets contentInsets = getContentInset().getCGInsets();
+
                 int mask = drawable.resizingMask().getInt();
                 final boolean hasFlexibleX = CG.isBitSet(mask, CGFrame.FLEXIBLE_X);
                 final boolean hasFlexibleY = CG.isBitSet(mask, CGFrame.FLEXIBLE_Y);
@@ -153,13 +183,13 @@ public class CGStack extends CGSomeDrawable {
 
                 if (hasFlexibleY) {
                     if (isVCenter) {
-                        frame.y = (thisFrame.height - frame.height) / 2;
+                        frame.y = (thisFrame.height - frame.height) / 2 + contentInsets.top - contentInsets.bottom;
                     }
                     if (isTop) {
-                        frame.y = 0;
+                        frame.y = contentInsets.top;
                     }
                     if (isBottom) {
-                        frame.y = thisFrame.height - frame.height;
+                        frame.y = thisFrame.height - frame.height - contentInsets.bottom;
                     }
                 }
 
@@ -192,7 +222,7 @@ public class CGStack extends CGSomeDrawable {
         int contentHeight = updateContentSizeAndApplyMasksToChildren().height;
 
         if (CG.isBitSet(alignmentInt, CG.VCENTER)) {
-            this.nextTop = contentInsets.top + (thisFrame.height - contentHeight) / 2;
+            this.nextTop = (thisFrame.height - contentHeight) / 2 + contentInsets.top - contentInsets.bottom;
         }
         if (CG.isBitSet(alignmentInt, CG.TOP)) {
             this.nextTop = thisFrame.y + contentInsets.top;
@@ -216,7 +246,7 @@ public class CGStack extends CGSomeDrawable {
                 
                 if (hasFlexibleX) {
                     if (isHCenter) {
-                        frame.x = (thisFrame.width - frame.width) / 2 + contentInsets.left;
+                        frame.x = (thisFrame.width - frame.width) / 2 + contentInsets.left - contentInsets.right;
                     }
                     if (isLeft) {
                         frame.x = contentInsets.left;
@@ -252,7 +282,7 @@ public class CGStack extends CGSomeDrawable {
         final Graphics graphics = g;
 
         final CGFrame thisFrame = getCGFrame();
-        CGInsets contentInsets = getContentInset().getCGInsets();
+        final CGInsets contentInsets = getContentInset().getCGInsets();
 
         this.nextLeft = thisFrame.x + contentInsets.left;
         this.nextTop = thisFrame.y + contentInsets.top;
@@ -292,25 +322,25 @@ public class CGStack extends CGSomeDrawable {
 
                 if (hasFlexibleY) {
                     if (isVCenter) {
-                        frame.y = (thisFrame.height - frame.height) / 2;
+                        frame.y = (thisFrame.height - frame.height) / 2 + contentInsets.top - contentInsets.bottom;
                     }
                     if (isTop) {
-                        frame.y = 0;
+                        frame.y = 0 + contentInsets.top;
                     }
                     if (isBottom) {
-                        frame.y = thisFrame.height - frame.height;
+                        frame.y = thisFrame.height - frame.height - contentInsets.bottom;
                     }
                 }
 
                 if (hasFlexibleX) {
                     if (isHCenter) {
-                        frame.x = (thisFrame.width - frame.width) / 2;
+                        frame.x = (thisFrame.width - frame.width) / 2 + contentInsets.left - contentInsets.right;
                     }
                     if (isLeft) {
-                        frame.x = 0;
+                        frame.x = contentInsets.left;
                     }
                     if (isRight) {
-                        frame.x = thisFrame.width - frame.width;
+                        frame.x = thisFrame.width - frame.width - contentInsets.right;
                     }
                 }
 

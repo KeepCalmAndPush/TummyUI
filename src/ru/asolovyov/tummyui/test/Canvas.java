@@ -6,6 +6,7 @@
 package ru.asolovyov.tummyui.test;
 
 import javax.microedition.lcdui.Displayable;
+import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Image;
 import ru.asolovyov.combime.bindings.Bool;
 import ru.asolovyov.combime.bindings.Int;
@@ -15,6 +16,7 @@ import ru.asolovyov.tummyui.graphics.CG;
 import ru.asolovyov.tummyui.graphics.views.CGDrawable;
 import ru.asolovyov.tummyui.graphics.CGFrame;
 import ru.asolovyov.tummyui.graphics.CGSize;
+import ru.asolovyov.tummyui.graphics.views.CGStack;
 import ru.asolovyov.tummyui.graphics.views.CGText;
 
 /**
@@ -70,35 +72,94 @@ public class Canvas extends UIMIDlet {
         // TODO управление памятью,
         // TODO отписка от подписок,
         return CG.Canvas(
-                CG.VStack(
-                new Int(CG.TOP | CG.RIGHT),
+//                CG.HStack(
+//                    new Int(CG.CENTER),
+//                    new CGStack(
+//                    CGStack.AXIS_VERTICAL,
+//                    new Object[]{ new Integer(Font.SIZE_SMALL), new Integer(Font.SIZE_MEDIUM), new Integer(Font.SIZE_LARGE)},
+//                    new CGStack.DrawableFactory() {
+//
+//                    public CGDrawable itemFor(Object viewModel) {
+//                        int size = ((Integer)viewModel).intValue();
+//
+//                        return CG.Text("Текст")
+//                                .font(Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_PLAIN, size))
+//                                .color(0xFF0000)
+//                                .backgroundColor(0x00FF00)
+//                                .borderColor(0x0000FF)
+//                                .cornerRaduis(new CGSize(20, 20))
+//                                .width(50);
+//                    }
+//                }).setOrigin(10, 20),
+//
+//
+                //TODO Шстек Встеков рисуется где-то в миллионах световых лет
+                //TODO Видимо ориджин и/или сайз не просетывается для стека, он рисуется всегда по центру экрана
+                new CGStack(
+                    CGStack.AXIS_VERTICAL,
 
+                    new Object[]{ new Integer(Font.STYLE_PLAIN), new Integer(Font.STYLE_BOLD), new Integer(Font.STYLE_ITALIC), new Integer(Font.STYLE_UNDERLINED)},
+
+                    new CGStack.DrawableFactory() {
+                    public CGDrawable itemFor(Object viewModel) {
+                        int style = ((Integer)viewModel).intValue();
+
+                        return CG.Text("Текст")
+                                .font(Font.getFont(Font.FACE_PROPORTIONAL, style, Font.SIZE_LARGE))
+                                .color(0xFF0000)
+                                .backgroundColor(0x00FF00)
+                                .borderColor(0x0000FF)
+                                .cornerRaduis(new CGSize(20, 20))
+                                .width(50);
+                    }
+                })
+
+                //.setOrigin(70, 20) // НЕ ПАШЕТ
+
+//                        , new CGStack(
+//                    CGStack.AXIS_VERTICAL,
+//                    new Object[]{ new Integer(Font.FACE_MONOSPACE), new Integer(Font.FACE_SYSTEM), new Integer(Font.FACE_PROPORTIONAL)},
+//                    new CGStack.DrawableFactory() {
+//
+//                    public CGDrawable itemFor(Object viewModel) {
+//                        int face = ((Integer)viewModel).intValue();
+//
+//                        return CG.Text("Текст")
+//                                .font(Font.getFont(face, Font.STYLE_PLAIN, Font.SIZE_LARGE))
+//                                .color(0xFF0000)
+//                                .backgroundColor(0x00FF00)
+//                                .borderColor(0x0000FF)
+//                                .cornerRaduis(new CGSize(20, 20))
+//                                .width(50);
+//                    }
+//                }).setOrigin(130, 20)
+//                        )
 //            CG.Image("res/spok.png"),
             //.height(90).width(101),
             
-            CG.Text("Если будет много текста")
-                //Сделать чтобы все вьюхи двигали контент внутри себя: то есть уважали контент инсеты
-                .color(0xFF0000)
-                .backgroundColor(0x00FF00)
-                .borderColor(0x0000FF)
-                .cornerRaduis(new CGSize(20, 20))
-                .width(100),
-
-          CG.Text("он просто обрежется многоточием")
-                //Сделать чтобы все вьюхи двигали контент внутри себя: то есть уважали контент инсеты
-                .color(0xFF0000)
-                .backgroundColor(0x00FF00)
-                .borderColor(0x0000FF)
-                .cornerRaduis(new CGSize(20, 20))
-                .width(100),
-
-         CG.Text("как будто так и надо")
-                //Сделать чтобы все вьюхи двигали контент внутри себя: то есть уважали контент инсеты
-                .color(0xFF0000)
-                .backgroundColor(0x00FF00)
-                .borderColor(0x0000FF)
-                .cornerRaduis(new CGSize(20, 20))
-                .width(100)
+//            CG.Text("Если будет много текста")
+//                //Сделать чтобы все вьюхи двигали контент внутри себя: то есть уважали контент инсеты
+//                .color(0xFF0000)
+//                .backgroundColor(0x00FF00)
+//                .borderColor(0x0000FF)
+//                .cornerRaduis(new CGSize(20, 20))
+//                .width(40),
+//
+//          CG.Text("он просто обрежется многоточием")
+//                //Сделать чтобы все вьюхи двигали контент внутри себя: то есть уважали контент инсеты
+//                .color(0xFF0000)
+//                .backgroundColor(0x00FF00)
+//                .borderColor(0x0000FF)
+//                .cornerRaduis(new CGSize(20, 20))
+//                .width(40),
+//
+//         CG.Text("как будто так и надо")
+//                //Сделать чтобы все вьюхи двигали контент внутри себя: то есть уважали контент инсеты
+//                .color(0xFF0000)
+//                .backgroundColor(0x00FF00)
+//                .borderColor(0x0000FF)
+//                .cornerRaduis(new CGSize(20, 20))
+//                .width(40)
 //                .height(70).width(100)
                 
 //                    CG.Rect()
@@ -206,8 +267,7 @@ public class Canvas extends UIMIDlet {
 //                        .color(0xFF0000)
 //                        .setFrame(75, 25, 10, 10)
 //                )
-                )
-                .setContentInset(10, 10, 10, 10) // TODO инсет внутри стека не работает
+//                ).setContentInset(10, 10, 10, 10)
                 )
                 .backgroundColor(0xFFFFFF);
     }
