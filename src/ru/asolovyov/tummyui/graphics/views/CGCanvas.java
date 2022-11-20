@@ -28,7 +28,7 @@ public class CGCanvas extends Canvas {
         return needsRepaint;
     }
 
-    private Int keyPressed = (Int) new Int(null).to(new Drop(1));
+    private Int keyPressed = (Int) new Int(null).to(new Drop(1)); //TODO оформить в оператор-метод
     private Int keyReleased = (Int) new Int(null).to(new Drop(1));
     private Int keyRepeated = (Int) new Int(null).to(new Drop(1));
 
@@ -40,15 +40,17 @@ public class CGCanvas extends Canvas {
         super();
         this.content = content;
         if (content.length == 1) {
-            CGFrame frame = content[0].getCGFrame();
-            int mask = content[0].resizingMask().getInt();
+            CGDrawable child = content[0];
+            CGFrame frame = child.getCGFrame();
+            int mask = child.resizingMask().getInt();
             if (CG.isBitSet(mask, CGFrame.FLEXIBLE_WIDTH)) {
                 frame.width = this.getWidth();
+                child.width(frame.width);
             }
             if (CG.isBitSet(mask, CGFrame.FLEXIBLE_HEIGHT)) {
                 frame.height = this.getHeight();
+                child.height(frame.width);
             }
-            content[0].needsRelayout(frame);
         }
         for (int i = 0; i < this.content.length; i++) {
             CGDrawable drawable = content[i];

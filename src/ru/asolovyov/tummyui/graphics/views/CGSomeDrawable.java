@@ -28,7 +28,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
         super();
     }
 
-    protected Frame frameBinding = new Frame(CGFrame.zero());
+    protected Frame frameBinding = new Frame(new CGFrame(0, 0, CG.VALUE_NOT_SET, CG.VALUE_NOT_SET));
     protected Point originBinding = new Point(CGPoint.zero());
     
     protected Int widthBinding = new Int(CG.VALUE_NOT_SET);
@@ -143,7 +143,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     public void needsRedraw() {
-        this.needsRelayout(this.getCGFrame());
+        this.needsRelayout(this.getCGFrame().copy());
     }
 
     public void needsRelayout(CGFrame frame) {
@@ -157,7 +157,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     public CGFrame getCGFrame() {
-        return this.frameBinding.getCGFrame();
+        return this.frameBinding.getCGFrame().copy();
     }
 
     public CGFrame intrinsicAwareFrame() {
@@ -205,7 +205,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
         this.originBinding.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
                 CGPoint origin = (CGPoint)value;
-                CGFrame frame = getCGFrame();
+                CGFrame frame = getCGFrame().copy();
                 frame.x = origin.x;
                 frame.y = origin.y;
 
@@ -219,7 +219,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
         this.widthBinding = width;
         this.widthBinding.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
-                CGFrame frame = getCGFrame();
+                CGFrame frame = getCGFrame().copy();
                 frame.width = ((Integer)value).intValue();
                 frameBinding.setCGFrame(frame);
             }
@@ -236,7 +236,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
         this.heightBinding.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
 //                height(heightBinding.getInt());
-                CGFrame frame = getCGFrame();
+                CGFrame frame = getCGFrame().copy();
                 frame.height = ((Integer)value).intValue();
                 frameBinding.setCGFrame(frame);
             }
@@ -302,7 +302,9 @@ public abstract class CGSomeDrawable implements CGDrawable {
         return this.intrinsicContentSizeBinding;
     }
 
-    protected void updateIntrinsicContentSize() { }
+    protected void updateIntrinsicContentSize() {
+        this.intrinsicContentSizeBinding.setCGSize(this.frameBinding.getCGFrame().getCGSize().copy());
+    }
 
     public CGDrawable readGeometry(GeometryReader reader) {
         this.geometryReader = reader;
@@ -366,7 +368,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
         this.contentOffsetBinding = offset;
         this.contentOffsetBinding.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
-                needsRelayout(getCGFrame());
+                needsRelayout(getCGFrame().copy());
             }
         });
         return this;
@@ -381,7 +383,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
         this.contentInsetBinding = inset;
         this.contentInsetBinding.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
-                needsRelayout(getCGFrame());
+                needsRelayout(getCGFrame().copy());
             }
         });
         return this;
@@ -434,7 +436,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
 
     public CGSize getCornerRadius() {
         if (this.cornerRadiusBinding != null) {
-            return this.cornerRadiusBinding.getCGSize();
+            return this.cornerRadiusBinding.getCGSize().copy();
         }
         return CGSize.zero();
     }

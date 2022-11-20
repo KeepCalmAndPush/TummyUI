@@ -51,7 +51,8 @@ public class CGImage extends CGSomeDrawable {
         g.drawImage(
                 originalImage,
                 frame.x + insets.left,
-                frame.y + insets.top, 0
+                frame.y + insets.top,
+                0
                 );
     }
 
