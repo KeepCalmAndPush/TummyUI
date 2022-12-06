@@ -41,20 +41,20 @@ public class CGCanvas extends Canvas {
         this.content = content;
         if (content.length == 1) {
             CGDrawable child = content[0];
-            CGFrame frame = child.getCGFrame();
-            int mask = child.resizingMask().getInt();
-            if (CG.isBitSet(mask, CGFrame.FLEXIBLE_WIDTH)) {
+            CGFrame frame = child.frame();
+            int mask = child.flexibility();
+            if (CG.isBitSet(mask, CG.GROWABLE_WIDTH)) {
                 frame.width = this.getWidth();
                 child.width(frame.width);
             }
-            if (CG.isBitSet(mask, CGFrame.FLEXIBLE_HEIGHT)) {
+            if (CG.isBitSet(mask, CG.GROWABLE_HEIGHT)) {
                 frame.height = this.getHeight();
                 child.height(frame.width);
             }
         }
         for (int i = 0; i < this.content.length; i++) {
             CGDrawable drawable = content[i];
-            drawable.setCanvas(this);
+            drawable.canvas(this);
         }
         this.backgroundColor(0);
         this.needsRepaint.to(new Debounce(33)).sink(new Sink() {
@@ -122,6 +122,3 @@ public class CGCanvas extends Canvas {
         return keyRepeated;
     }
 }
-
-
-

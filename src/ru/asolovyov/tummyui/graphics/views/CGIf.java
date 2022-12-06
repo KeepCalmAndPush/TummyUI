@@ -26,8 +26,8 @@ public class CGIf extends CGSomeDrawable {
 
         this.conditionBinding.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
-                if (getCanvas() != null) {
-                    getCanvas().needsRepaint().setBool(true);
+                if (canvas() != null) {
+                    canvas().needsRepaint().setBool(true);
                 }
                 //TODO вычислить рект, описывающий старый и новый фоейм, и перерисовывать именно его
             }
@@ -35,16 +35,16 @@ public class CGIf extends CGSomeDrawable {
     }
 
     public CGDrawable canvas(CGCanvas canvas) {
-        this.ifItem.setCanvas(canvas);
-        this.elseItem.setCanvas(canvas);
+        this.ifItem.canvas(canvas);
+        this.elseItem.canvas(canvas);
         
-        return super.setCanvas(canvas);
+        return super.canvas(canvas);
     }
 
     //TODO Хитрая обработка инсетов и офсетов
     public void draw(Graphics g) {
         super.draw(g);
-        if(this.conditionBinding.getBool()) {
+        if(this.conditionBinding.getBoolean()) {
             this.ifItem.draw(g);
         } else {
             this.elseItem.draw(g);

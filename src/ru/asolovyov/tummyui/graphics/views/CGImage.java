@@ -12,6 +12,7 @@ import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.tummyui.bindings.Size;
 import ru.asolovyov.tummyui.graphics.CGFrame;
 import ru.asolovyov.tummyui.graphics.CGInsets;
+import ru.asolovyov.tummyui.graphics.CGSize;
 
 /**
  *
@@ -36,7 +37,7 @@ public class CGImage extends CGSomeDrawable {
         
         this.image.sink(new Sink() {
             protected void onValue(Object value) {
-                CGImage.this.needsRelayout(getCGFrame());
+                CGImage.this.needsRelayout(frame());
             }
         });
         return this;
@@ -44,7 +45,7 @@ public class CGImage extends CGSomeDrawable {
 
     public void draw(Graphics g) {
         super.draw(g);
-        CGFrame frame = frameBinding.getCGFrame().copy();
+        CGFrame frame = this.frame();
         Image originalImage = (Image)this.image.getObject();
 
         CGInsets insets = this.contentInsetBinding.getCGInsets();
@@ -56,9 +57,9 @@ public class CGImage extends CGSomeDrawable {
                 );
     }
 
-    public Size intrinsicContentSize() {
+    public CGSize intrinsicContentSize() {
         Image originalImage = (Image)this.image.getObject();
-        return new Size(originalImage.getWidth(), originalImage.getHeight());
+        return new CGSize(originalImage.getWidth(), originalImage.getHeight());
     }
 
     public CGDrawable sizeToFit() {

@@ -227,7 +227,7 @@ public class UIForm extends Form implements ItemStateListener, CommandListener, 
     public UIForm alert(final Bool isVisible, final UIAlert alert) {
         isVisible.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
-                if (isVisible.getBool()) {
+                if (isVisible.getBoolean()) {
                     Environment.midlet.getDisplay().setCurrent(alert);
                 }
             }
@@ -305,7 +305,7 @@ public class UIForm extends Form implements ItemStateListener, CommandListener, 
 
         trigger.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
-                if (trigger.getBool()) {
+                if (trigger.getBoolean()) {
                     Environment.midlet.getDisplay().setCurrent(content);
                 } else {
                     Environment.midlet.getDisplay().setCurrent(UIForm.this);

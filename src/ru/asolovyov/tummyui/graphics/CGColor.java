@@ -9,7 +9,6 @@ package ru.asolovyov.tummyui.graphics;
  * @author Администратор
  */
 public class CGColor {
-
     public static final int ALICE_BLUE = 0xF0F8FF;
     public static final int ANTIQUE_WHITE = 0xFAEBD7;
     public static final int AQUA = 0x00FFFF;

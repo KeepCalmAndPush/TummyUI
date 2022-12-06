@@ -72,10 +72,10 @@ public class UICommand extends Command {
     public UICommand isVisible(final Bool binding) {
         binding.sink(new Sink() {
             protected void onValue(Object value) {
-                if (isVisible == binding.getBool()) {
+                if (isVisible == binding.getBoolean()) {
                     return;
                 }
-                isVisible = binding.getBool();
+                isVisible = binding.getBoolean();
                 S.print("UICOMMAND VIS");
                 UICommand.this.needsRelayout = true;
                 onChanged.sendValue(UICommand.this);

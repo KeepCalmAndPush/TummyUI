@@ -34,7 +34,7 @@ public class Frame extends PassthroughSubjectValueWrapper {
     }
 
     public CGFrame getCGFrame() {
-        return (CGFrame)this.getValue();
+        return ((CGFrame)this.getValue()).copy();
     }
 
     public void setCGFrame(CGFrame value) {

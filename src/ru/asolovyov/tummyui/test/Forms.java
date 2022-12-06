@@ -177,12 +177,12 @@ public class Forms extends UIMIDlet {
 //
 //            public void handle() {
 //                S.println("CAT");
-//                isCat.setBool(!isCat.getBool());
+//                isCat.setBool(!isCat.getBoolean());
 //            }
 //        })).command(UI.Command("VIS", new UICommand.Handler() {
 //            public void handle() {
 //                S.println("VIS");
-//                alertVisible.setBool(!alertVisible.getBool());
+//                alertVisible.setBool(!alertVisible.getBoolean());
 //            }
 //        })
             );

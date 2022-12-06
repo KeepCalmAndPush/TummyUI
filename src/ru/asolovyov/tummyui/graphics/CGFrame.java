@@ -10,15 +10,6 @@ package ru.asolovyov.tummyui.graphics;
  * @author Администратор
  */
 public final class CGFrame {
-    public static final int FLEXIBLE_WIDTH = 1;
-    public static final int FLEXIBLE_HEIGHT = 1 << 1;
-    public static final int FLEXIBLE_X = 1 << 2;
-    public static final int FLEXIBLE_Y = 1 << 3;
-
-    public static final int FLEXIBLE_ORIGIN = FLEXIBLE_X | FLEXIBLE_Y;
-    public static final int FLEXIBLE_SIZE = FLEXIBLE_WIDTH | FLEXIBLE_HEIGHT;
-    public static final int FLEXIBLE_ALL = (1 << 4) - 1;
-
     public static CGFrame zero() {
         return new CGFrame(0, 0, 0, 0);
     }

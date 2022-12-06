@@ -34,7 +34,7 @@ public class Insets extends PassthroughSubjectValueWrapper {
     }
 
     public CGInsets getCGInsets() {
-        return (CGInsets)this.getValue();
+        return ((CGInsets)this.getValue()).copy();
     }
 
     public void setCGInsets(CGInsets value) {

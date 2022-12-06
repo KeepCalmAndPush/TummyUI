@@ -34,7 +34,7 @@ public class Size extends PassthroughSubjectValueWrapper {
     }
 
     public CGSize getCGSize() {
-        return (CGSize)this.getValue();
+        return ((CGSize)this.getValue()).copy();
     }
 
     public void setCGSize(CGSize value) {

@@ -18,7 +18,7 @@ import ru.asolovyov.tummyui.graphics.CGInsets;
 public class CGLine extends CGSomeDrawable {
     public void draw(Graphics g) {
         super.draw(g);
-        CGFrame frame = getCGFrame();
+        CGFrame frame = frame();
         if (frame == null) {
             return;
         }

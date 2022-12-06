@@ -34,7 +34,7 @@ public class Point extends PassthroughSubjectValueWrapper {
     }
 
     public CGPoint getCGPoint() {
-        return (CGPoint)this.getValue();
+        return ((CGPoint)this.getValue()).copy();
     }
 
     public void setCGPoint(CGPoint value) {

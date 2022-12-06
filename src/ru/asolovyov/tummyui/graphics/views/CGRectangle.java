@@ -34,8 +34,8 @@ public class CGRectangle extends CGSomeDrawable {
                     frame.y + insets.top,
                     frame.width - insets.left - insets.right,
                     frame.height - insets.top - insets.bottom,
-                    getCornerRadius().width,
-                    getCornerRadius().height);
+                    cornerRadius().width,
+                    cornerRadius().height);
         }
 
         int strokeColor = this.getBorderColor();
@@ -48,8 +48,8 @@ public class CGRectangle extends CGSomeDrawable {
                     frame.y,
                     frame.width,
                     frame.height,
-                    getCornerRadius().width,
-                    getCornerRadius().height);
+                    cornerRadius().width,
+                    cornerRadius().height);
         }
     }
 }

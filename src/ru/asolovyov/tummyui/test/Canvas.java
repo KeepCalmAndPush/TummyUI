@@ -34,7 +34,7 @@ public class Canvas extends UIMIDlet {
     /*
      CG.HStack(new GeometryReader() {
         public CGDrawable content(Obj frame) {
-              return CG.Rectangle().setFrame(
+              return CG.Rectangle().frame(
               frame.map { onValue(CGFrame value) { return value.width / 3 } }
               );
         }
@@ -93,7 +93,7 @@ public class Canvas extends UIMIDlet {
                                 .width(50);
                     }
                 })
-//                .setOrigin(10, 20),
+//                .origin(10, 20),
 //
 //
                 //TODO Шстек Встеков рисуется где-то в миллионах световых лет
@@ -125,7 +125,7 @@ public class Canvas extends UIMIDlet {
                     }
                 })
 //
-//                //.setOrigin(70, 20) // НЕ ПАШЕТ
+//                //.origin(70, 20) // НЕ ПАШЕТ
 //
 //                        , new CGStack(
 //                    CGStack.AXIS_VERTICAL,
@@ -149,7 +149,7 @@ public class Canvas extends UIMIDlet {
                 .backgroundColor(CGColor.PINK)
                 .borderColor(CGColor.RED)
                 .cornerRaduis(new CGSize(10, 5))
-                .setOrigin(20, 20) // TODO НЕ РАБОТАЕТ!
+                .origin(20, 20) // TODO НЕ РАБОТАЕТ!
           ).backgroundColor(0xFFFFFF);
     }
 }
@@ -157,7 +157,7 @@ public class Canvas extends UIMIDlet {
 
 /*
  * Однажды я научусь делать все аккуратно:
- * //                .setOrigin(130, 20)s
+ * //                .origin(130, 20)s
 //                        )
 //            CG.Image("res/spok.png"),
             //.height(90).width(101),
@@ -189,15 +189,15 @@ public class Canvas extends UIMIDlet {
 
 //                    CG.Rect()
 //                            .height(230).width(30)
-//                            .resizingMask(CGFrame.FLEXIBLE_WIDTH)
+//                            .flexibility(CGFrame.FLEXIBLE_WIDTH)
 //                            .backgroundColor(0xFFFFFF),
 //                    CG.Rect()
 //                             .height(130).width(30)
-//                            .resizingMask(CGFrame.FLEXIBLE_WIDTH)
+//                            .flexibility(CGFrame.FLEXIBLE_WIDTH)
 //                            .backgroundColor(0x0000FF),
 //                    CG.Rect()
 //                             .height(30).width(30)
-//                            .resizingMask(CGFrame.FLEXIBLE_WIDTH)
+//                            .flexibility(CGFrame.FLEXIBLE_WIDTH)
 //                            .backgroundColor(0xFF0000)
 
 
@@ -230,15 +230,15 @@ public class Canvas extends UIMIDlet {
 
 //                    CG.Rect()
 //                            .height(132)
-//                            .resizingMask(CGFrame.FLEXIBLE_WIDTH)
+//                            .flexibility(CGFrame.FLEXIBLE_WIDTH)
 //                            .color(0xFFFFFF),
 //                    CG.Rect()
 //                            .height(88)
-//                            .resizingMask(CGFrame.FLEXIBLE_WIDTH)
+//                            .flexibility(CGFrame.FLEXIBLE_WIDTH)
 //                            .color(0x0000FF),
 //                    CG.Rect()
 //                            .height(44)
-//                            .resizingMask(CGFrame.FLEXIBLE_WIDTH)
+//                            .flexibility(CGFrame.FLEXIBLE_WIDTH)
 //                            .color(0xFF0000)
 //                new Arr(new CGDrawable[] {
 //                    CG.Rect()
@@ -252,45 +252,45 @@ public class Canvas extends UIMIDlet {
 //                    CG.Rect()
 //                            .color(0xFFFFFF)
 //                            .height(48)
-//                            .resizingMask(CGFrame.FLEXIBLE_ORIGIN)
+//                            .flexibility(CGFrame.FLEXIBLE_ORIGIN)
 //                            .readGeometry(new CGDrawable.GeometryReader() {
 //                                public void read(CGDrawable self, CGFrame frame) {
 //                                    S.println("333333333");
-//                                    self.getCGFrame().width = frame.width / 3;
+//                                    self.frame().width = frame.width / 3;
 //                                }
 //                             }),
 //                    CG.Rect()
 //                            .color(0x0000FF)
-////                            .setOrigin(25, 25)
+////                            .origin(25, 25)
 //                            .height(77)
-//                            .resizingMask(CGFrame.FLEXIBLE_ORIGIN)
+//                            .flexibility(CGFrame.FLEXIBLE_ORIGIN)
 //                            .readGeometry(new CGDrawable.GeometryReader() {
 //                                public void read(CGDrawable self, CGFrame frame) {
 //                                    S.println("222222222");
-//                                    self.getCGFrame().width = frame.width / 2;
+//                                    self.frame().width = frame.width / 2;
 //                                }
 //                             }),
 //                    CG.Rect()
 //                            .color(0xFF0000)
 //                            .height(66)
-//                            .resizingMask(CGFrame.FLEXIBLE_ORIGIN)
+//                            .flexibility(CGFrame.FLEXIBLE_ORIGIN)
 //                            .readGeometry(new CGDrawable.GeometryReader() {
 //                                public void read(CGDrawable self, CGFrame frame) {
 //                                    S.println("666666666");
-//                                    self.getCGFrame().width = frame.width / 6;
+//                                    self.frame().width = frame.width / 6;
 //                                }
 //                             })
 //                )
 //                CG.Arc(30, 300)
 //                        .color(arcColor)
-//                        .setFrame(10, 10, 100, 100),
+//                        .frame(10, 10, 100, 100),
 //                CG.If(cond,
 //                    CG.Rect()
 //                        .color(0x00FF00)
-//                        .setFrame(75, 25, 10, 10),
+//                        .frame(75, 25, 10, 10),
 //                    CG.Circle()
 //                        .color(0xFF0000)
-//                        .setFrame(75, 25, 10, 10)
+//                        .frame(75, 25, 10, 10)
 //                )
-//                ).setContentInset(10, 10, 10, 10)
+//                ).contentInset(10, 10, 10, 10)
  */

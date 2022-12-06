@@ -29,7 +29,7 @@ public class UIIf extends UIItem {
         this.conditionBinding = condition;
         this.ifItems = ifItems;
         this.elseItems = elseItems;
-        this.condition = condition.getBool();
+        this.condition = condition.getBoolean();
 
         for (int i = 0; i < this.ifItems.length; i++) { (this.ifItems[i]).setParent(this); }
         for (int i = 0; i < this.elseItems.length; i++) { (this.elseItems[i]).setParent(this); }
@@ -47,7 +47,7 @@ public class UIIf extends UIItem {
 
         this.conditionBinding.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
-                UIIf.this.condition = conditionBinding.getBool();
+                UIIf.this.condition = conditionBinding.getBoolean();
                 onChanged.sendValue(UIIf.this);
             }
         });

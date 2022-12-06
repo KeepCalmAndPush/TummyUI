@@ -44,7 +44,7 @@ public class CGArc extends CGSomeDrawable {
     public void draw(Graphics g) {
         super.draw(g);
 
-        CGFrame frame = getCGFrame();
+        CGFrame frame = frame();
         if (frame == null) {
             return;
         }

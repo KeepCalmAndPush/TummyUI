@@ -13,6 +13,8 @@ import ru.asolovyov.tummyui.bindings.Insets;
 import ru.asolovyov.tummyui.bindings.Point;
 import ru.asolovyov.tummyui.bindings.Size;
 import ru.asolovyov.tummyui.graphics.CGFrame;
+import ru.asolovyov.tummyui.graphics.CGInsets;
+import ru.asolovyov.tummyui.graphics.CGPoint;
 import ru.asolovyov.tummyui.graphics.CGSize;
 
 /**
@@ -46,8 +48,8 @@ public interface CGDrawable {
     public CGDrawable handleKeyboard(KeyboardHandler handler);
     public KeyboardHandler getKeyboardHandler();
 
-    public CGCanvas getCanvas();
-    public CGDrawable setCanvas(CGCanvas canvas);
+    public CGCanvas canvas();
+    public CGDrawable canvas(CGCanvas canvas);
 
     public CGDrawable sizeToFit();
     
@@ -60,54 +62,43 @@ public interface CGDrawable {
     public CGDrawable borderColor(int borderColorHex);
     public CGDrawable borderColor(Int borderColorHex);
 
-    public CGDrawable setFrame(Frame frame);
-    public CGDrawable setFrame(int x, int y, int width, int height);
+    public CGSize intrinsicContentSize();
+    public CGFrame intrinsicAwareFrame();
 
-    public CGDrawable setOrigin(Point offset);
-    public CGDrawable setOrigin(int x, int y);
+    public CGFrame frame();
+    public CGDrawable frame(Frame frame);
+    public CGDrawable frame(int x, int y, int width, int height);
 
-    public CGDrawable setContentOffset(Point offset);
-    public CGDrawable setContentOffset(int x, int y);
+    public CGPoint origin();
+    public CGDrawable origin(Point offset);
+    public CGDrawable origin(int x, int y);
 
-    public CGDrawable setContentInset(Insets inset);
-    public CGDrawable setContentInset(int top, int left, int bottom, int right);
+    public CGPoint contentOffset();
+    public CGDrawable contentOffset(Point offset);
+    public CGDrawable contentOffset(int x, int y);
 
+    public CGInsets contentInset();
+    public CGDrawable contentInset(Insets inset);
+    public CGDrawable contentInset(int top, int left, int bottom, int right);
+
+    public CGSize cornerRadius();
     public CGDrawable cornerRaduis(CGSize cornerRadius);
     public CGDrawable cornerRaduis(Size cornerRadiusBinding);
 
+    public int width();
     public CGDrawable width(Int width);
     public CGDrawable width(int width);
 
+    public int height();
     public CGDrawable height(Int height);
     public CGDrawable height(int height);
-    
-    public CGDrawable resizingMask(Int mask);
-    public CGDrawable resizingMask(int mask);
 
+    public int flexibility();
+    public CGDrawable flexibility(Int mask);
+    public CGDrawable flexibility(int mask);
+
+    public boolean isVisible();
     public CGDrawable isVisible(boolean isVisible);
     public CGDrawable isVisible(Bool isVisible);
-
-    public Bool isVisible();
-    
-    //TODO возможно нам не нужен фрейм. Он будет не для самосоятотельного задания пользоватем.
-    //фрейм заполняем в стеках и прочих контейнерах на основании вычислений/интринсиков.
-    //тогда если у нас не заданы видс/хайт, то пляшем от интринскика/вычислений
-    
-    public Point getOrigin();
-
-    public int getWidth();
-    public int getHeight();
-
-    //TODO Вертать не публишер, а примитив
-    public Point getContentOffset();
-    public Insets getContentInset();
-
-    public Int resizingMask();
-
-    public Size intrinsicContentSize();
-    public CGSize getCornerRadius();
-    
-    public CGFrame getCGFrame();
-    public CGFrame intrinsicAwareFrame();
 }
 
