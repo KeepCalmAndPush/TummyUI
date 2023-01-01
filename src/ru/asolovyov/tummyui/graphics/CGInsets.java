@@ -46,4 +46,12 @@ public class CGInsets {
     public int vertical() {
         return top + bottom;
     }
+
+    public int deltaX() {
+        return +left - right;
+    }
+
+    public int deltaY() {
+        return +top - bottom;
+    }
 }

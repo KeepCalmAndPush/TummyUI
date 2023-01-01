@@ -27,15 +27,16 @@ public class CGLine extends CGSomeDrawable {
 
         int color = this.getColor();
         
-        if (color != CG.VALUE_NOT_SET) {
-            g.setColor(color);
-            g.setStrokeStyle(this.getStrokeStyle());
-            g.drawLine(
+        if (color == CG.NULL) {
+            return;
+        }
+
+        g.setColor(color);
+        g.setStrokeStyle(this.getStrokeStyle());
+        g.drawLine(
                 frame.x + insets.left,
                 frame.y + insets.top,
                 frame.width - insets.left - insets.right,
-                frame.height - insets.top - insets.bottom
-                );
-        }
+                frame.height - insets.top - insets.bottom);
     }
 }

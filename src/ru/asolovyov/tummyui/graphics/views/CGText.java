@@ -127,7 +127,7 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
     public CGDrawable sizeToFit() {
         int width = this.height();
         
-        if (this.width() != CG.VALUE_NOT_SET) {
+        if (this.width() != CG.NULL) {
             width = this.getFont().getHeight();
         }
 

@@ -42,15 +42,11 @@ public class CGCanvas extends Canvas {
         if (content.length == 1) {
             CGDrawable child = content[0];
             CGFrame frame = child.frame();
-            int mask = child.flexibility();
-            if (CG.isBitSet(mask, CG.GROWABLE_WIDTH)) {
-                frame.width = this.getWidth();
-                child.width(frame.width);
-            }
-            if (CG.isBitSet(mask, CG.GROWABLE_HEIGHT)) {
-                frame.height = this.getHeight();
-                child.height(frame.width);
-            }
+            
+            frame.width = Math.min(this.getWidth(), child.maxWidth());
+            frame.height = Math.min(this.getHeight(), child.maxHeight());
+            child.width(frame.width);
+            child.height(frame.height);
         }
         for (int i = 0; i < this.content.length; i++) {
             CGDrawable drawable = content[i];

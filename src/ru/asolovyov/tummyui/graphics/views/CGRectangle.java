@@ -27,7 +27,7 @@ public class CGRectangle extends CGSomeDrawable {
         CGInsets insets = this.contentInsetBinding.getCGInsets();
 
         int foregroundColor = this.getColor();
-        if (foregroundColor != CG.VALUE_NOT_SET) {
+        if (foregroundColor != CG.NULL) {
             g.setColor(foregroundColor);
             g.fillRoundRect(
                     frame.x + insets.left,
@@ -39,7 +39,7 @@ public class CGRectangle extends CGSomeDrawable {
         }
 
         int strokeColor = this.getBorderColor();
-        if (strokeColor != CG.VALUE_NOT_SET) {
+        if (strokeColor != CG.NULL) {
             g.setStrokeStyle(this.getStrokeStyle());
             g.setColor(strokeColor);
 

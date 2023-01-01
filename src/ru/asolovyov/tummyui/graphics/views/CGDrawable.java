@@ -34,8 +34,6 @@ public interface CGDrawable {
 
     public void draw(Graphics g);
 
-    public void animate(int durationMillis, Runnable animations);
-
     public CGDrawable stroke(int strokeStyle);
     public CGDrawable stroke(Int strokeStyle);
 
@@ -70,7 +68,7 @@ public interface CGDrawable {
     public CGDrawable frame(int x, int y, int width, int height);
 
     public CGPoint origin();
-    public CGDrawable origin(Point offset);
+    public CGDrawable origin(Point origin);
     public CGDrawable origin(int x, int y);
 
     public CGPoint contentOffset();
@@ -85,17 +83,65 @@ public interface CGDrawable {
     public CGDrawable cornerRaduis(CGSize cornerRadius);
     public CGDrawable cornerRaduis(Size cornerRadiusBinding);
 
+    public int x();
+    public CGDrawable x(Int x);
+    public CGDrawable x(int x);
+
+    public int minX();
+    public CGDrawable minX(Int minX);
+    public CGDrawable minX(int minX);
+
+    public int maxX();
+    public CGDrawable maxX(Int maxX);
+    public CGDrawable maxX(int maxX);
+
+    public int y();
+    public CGDrawable y(Int y);
+    public CGDrawable y(int y);
+
+    public int minY();
+    public CGDrawable minY(Int minY);
+    public CGDrawable minY(int minY);
+
+    public int maxY();
+    public CGDrawable maxY(Int maxY);
+    public CGDrawable maxY(int maxY);
+
     public int width();
     public CGDrawable width(Int width);
     public CGDrawable width(int width);
+
+    public int minWidth();
+    public CGDrawable minWidth(Int minWidth);
+    public CGDrawable minWidth(int minWidth);
+
+    public int maxWidth();
+    public CGDrawable maxWidth(Int maxWidth);
+    public CGDrawable maxWidth(int maxWidth);
 
     public int height();
     public CGDrawable height(Int height);
     public CGDrawable height(int height);
 
-    public int flexibility();
-    public CGDrawable flexibility(Int mask);
-    public CGDrawable flexibility(int mask);
+    public int minHeight();
+    public CGDrawable minHeight(Int minHeight);
+    public CGDrawable minHeight(int minHeight);
+
+    public int maxHeight();
+    public CGDrawable maxHeight(Int maxHeight);
+    public CGDrawable maxHeight(int maxHeight);
+
+    public boolean hasShrinkableWidth();
+    public boolean hasGrowableWidth();
+    public boolean hasShrinkableHeight();
+    public boolean hasGrowableHeight();
+
+    // TODO отрефачить в реактив: просто просетываем Х,
+    // а просетывалка Х прокидывается в пару операторов, которые клэмпят в допустимый диапазон
+    public int updateX(int x);
+    public int updateY(int y);
+    public int updateWidth(int width);
+    public int updateHeight(int height);
 
     public boolean isVisible();
     public CGDrawable isVisible(boolean isVisible);

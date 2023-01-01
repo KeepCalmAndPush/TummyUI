@@ -34,16 +34,81 @@ public class CGStack extends CGSomeDrawable {
     public final static int AXIS_VERTICAL = 1;
     public final static int AXIS_Z = 2;
 
+    private int nextLeft = 0;
+    private int nextTop = 0;
+    
     protected Arr drawables = new Arr(new CGDrawable[]{});
     protected Int alignment = new Int(CG.LEFT);
     protected Int axis = new Int(AXIS_HORIZONTAL);
 
+    protected Int maxContentWidthBinding = new Int(Integer.MAX_VALUE);
+    protected Int maxContentHeightBinding = new Int(Integer.MAX_VALUE);
+
+    public CGStack maxContentWidth(int width) {
+        this.maxContentWidthBinding.setInt(width);
+        return this;
+    }
+
+    public CGStack maxContentHeight(int height) {
+        this.maxContentHeightBinding.setInt(height);
+        return this;
+    }
+
+    // TODO хуйня какая-то эти биндинги. НЕ НАДО ЗАМЕНЯТЬ ВНУТРЕННИЙ СУБСКРИПШЕН!
+    // Надо наверно иметь ОДИН ПРОТЕКТЕД БИНДИНГ и ОДИН СУБСКРИПШЕН.
+    // Когд получаем новый биндинг, то ТЕРМИНИРУЕМ СУБСКРИПШЕН, НАЧИНАЕМ СЛИВАТЬ ДАННЫЕ ИЗ НОВОГО БИНДИНГА В ТЕКУЩИЙ
+    // И СОХРАНЯЕМ СУБСКРИПШЕН ЭТОГО СЛИВАНИЯ.
+    public CGStack maxContentWidth(Int width) {
+        this.maxContentWidthBinding = width;
+        this.maxContentWidthBinding.sink(new Sink() {
+            protected void onValue(Object value) {
+                updateIntrinsicContentSize();
+                needsRedraw();
+            }
+        });
+        return this;
+    }
+
+    public CGStack maxContentHeight(Int height) {
+        this.maxContentHeightBinding = height;
+        this.maxContentHeightBinding.sink(new Sink() {
+            protected void onValue(Object value) {
+                updateIntrinsicContentSize();
+                needsRedraw();
+            }
+        });
+        return this;
+    }
+
+    public int spacing() {
+        return this.spacing.getInt();
+    }
+    
+    public CGStack spacing(Int spacing) {
+        this.spacing = spacing;
+        this.spacing.sink(new Sink() {
+            protected void onValue(Object value) {
+                updateIntrinsicContentSize();
+                needsRedraw();
+            }
+        });
+        return this;
+    }
+
+    public CGStack spacing(int spacing) {
+        this.spacing.setInt(spacing);
+        return this;
+    }
+
+    protected Int spacing = new Int(0);
+
     protected Arr models = new Arr(new Object[]{});
     protected DrawableFactory factory;
 
-    protected Size contentSize = new Size(CG.VALUE_NOT_SET, CG.VALUE_NOT_SET);
+    protected Size contentSize = new Size(CG.NULL, CG.NULL);
 
     private List repeatedKeys = new List();
+    private DispatchQueue keyRepeatQueue = new DispatchQueue(120);
 
     public Size contentSize() {
         return contentSize;
@@ -90,7 +155,8 @@ public class CGStack extends CGSomeDrawable {
 
         this.axis.sink(new Sink() {
             protected void onValue(Object value) {
-                needsRedraw();
+                updateIntrinsicContentSize();
+                needsRelayout(frame());
             }
         });
 
@@ -106,6 +172,11 @@ public class CGStack extends CGSomeDrawable {
                 needsRelayout(frame());
             }
         });
+
+        //Trigger subscription
+        this.spacing = spacing;
+        this.maxContentWidthBinding = maxContentWidthBinding;
+        this.maxContentHeightBinding = maxContentHeightBinding;
     }
 
     public Int axis() {
@@ -143,9 +214,6 @@ public class CGStack extends CGSomeDrawable {
         this.pushFrameToChildren();
     }
 
-    private int nextLeft = 0;
-    private int nextTop = 0;
-
     private void hDraw(Graphics g) {
         final Graphics graphics = g;
 
@@ -159,13 +227,13 @@ public class CGStack extends CGSomeDrawable {
         int contentWidth = this.contentSize().getCGSize().width;
 
         if (CG.isBitSet(alignmentInt,CG.HCENTER)) {
-            this.nextLeft = thisFrame.x + (thisFrame.width - contentWidth) / 2 + contentInsets.left - contentInsets.right;
+            this.nextLeft = thisFrame.x + (thisFrame.width - contentWidth) / 2 + contentInsets.deltaX();
         } 
         if (CG.isBitSet(alignmentInt,CG.LEFT)) {
-            this.nextLeft = thisFrame.x + contentInsets.left + contentInsets.left;
+            this.nextLeft = thisFrame.x + contentInsets.deltaX();
         }
         if (CG.isBitSet(alignmentInt,CG.RIGHT)) {
-            this.nextLeft = thisFrame.x + thisFrame.width - contentWidth - contentInsets.right;
+            this.nextLeft = thisFrame.x + thisFrame.width - contentWidth + contentInsets.deltaX();
         }
 
         final boolean isVCenter = CG.isBitSet(alignmentInt, CG.VCENTER);
@@ -179,23 +247,19 @@ public class CGStack extends CGSomeDrawable {
 
                 CGInsets contentInsets = contentInset();
 
-                int mask = child.flexibility();
-                final boolean hasFlexibleX = CG.isBitSet(mask, CG.FLEXIBLE_X);
-                final boolean hasFlexibleY = CG.isBitSet(mask, CG.FLEXIBLE_Y);
-
                 if (hasFlexibleX) {
                     childFrame.x = nextLeft;
                 }
 
                 if (hasFlexibleY) {
                     if (isVCenter) {
-                        childFrame.y = thisFrame.y + (thisFrame.height - childFrame.height) / 2 + contentInsets.top - contentInsets.bottom;
+                        childFrame.y = thisFrame.y + (thisFrame.height - childFrame.height) / 2 + contentInsets.deltaY();
                     }
                     if (isTop) {
-                        childFrame.y = thisFrame.y + contentInsets.top;
+                        childFrame.y = thisFrame.y + contentInsets.deltaY();
                     }
                     if (isBottom) {
-                        childFrame.y = thisFrame.y + thisFrame.height - childFrame.height - contentInsets.bottom;
+                        childFrame.y = thisFrame.y + thisFrame.height - childFrame.height + contentInsets.deltaY();
                     }
                 }
 
@@ -228,13 +292,13 @@ public class CGStack extends CGSomeDrawable {
         int contentHeight = this.contentSize.getCGSize().height;
 
         if (CG.isBitSet(alignmentInt, CG.VCENTER)) {
-            this.nextTop = thisFrame.y + (thisFrame.height - contentHeight) / 2 + contentInsets.top - contentInsets.bottom;
+            this.nextTop = thisFrame.y + (thisFrame.height - contentHeight) / 2 + contentInsets.deltaY();
         }
         if (CG.isBitSet(alignmentInt, CG.TOP)) {
-            this.nextTop = thisFrame.y + contentInsets.top;
+            this.nextTop = thisFrame.y + contentInsets.deltaY();
         }
         if (CG.isBitSet(alignmentInt, CG.BOTTOM)) {
-            this.nextTop = thisFrame.y + thisFrame.height - contentHeight - contentInsets.bottom;
+            this.nextTop = thisFrame.y + thisFrame.height - contentHeight + contentInsets.deltaY();
         }
 
         final boolean isHCenter = CG.isBitSet(alignmentInt, CG.HCENTER);
@@ -252,13 +316,13 @@ public class CGStack extends CGSomeDrawable {
                 
                 if (hasFlexibleX) {
                     if (isHCenter) {
-                        childFrame.x = thisFrame.x + (thisFrame.width - childFrame.width) / 2 + contentInsets.left - contentInsets.right;
+                        childFrame.x = thisFrame.x + (thisFrame.width - childFrame.width) / 2 + contentInsets.deltaX();
                     }
                     if (isLeft) {
-                        childFrame.x = thisFrame.x + contentInsets.left;
+                        childFrame.x = thisFrame.x + contentInsets.deltaX();
                     }
                     if (isRight) {
-                        childFrame.x = thisFrame.x + thisFrame.width - childFrame.width - contentInsets.right;
+                        childFrame.x = thisFrame.x + thisFrame.width - childFrame.width + contentInsets.deltaX();
                     }
                 }
 
@@ -329,25 +393,25 @@ public class CGStack extends CGSomeDrawable {
 
                 if (hasFlexibleY) {
                     if (isVCenter) {
-                        frame.y = (thisFrame.height - frame.height) / 2 + contentInsets.top - contentInsets.bottom;
+                        frame.y = (thisFrame.height - frame.height) / 2 + contentInsets.deltaY();
                     }
                     if (isTop) {
-                        frame.y = 0 + contentInsets.top;
+                        frame.y = 0 + contentInsets.deltaY();
                     }
                     if (isBottom) {
-                        frame.y = thisFrame.height - frame.height - contentInsets.bottom;
+                        frame.y = thisFrame.height - frame.height + contentInsets.deltaY();
                     }
                 }
 
                 if (hasFlexibleX) {
                     if (isHCenter) {
-                        frame.x = (thisFrame.width - frame.width) / 2 + contentInsets.left - contentInsets.right;
+                        frame.x = (thisFrame.width - frame.width) / 2 + contentInsets.deltaX();
                     }
                     if (isLeft) {
-                        frame.x = contentInsets.left;
+                        frame.x =  contentInsets.deltaX();
                     }
                     if (isRight) {
-                        frame.x = thisFrame.width - frame.width - contentInsets.right;
+                        frame.x = thisFrame.width - frame.width + contentInsets.deltaX();
                     }
                 }
 
@@ -444,10 +508,7 @@ public class CGStack extends CGSomeDrawable {
 
         contentOffsetBinding.setCGPoint(contentOffset);
     }
-
-
-    private DispatchQueue keyRepeatQueue = new DispatchQueue(120);
-
+    
     private void scheduleKeyRepeatedHandling(final Integer keyCode) {
         this.keyRepeatQueue.async(CG.FRAME_MILLIS, new Runnable() {
             public void run() {
@@ -473,53 +534,127 @@ public class CGStack extends CGSomeDrawable {
         });
     }
 
-    //TODO может тут надо будет учитывать офссеты дочерних вьюх
+//    private List childrenWithFlexibility(int flexibility) {
+//        List children = new List();
+//        Object[] drawables = this.drawables.getArray();
+//
+//        for (int i = 0; i < drawables.length; i++) {
+//            CGDrawable object = (CGDrawable)drawables[i];
+//            int mask = object.flexibility();
+//
+//            if (CG.isBitSet(mask, flexibility)) {
+//                children.addElement(object);
+//            }
+//        }
+//
+//        return children;
+//    }
+//
+//    private int[] minWidthHeightMaxWidthHeight(Object[] drawables) {
+//        int minWidth = 0;
+//        int maxWidth = 0;
+//        int minHeight = 0;
+//        int maxHeight = 0;
+//
+//        for (int i = 0; i < drawables.length; i++) {
+//            CGDrawable object = (CGDrawable)drawables[i];
+//            if (minWidth > object.width()) {
+//                minWidth = object.width();
+//            }
+//            if (maxWidth < object.width()) {
+//                maxWidth = object.width();
+//            }
+//            if (minHeight > object.height()) {
+//                minHeight = object.height();
+//            }
+//            if (maxHeight < object.height()) {
+//                maxHeight = object.height();
+//            }
+//        }
+//
+//        return new int[]{minWidth, maxWidth, minHeight, maxHeight};
+//    }
+
+    /*
+     * Если фрейм сайз НЕ задан
+     *      1) Вычисляем интринсик
+     *      2) Просетываем его во фрейм сайз
+     *      3) Конец
+     *
+     * Если фрейм сайз задан
+     *      1) Вычисляем интринсик
+     *      2) Если он равен фрейму то конец
+     *      3) Если фрейм флексибильный, то подтягиваем фрейм под инринсик
+     *      4) Если все равно не равен, то
+     *      - Если меньше, то сжимаем сжимаемых чилдов ПРОПОРЦИОНАЛЬНО!
+     *      - Если больше, то растягиваем растягиваемых чилдов ПРОПОРЦИОНАЛЬНО!
+     *
+     *      5) Центрируем чидлы внутри стека
+     */
+
     protected CGSize updateContentSizeAndApplyMasksToChildren() {
+        /*
+         * Сделать что-то типа максКонтентСайз
+         * Пройтись по вьюхам, посчитать их суммарный контент сайз
+         * Если он меньше/больше - ИТЕРАТИВНО и ПРОПОРЦИОНАЛЬНО расширить/уменбшить расширябельные вьюхи, так как у вьюхи может быть допуск для расширения 1 пиксель, а мы насчитаем что она пропорционально
+         * может вырасти на 10. Поэтому, увеличили на сколько получилось, отняли увеличенное из общего запаса и далее с остатком запаса переходим к оставщимся вьюхам, пока не посетим все.
+         * Вооот. Таким образом определили истинный контентСайзСтека
+         * Если не задан ФРЕЙМ (или шир/выс) стека, то этот сайз и станет сайзом (или шир/выс) фрейма.
+         *
+         * Нужен массив допусков = [[50, inf], [0, 100], [0, 0] итп] первое - на уменьшение, второе - на увеличение.
+         */
         int contentWidth = 0;
         int contentHeight = 0;
+
         int unallocatedWidthCount = 0;
         int unallocatedHeightCount = 0;
+
         int axis = axis().getInt();
-        
-        List dynamicWidthChildren = new List();
-        List dynamicHeightChildren = new List();
+
+        List shrinkableWidthChildren = new List();
+        List growableWidthChildren = new List();
+
+        List shrinkableHeightChildren = new List();
+        List growableHeightChildren = new List();
 
         CGFrame thisFrame = frame();
-        CGInsets contentInsets = contentInset().getCGInsets();
+        CGInsets contentInsets = contentInset();
 
         int availableWidth = thisFrame.width - contentInsets.left - contentInsets.right;
         int availableHeight = thisFrame.height - contentInsets.top - contentInsets.bottom;
-        
+
         int maxWidth = 0;
         int maxHeight = 0;
 
         Object[] drawables = this.drawables.getArray();
 
         for (int i = 0; i < drawables.length; i++) {
-            CGDrawable object = (CGDrawable)drawables[i];
-            int mask = object.flexibility();
+            CGDrawable drawable = (CGDrawable)drawables[i];
 
-            boolean hasFlexibleWidth = CG.isBitSet(mask, CG.FLEXIBLE_WIDTH);
-            boolean hasFlexibleHeight = CG.isBitSet(mask, CG.FLEXIBLE_HEIGHT);
-
-            if (hasFlexibleWidth) {
-                dynamicWidthChildren.addElement(object);
+            if (drawable.hasGrowableWidth()) {
+                growableWidthChildren.addElement(drawable);
+            }
+            if (drawable.hasShrinkableWidth()) {
+                shrinkableWidthChildren.addElement(drawable);
             }
 
-            if (hasFlexibleHeight) {
-                dynamicHeightChildren.addElement(object);
+            if (drawable.hasGrowableHeight()) {
+                growableHeightChildren.addElement(drawable);
+            }
+            if (drawable.hasShrinkableHeight()) {
+                shrinkableHeightChildren.addElement(drawable);
             }
 
-            int childWidth = object.intrinsicAwareFrame().width;
-            int childHeight = object.intrinsicAwareFrame().height;
-            
+            int childWidth = drawable.intrinsicAwareFrame().width;
+            int childHeight = drawable.intrinsicAwareFrame().height;
+
             if (axis == AXIS_HORIZONTAL) {
-                if (childWidth == CG.VALUE_NOT_SET && hasFlexibleWidth) {
+                if (childWidth == 0 && drawable.hasGrowableWidth()) {
                     unallocatedWidthCount++;
                 }
                 contentWidth += childWidth;
             } else if (axis == AXIS_VERTICAL) {
-                if (childHeight == CG.VALUE_NOT_SET && hasFlexibleHeight) {
+                if (childHeight == 0 && drawable.hasGrowableHeight()) {
                     unallocatedHeightCount++;
                 }
                 contentHeight += childHeight;
@@ -550,27 +685,14 @@ public class CGStack extends CGSomeDrawable {
 
         for (int i = 0; i < drawables.length; i++) {
             CGDrawable drawable = (CGDrawable)drawables[i];
-            int mask = drawable.flexibility();
             CGFrame frame = drawable.intrinsicAwareFrame();
 
-            if (axis == AXIS_VERTICAL) {
-                if (frame.width == CG.VALUE_NOT_SET && CG.isBitSet(mask, CG.FLEXIBLE_WIDTH)) {
-                    frame.width = defaultWidth;
-                }
-
-                if (frame.height == CG.VALUE_NOT_SET && CG.isBitSet(mask, CG.FLEXIBLE_HEIGHT)) {
-                    frame.height = defaultHeight;
-                }
+            if (frame.width == 0 && drawable.hasGrowableWidth()) {
+                frame.width = defaultWidth;
             }
 
-            if (axis == AXIS_HORIZONTAL) {
-                if (frame.width == CG.VALUE_NOT_SET && CG.isBitSet(mask, CG.FLEXIBLE_WIDTH)) {
-                    frame.width = defaultWidth;
-                }
-
-                if (frame.height == CG.VALUE_NOT_SET && CG.isBitSet(mask, CG.FLEXIBLE_HEIGHT)) {
-                    frame.height = defaultHeight;
-                }
+            if (frame.height == 0 && drawable.hasGrowableHeight()) {
+                frame.height = defaultHeight;
             }
 
             drawable.width(frame.width);
@@ -591,23 +713,163 @@ public class CGStack extends CGSomeDrawable {
         } else {
             contentHeight += defaultHeight * unallocatedHeightCount;
         }
-        
+
         contentWidth += (contentInsets.left + contentInsets.right);
         contentHeight += (contentInsets.top + contentInsets.bottom);
-        
+
         CGSize size = new CGSize(contentWidth, contentHeight);
         this.contentSize.setCGSize(size);
 
-        int mask = this.flexibility();
-        if (CG.isBitSet(mask, CG.FLEXIBLE_HEIGHT)) {
-            this.height(size.height);
-        }
-        if (CG.isBitSet(mask, CG.FLEXIBLE_WIDTH)) {
+        if (size.width > this.width() && this.hasGrowableWidth() ||
+            size.width < this.width() && this.hasShrinkableWidth()) {
             this.width(size.width);
+        }
+
+        if (size.height > this.height() && this.hasGrowableHeight() ||
+            size.height < this.height() && this.hasShrinkableHeight()) {
+            this.height(size.height);
         }
         
         return size;
     }
+    
+    //TODO может тут надо будет учитывать офссеты дочерних вьюх
+//    protected CGSize updateContentSizeAndApplyMasksToChildren() {
+//        int contentWidth = 0;
+//        int contentHeight = 0;
+//
+//        int unallocatedWidthCount = 0;
+//        int unallocatedHeightCount = 0;
+//
+//        int axis = axis().getInt();
+//
+//        List dynamicWidthChildren = new List();
+//        List dynamicHeightChildren = new List();
+//
+//        CGFrame thisFrame = frame();
+//        CGInsets contentInsets = contentInset();
+//
+//        int availableWidth = thisFrame.width - contentInsets.left - contentInsets.right;
+//        int availableHeight = thisFrame.height - contentInsets.top - contentInsets.bottom;
+//
+//        int maxWidth = 0;
+//        int maxHeight = 0;
+//
+//        Object[] drawables = this.drawables.getArray();
+//
+//        for (int i = 0; i < drawables.length; i++) {
+//            CGDrawable object = (CGDrawable)drawables[i];
+//            int mask = object.flexibility();
+//
+//            boolean hasFlexibleWidth = CG.isBitSet(mask, CG.FLEXIBLE_WIDTH);
+//            boolean hasFlexibleHeight = CG.isBitSet(mask, CG.FLEXIBLE_HEIGHT);
+//
+//            if (hasFlexibleWidth) {
+//                dynamicWidthChildren.addElement(object);
+//            }
+//
+//            if (hasFlexibleHeight) {
+//                dynamicHeightChildren.addElement(object);
+//            }
+//
+//            int childWidth = object.intrinsicAwareFrame().width;
+//            int childHeight = object.intrinsicAwareFrame().height;
+//
+//            if (axis == AXIS_HORIZONTAL) {
+//                if (childWidth == CG.NULL && hasFlexibleWidth) {
+//                    unallocatedWidthCount++;
+//                }
+//                contentWidth += childWidth;
+//            } else if (axis == AXIS_VERTICAL) {
+//                if (childHeight == CG.NULL && hasFlexibleHeight) {
+//                    unallocatedHeightCount++;
+//                }
+//                contentHeight += childHeight;
+//            }
+//        }
+//
+//        int defaultHeight = availableHeight;
+//        if (axis == AXIS_VERTICAL) {
+//             defaultHeight = unallocatedHeightCount > 0
+//                ? (availableHeight - contentHeight) / unallocatedHeightCount
+//                : 0;
+//        } else if (axis == AXIS_HORIZONTAL) {
+//            if (unallocatedHeightCount > 0 && contentHeight > 0) {
+//                defaultHeight = contentHeight;
+//            }
+//        }
+//
+//        int defaultWidth = availableWidth;
+//        if (axis == AXIS_HORIZONTAL) {
+//             defaultWidth = unallocatedWidthCount > 0
+//                ? (availableWidth - contentWidth) / unallocatedWidthCount
+//                : 0;
+//        } else if (axis == AXIS_VERTICAL) {
+//            if (unallocatedWidthCount > 0 && contentWidth > 0) {
+//                defaultWidth = contentWidth;
+//            }
+//        }
+//
+//        for (int i = 0; i < drawables.length; i++) {
+//            CGDrawable drawable = (CGDrawable)drawables[i];
+//            int mask = drawable.flexibility();
+//            CGFrame frame = drawable.intrinsicAwareFrame();
+//
+//            if (axis == AXIS_VERTICAL) {
+//                if (frame.width == CG.NULL && CG.isBitSet(mask, CG.FLEXIBLE_WIDTH)) {
+//                    frame.width = defaultWidth;
+//                }
+//
+//                if (frame.height == CG.NULL && CG.isBitSet(mask, CG.FLEXIBLE_HEIGHT)) {
+//                    frame.height = defaultHeight;
+//                }
+//            }
+//
+//            if (axis == AXIS_HORIZONTAL) {
+//                if (frame.width == CG.NULL && CG.isBitSet(mask, CG.FLEXIBLE_WIDTH)) {
+//                    frame.width = defaultWidth;
+//                }
+//
+//                if (frame.height == CG.NULL && CG.isBitSet(mask, CG.FLEXIBLE_HEIGHT)) {
+//                    frame.height = defaultHeight;
+//                }
+//            }
+//
+//            drawable.width(frame.width);
+//            drawable.height(frame.height);
+//
+//            maxWidth = Math.max(maxWidth, frame.width);
+//            maxHeight = Math.max(maxHeight, frame.height);
+//        }
+//
+//        if (axis == AXIS_VERTICAL) {
+//            contentWidth = maxWidth;
+//        } else {
+//            contentWidth += defaultWidth * unallocatedWidthCount;
+//        }
+//
+//        if (axis == AXIS_HORIZONTAL) {
+//            contentHeight = maxHeight;
+//        } else {
+//            contentHeight += defaultHeight * unallocatedHeightCount;
+//        }
+//
+//        contentWidth += (contentInsets.left + contentInsets.right);
+//        contentHeight += (contentInsets.top + contentInsets.bottom);
+//
+//        CGSize size = new CGSize(contentWidth, contentHeight);
+//        this.contentSize.setCGSize(size);
+//
+//        int mask = this.flexibility();
+//        if (CG.isBitSet(mask, CG.FLEXIBLE_HEIGHT)) {
+//            this.height(size.height);
+//        }
+//        if (CG.isBitSet(mask, CG.FLEXIBLE_WIDTH)) {
+//            this.width(size.width);
+//        }
+//
+//        return size;
+//    }
 
     protected void updateIntrinsicContentSize() {
         super.updateIntrinsicContentSize();

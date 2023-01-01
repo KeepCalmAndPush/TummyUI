@@ -34,7 +34,7 @@ public class CG {
     public final static int FPS = 30;
     public final static int FRAME_MILLIS = 1000 / FPS;
 
-    public final static int VALUE_NOT_SET = Integer.MIN_VALUE;
+    public final static int NULL = Integer.MIN_VALUE;
 
     public final static int HCENTER = Graphics.HCENTER;
     public final static int VCENTER = Graphics.VCENTER;
@@ -45,33 +45,9 @@ public class CG {
 
     public final static int CENTER = HCENTER | VCENTER;
 
-    public static final int GROWABLE_WIDTH = 1;
-    public static final int GROWABLE_HEIGHT = 1 << 1;
-    public static final int SHRINKABLE_WIDTH = 1 << 2;
-    public static final int SHRINKABLE_HEIGHT = 1 << 3;
-
-    public static final int GROWABLE_X = 1 << 4;
-    public static final int GROWABLE_Y = 1 << 5;
-    public static final int SHRINKABLE_X = 1 << 6;
-    public static final int SHRINKABLE_Y = 1 << 7;
-
-    public static final int GROWABLE_SIZE = GROWABLE_WIDTH | GROWABLE_HEIGHT;
-    public static final int SHRINKABLE_SIZE = SHRINKABLE_WIDTH | SHRINKABLE_HEIGHT;
-    public static final int GROWABLE_ORIGIN = GROWABLE_X | GROWABLE_Y;
-    public static final int SHRINKABLE_ORIGIN = SHRINKABLE_X | SHRINKABLE_Y;
-
-    public static final int GROWABLE_ALL = GROWABLE_ORIGIN | GROWABLE_SIZE;
-    public static final int SHRINKABLE_ALL = SHRINKABLE_ORIGIN | SHRINKABLE_SIZE;
-
-    public static final int FLEXIBLE_X2 = GROWABLE_X | SHRINKABLE_X;
-    public static final int FLEXIBLE_Y2 = GROWABLE_Y | SHRINKABLE_Y;
-
-    public static final int FLEXIBLE_WIDTH2 = GROWABLE_WIDTH | SHRINKABLE_WIDTH;
-    public static final int FLEXIBLE_HEIGHT2 = GROWABLE_HEIGHT | SHRINKABLE_HEIGHT;
-
-    public static final int FLEXIBLE_ORIGIN2 = FLEXIBLE_X2 | FLEXIBLE_Y2;
-    public static final int FLEXIBLE_SIZE2 = FLEXIBLE_WIDTH2 | FLEXIBLE_HEIGHT2;
-    public static final int FLEXIBLE_ALL2 = FLEXIBLE_ORIGIN2 | FLEXIBLE_SIZE2;
+    public static int clamp(int value, int min, int max) {
+        return Math.max(min, Math.min(value, max));
+    }
 
     public static boolean isBitSet(int mask, int bit) {
         return (mask & bit) == bit;
