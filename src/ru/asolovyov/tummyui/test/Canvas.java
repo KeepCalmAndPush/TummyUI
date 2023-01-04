@@ -74,20 +74,26 @@ public class Canvas extends UIMIDlet {
     // TODO запилить движок анимаций: сделать здоровенный метод в CG, типа animate(delay, duration, view, frame, bgcolor, borderColor, cornerRadius, inset итп)
     // TODO сделать DisplayLink, это таймер который тикает раз в 33мс. В методе анимейт создавать объект анимации, который сушает дисплейЛинк и на каждый тик
     // меняет переданные параметры на некоторую дельту = дюрейщен/33
-
-     //TODO ЗАЕБЕНИТЬ СПЕЙСИНГ!
+    
     protected Displayable content() {
         // TODO управление памятью,
         // TODO отписка от подписок,
         return CG.Canvas(
-                CG.HStack(
-                    new Int(CG.CENTER),
+                this.textStylesIteratingHorizontalStackOfLabels()
+          ).backgroundColor(0xFFFFFF);
+    }
+
+
+    /*
+     * !!! ТЕСТ КЕЙСЫ !!!
+     */
+
+    private CGDrawable textStylesIteratingHorizontalStackOfLabels() {
+        return CG.HStack(
+                new Int(CG.CENTER),
                 new CGStack(
                 CGStack.AXIS_VERTICAL,
-                new Object[]{
-            new Integer(Font.SIZE_SMALL)
-                        , new Integer(Font.SIZE_MEDIUM)
-        },
+                new Object[]{ new Integer(Font.SIZE_SMALL), new Integer(Font.SIZE_MEDIUM) },
                 new CGStack.DrawableFactory() {
                     public CGDrawable itemFor(Object viewModel) {
                         int size = ((Integer) viewModel).intValue();
@@ -156,8 +162,7 @@ public class Canvas extends UIMIDlet {
                 .backgroundColor(CGColor.PINK)
                 .borderColor(CGColor.RED)
                 .cornerRaduis(new CGSize(10, 5))
-                .origin(20, 20) // TODO НЕ РАБОТАЕТ!
-          ).backgroundColor(0xFFFFFF);
+                .origin(20, 20); // TODO НЕ РАБОТАЕТ!
     }
 }
 
