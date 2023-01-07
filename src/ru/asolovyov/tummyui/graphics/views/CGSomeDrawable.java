@@ -449,6 +449,16 @@ public abstract class CGSomeDrawable implements CGDrawable {
         return this;
     }
 
+    void widthOnly(int width) {
+        CGFrame frame = this.frame();
+        this.frame(frame.x, frame.y, width, frame.height);
+    }
+
+    void heightOnly(int height) {
+        CGFrame frame = this.frame();
+        this.frame(frame.x, frame.y, frame.width, height);
+    }
+
     public CGDrawable height(int height) {
         return height(new Int(height));
     }

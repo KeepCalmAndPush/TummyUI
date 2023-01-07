@@ -12,6 +12,7 @@ import ru.asolovyov.combime.common.S;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.tummyui.bindings.Size;
 import java.lang.Math.*;
+import java.util.Vector;
 import ru.asolovyov.combime.operators.mapping.Map;
 import ru.asolovyov.threading.DispatchQueue;
 import ru.asolovyov.tummyui.data.List;
@@ -552,7 +553,7 @@ public class CGStack extends CGSomeDrawable {
      *
      *      5) Центрируем чидлы внутри стека
      */
-
+    
     protected CGSize updateContentSizeAndApplyMasksToChildren() {
         /*
          * Пройтись по вьюхам, посчитать их суммарный контент сайз
@@ -569,22 +570,14 @@ public class CGStack extends CGSomeDrawable {
         int contentWidth = 0;
         int contentHeight = 0;
 
-        int unallocatedWidthCount = 0;
-        int unallocatedHeightCount = 0;
+        // Кажется деаллокатедов быть не должно. Любая растущая сторона - это деалокатед по такой логике, не только нулевая.
+//        int unallocatedWidthCount = 0;
+//        int unallocatedHeightCount = 0;
 
         int axis = axis().getInt();
 
-//        List shrinkableWidthChildren = new List();
-//        List growableWidthChildren = new List();
-//
-//        List shrinkableHeightChildren = new List();
-//        List growableHeightChildren = new List();
-
         CGFrame thisFrame = frame();
         CGInsets contentInsets = contentInset();
-
-        int availableWidth = thisFrame.width - contentInsets.left - contentInsets.right;
-        int availableHeight = thisFrame.height - contentInsets.top - contentInsets.bottom;
 
         int maxWidth = 0;
         int maxHeight = 0;
@@ -594,19 +587,25 @@ public class CGStack extends CGSomeDrawable {
 
         int ratio = 1;
 
+        boolean shouldSetWidthToContentSize = false;
+        boolean shouldSetHeightToContentSize = false;
+
+        boolean shouldShrinkDrawables = false;
+        boolean shouldExpandDrawables = false;
+
         Object[] drawables = this.drawables.getArray();
 
         int[][] flexibilities = new int[drawables.length][4];
 
         for (int i = 0; i < drawables.length; i++) {
             CGDrawable drawable = (CGDrawable)drawables[i];
-
+            /*
             minWidth = Math.min(minWidth, drawable.frame().width);
             maxWidth = Math.max(maxWidth, drawable.frame().width);
 
             minHeight = Math.min(minHeight, drawable.frame().height);
             maxHeight = Math.max(maxHeight, drawable.frame().height);
-            
+            */
             flexibilities[i] = new int[] {
                 drawable.width() - drawable.minWidth(),
                 drawable.maxWidth() - drawable.width(),
@@ -618,18 +617,22 @@ public class CGStack extends CGSomeDrawable {
             int childHeight = drawable.intrinsicAwareFrame().height;
 
             if (axis == AXIS_HORIZONTAL) {
-                if (childWidth == 0 && drawable.hasGrowableWidth()) {
-                    unallocatedWidthCount++;
-                }
+//                if (childWidth == 0 && drawable.hasGrowableWidth()) {
+//                    unallocatedWidthCount++;
+//                }
                 contentWidth += childWidth;
             } else if (axis == AXIS_VERTICAL) {
-                if (childHeight == 0 && drawable.hasGrowableHeight()) {
-                    unallocatedHeightCount++;
-                }
+//                if (childHeight == 0 && drawable.hasGrowableHeight()) {
+//                    unallocatedHeightCount++;
+//                }
                 contentHeight += childHeight;
             }
         }
 
+        /*
+        int availableWidth = thisFrame.width - contentInsets.left - contentInsets.right;
+        int availableHeight = thisFrame.height - contentInsets.top - contentInsets.bottom;
+        
         int defaultHeight = availableHeight;
         if (axis == AXIS_VERTICAL) {
              ratio = Math.max(minHeight, 1) * 1000 / Math.max(maxHeight, 1);
@@ -653,8 +656,22 @@ public class CGStack extends CGSomeDrawable {
                 defaultWidth = contentWidth;
             }
         }
-        
+        */
+
 //  TODO  хуйня с этим ратио получается. Надо итерироваться по гибким вьюхам пока либо не сойдет в ноль запас лишнего места, либо пока у вьюх не кончится гибкость
+        if (axis == AXIS_HORIZONTAL) {
+            contentHeight = maxHeight;
+        } else if (axis == AXIS_VERTICAL) {
+            contentWidth = maxWidth;
+        }
+//Бля, разбить на 2-3 метода. Х-лаяут, В-лайяут, З-лаяйут 
+        if (this.width() == 0 && this.hasGrowableWidth()) {
+            if (axis == AXIS_HORIZONTAL) {
+                contentHeight = maxHeight;
+            } else if (axis == AXIS_VERTICAL) {
+                contentWidth = maxWidth;
+            }
+        }
 
         for (int i = 0; i < drawables.length; i++) {
             CGDrawable drawable = (CGDrawable)drawables[i];
@@ -706,153 +723,201 @@ public class CGStack extends CGSomeDrawable {
         return size;
     }
 
-   //если контент МЕНЬШЕ ФРЕЙМА
-    private void expandViews() {
+    protected CGSize hUpdateContentSize() {
+        int contentWidth = 0;
+        int contentHeight = 0;
 
+        int maxWidth = 0;
+        int maxHeight = 0;
+
+        boolean shouldSetWidthToContentSize = false;
+        boolean shouldSetHeightToContentSize = false;
+
+        boolean shouldShrinkDrawables = false;
+        boolean shouldExpandDrawables = false;
+
+        Object[] objDrawables = this.drawables.getArray();
+        CGDrawable[] drawables = new CGDrawable[objDrawables.length];
+
+        for (int i = 0; i < drawables.length; i++) {
+            drawables[i] = (CGDrawable)objDrawables[i];
+        }
+
+        int[][] flexibilities = new int[drawables.length][4];
+
+        for (int i = 0; i < drawables.length; i++) {
+            CGDrawable drawable = drawables[i];
+
+            flexibilities[i] = new int[] {
+                drawable.width() - drawable.minWidth(),
+                drawable.maxWidth() - drawable.width(),
+                drawable.height() - drawable.minHeight(),
+                drawable.maxHeight() - drawable.height(),
+            };
+
+            int childWidth = drawable.intrinsicAwareFrame().width;
+            contentWidth += childWidth;
+
+            maxHeight = Math.max(maxHeight, drawable.height());
+        }
+
+        contentWidth += this.contentInset().horizontal();
+        contentHeight += this.contentInset().vertical();
+        
+        contentWidth = Math.min(contentWidth, this.maxContentWidthBinding.getInt());
+        contentHeight = Math.min(maxHeight, this.maxContentHeightBinding.getInt());
+
+        if (this.height() < contentHeight && this.hasGrowableHeight()) {
+            int height = Math.min(contentHeight, this.maxHeight());
+            this.heightOnly(height);
+        } else if (this.height() > contentHeight && this.hasShrinkableHeight()) {
+            int height = Math.max(contentHeight, this.minHeight());
+            this.heightOnly(height);
+        }
+
+        if (this.width() < contentWidth && this.hasGrowableWidth()) {
+            CGSize size = new CGSize(contentWidth, contentHeight);
+            this.contentSize.setCGSize(size);
+            int width = Math.min(contentWidth, this.maxWidth());
+            this.widthOnly(width);
+        } else if (this.width() > contentWidth && this.hasShrinkableWidth()) {
+            int width = Math.max(contentWidth, this.minWidth());
+            this.widthOnly(width);
+        }
+
+        int widthDelta = this.width() - contentWidth;
+        if (widthDelta > 0) {
+            this.expandWidthsIfNeeded(drawables, widthDelta);
+        } else {
+            this.shrinkWidthsIfNeeded(drawables, widthDelta);
+        }
+
+        int heightDelta = this.height() - contentHeight;
+        if (heightDelta > 0) {
+            this.expandHeightsIfNeeded(drawables, widthDelta);
+        } else {
+            this.shrinkHeightsIfNeeded(drawables, widthDelta);
+        }
+
+        //TODO ПЕРЕСЧИТАТЬ НОВЫЙ РАЗМЕР КОНТЕНТА!
+
+        CGSize size = new CGSize(contentWidth, contentHeight);
+        this.contentSize.setCGSize(size);
+
+        if (size.width > this.width() && this.hasGrowableWidth() ||
+            size.width < this.width() && this.hasShrinkableWidth()) {
+            this.width(size.width);
+        }
+
+        if (size.height > this.height() && this.hasGrowableHeight() ||
+            size.height < this.height() && this.hasShrinkableHeight()) {
+            this.height(size.height);
+        }
+
+        return size;
     }
-    //если контент БОЛЬШЕ МАКС КОНТЕНТ САЙЗА
-    private void shrinkViews() {
+    
+    private void expandWidthsIfNeeded(CGDrawable[] views, int delta) {
+        Object[] expandibles = S.filter(views, new S.Filter() {
+            public boolean filter(Object object) {
+                CGDrawable view = (CGDrawable) object;
+                return view.maxWidth() > view.width();
+            }
+        });
 
+        int expandiblesCount = expandibles.length;
+
+        while (expandiblesCount > 0 && delta > 0) {
+            int sliceToShare = delta / expandibles.length;
+            for (int i = 0; i < expandiblesCount; i++) {
+                CGSomeDrawable view = (CGSomeDrawable)expandibles[i];
+                int spaceToGrow = view.maxWidth() - view.width();
+                spaceToGrow = Math.min(spaceToGrow, sliceToShare);
+                view.widthOnly(view.width() + spaceToGrow);
+                delta -= spaceToGrow;
+                if (view.width() == view.maxWidth()) {
+                    expandiblesCount--;
+                }
+            }
+        }
+    }
+
+    private void expandHeightsIfNeeded(CGDrawable[] views, int delta) {
+        Object[] expandibles = S.filter(views, new S.Filter() {
+            public boolean filter(Object object) {
+                CGDrawable view = (CGDrawable) object;
+                return view.maxHeight() > view.height();
+            }
+        });
+
+        int expandiblesCount = expandibles.length;
+
+        while (expandiblesCount > 0 && delta > 0) {
+            int sliceToShare = delta / expandibles.length;
+            for (int i = 0; i < expandiblesCount; i++) {
+                CGSomeDrawable view = (CGSomeDrawable)expandibles[i];
+                int spaceToGrow = view.maxHeight() - view.height();
+                spaceToGrow = Math.min(spaceToGrow, sliceToShare);
+                view.heightOnly(view.height() + spaceToGrow);
+                delta -= spaceToGrow;
+                if (view.height() == view.maxHeight()) {
+                    expandiblesCount--;
+                }
+            }
+        }
+    }
+
+    private void shrinkWidthsIfNeeded(CGDrawable[] views, int delta) {
+        Object[] shrinkables = S.filter(views, new S.Filter() {
+            public boolean filter(Object object) {
+                CGDrawable view = (CGDrawable) object;
+                return view.minWidth() < view.width();
+            }
+        });
+
+        int shrinkablesCount = shrinkables.length;
+
+        while (shrinkablesCount > 0 && delta > 0) {
+            int sliceToShare = delta / shrinkables.length;
+            for (int i = 0; i < shrinkablesCount; i++) {
+                CGSomeDrawable view = (CGSomeDrawable)shrinkables[i];
+                int spaceToShrink = view.width() - view.minWidth();
+                spaceToShrink = Math.min(spaceToShrink, sliceToShare);
+                view.widthOnly(view.width() - spaceToShrink);
+                delta -= spaceToShrink;
+                if (view.width() == view.minWidth()) {
+                    shrinkablesCount--;
+                }
+            }
+        }
+    }
+
+    private void shrinkHeightsIfNeeded(CGDrawable[] views, int delta) {
+        Object[] shrinkables = S.filter(views, new S.Filter() {
+            public boolean filter(Object object) {
+                CGDrawable view = (CGDrawable) object;
+                return view.minHeight() < view.height();
+            }
+        });
+
+        int shrinkablesCount = shrinkables.length;
+
+        while (shrinkablesCount > 0 && delta > 0) {
+            int sliceToShare = delta / shrinkables.length;
+            for (int i = 0; i < shrinkablesCount; i++) {
+                CGSomeDrawable view = (CGSomeDrawable)shrinkables[i];
+                int spaceToShrink = view.height() - view.minHeight();
+                spaceToShrink = Math.min(spaceToShrink, sliceToShare);
+                view.heightOnly(view.height() - spaceToShrink);
+                delta -= spaceToShrink;
+                if (view.height() == view.minHeight()) {
+                    shrinkablesCount--;
+                }
+            }
+        }
     }
     
     //TODO может тут надо будет учитывать офссеты дочерних вьюх
-//    protected CGSize updateContentSizeAndApplyMasksToChildren() {
-//        int contentWidth = 0;
-//        int contentHeight = 0;
-//
-//        int unallocatedWidthCount = 0;
-//        int unallocatedHeightCount = 0;
-//
-//        int axis = axis().getInt();
-//
-//        List dynamicWidthChildren = new List();
-//        List dynamicHeightChildren = new List();
-//
-//        CGFrame thisFrame = frame();
-//        CGInsets contentInsets = contentInset();
-//
-//        int availableWidth = thisFrame.width - contentInsets.left - contentInsets.right;
-//        int availableHeight = thisFrame.height - contentInsets.top - contentInsets.bottom;
-//
-//        int maxWidth = 0;
-//        int maxHeight = 0;
-//
-//        Object[] drawables = this.drawables.getArray();
-//
-//        for (int i = 0; i < drawables.length; i++) {
-//            CGDrawable object = (CGDrawable)drawables[i];
-//            int mask = object.flexibility();
-//
-//            boolean hasFlexibleWidth = CG.isBitSet(mask, CG.FLEXIBLE_WIDTH);
-//            boolean hasFlexibleHeight = CG.isBitSet(mask, CG.FLEXIBLE_HEIGHT);
-//
-//            if (hasFlexibleWidth) {
-//                dynamicWidthChildren.addElement(object);
-//            }
-//
-//            if (hasFlexibleHeight) {
-//                dynamicHeightChildren.addElement(object);
-//            }
-//
-//            int childWidth = object.intrinsicAwareFrame().width;
-//            int childHeight = object.intrinsicAwareFrame().height;
-//
-//            if (axis == AXIS_HORIZONTAL) {
-//                if (childWidth == CG.NULL && hasFlexibleWidth) {
-//                    unallocatedWidthCount++;
-//                }
-//                contentWidth += childWidth;
-//            } else if (axis == AXIS_VERTICAL) {
-//                if (childHeight == CG.NULL && hasFlexibleHeight) {
-//                    unallocatedHeightCount++;
-//                }
-//                contentHeight += childHeight;
-//            }
-//        }
-//
-//        int defaultHeight = availableHeight;
-//        if (axis == AXIS_VERTICAL) {
-//             defaultHeight = unallocatedHeightCount > 0
-//                ? (availableHeight - contentHeight) / unallocatedHeightCount
-//                : 0;
-//        } else if (axis == AXIS_HORIZONTAL) {
-//            if (unallocatedHeightCount > 0 && contentHeight > 0) {
-//                defaultHeight = contentHeight;
-//            }
-//        }
-//
-//        int defaultWidth = availableWidth;
-//        if (axis == AXIS_HORIZONTAL) {
-//             defaultWidth = unallocatedWidthCount > 0
-//                ? (availableWidth - contentWidth) / unallocatedWidthCount
-//                : 0;
-//        } else if (axis == AXIS_VERTICAL) {
-//            if (unallocatedWidthCount > 0 && contentWidth > 0) {
-//                defaultWidth = contentWidth;
-//            }
-//        }
-//
-//        for (int i = 0; i < drawables.length; i++) {
-//            CGDrawable drawable = (CGDrawable)drawables[i];
-//            int mask = drawable.flexibility();
-//            CGFrame frame = drawable.intrinsicAwareFrame();
-//
-//            if (axis == AXIS_VERTICAL) {
-//                if (frame.width == CG.NULL && CG.isBitSet(mask, CG.FLEXIBLE_WIDTH)) {
-//                    frame.width = defaultWidth;
-//                }
-//
-//                if (frame.height == CG.NULL && CG.isBitSet(mask, CG.FLEXIBLE_HEIGHT)) {
-//                    frame.height = defaultHeight;
-//                }
-//            }
-//
-//            if (axis == AXIS_HORIZONTAL) {
-//                if (frame.width == CG.NULL && CG.isBitSet(mask, CG.FLEXIBLE_WIDTH)) {
-//                    frame.width = defaultWidth;
-//                }
-//
-//                if (frame.height == CG.NULL && CG.isBitSet(mask, CG.FLEXIBLE_HEIGHT)) {
-//                    frame.height = defaultHeight;
-//                }
-//            }
-//
-//            drawable.width(frame.width);
-//            drawable.height(frame.height);
-//
-//            maxWidth = Math.max(maxWidth, frame.width);
-//            maxHeight = Math.max(maxHeight, frame.height);
-//        }
-//
-//        if (axis == AXIS_VERTICAL) {
-//            contentWidth = maxWidth;
-//        } else {
-//            contentWidth += defaultWidth * unallocatedWidthCount;
-//        }
-//
-//        if (axis == AXIS_HORIZONTAL) {
-//            contentHeight = maxHeight;
-//        } else {
-//            contentHeight += defaultHeight * unallocatedHeightCount;
-//        }
-//
-//        contentWidth += (contentInsets.left + contentInsets.right);
-//        contentHeight += (contentInsets.top + contentInsets.bottom);
-//
-//        CGSize size = new CGSize(contentWidth, contentHeight);
-//        this.contentSize.setCGSize(size);
-//
-//        int mask = this.flexibility();
-//        if (CG.isBitSet(mask, CG.FLEXIBLE_HEIGHT)) {
-//            this.height(size.height);
-//        }
-//        if (CG.isBitSet(mask, CG.FLEXIBLE_WIDTH)) {
-//            this.width(size.width);
-//        }
-//
-//        return size;
-//    }
-
     protected void updateIntrinsicContentSize() {
         super.updateIntrinsicContentSize();
         this.updateContentSizeAndApplyMasksToChildren();
