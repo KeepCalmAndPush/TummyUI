@@ -564,19 +564,19 @@ public class CGStack extends CGSomeDrawable {
         if (widthDelta > 0) {
             widthDelta -= this.expandWidthsIfNeeded(drawables, widthDelta);
         } else if (widthDelta < 0) {
-            widthDelta += this.shrinkWidthsIfNeeded(drawables, widthDelta);
+            widthDelta += this.shrinkWidthsIfNeeded(drawables, Math.abs(widthDelta));
         }
 
         // ХЕРОВАЯ ИДЕЯ - НАДО НЕ ВСЕ СУММАРНО УМЕНЬШАТЬ, А ТОЛЬКО ТЕ ВЬЮХИ КОТОРЫЕ БОЛЬШЕ ИЛИ МЕНЬШЕ ЭТОГО ХАЙТА
         int heightDelta = this.height() - contentHeight;
 
-//        if (heightDelta > 0) {
-//            heightDelta -= this.expandHeightsIfNeeded(drawables, heightDelta);
-//        } else if (heightDelta < 0) {
-//            heightDelta += this.shrinkHeightsIfNeeded(drawables, heightDelta);
-//        }
+        if (heightDelta > 0) {
+            heightDelta -= this.expandHeightsIfNeeded(drawables, heightDelta);
+        } else if (heightDelta < 0) {
+            heightDelta += this.shrinkHeightsIfNeeded(drawables, Math.abs(heightDelta));
+        }
 
-//        contentWidth += widthDelta;
+        contentWidth += widthDelta;
         contentHeight += heightDelta;
         
         CGSize size = new CGSize(contentWidth, contentHeight);
@@ -632,21 +632,21 @@ public class CGStack extends CGSomeDrawable {
             this.widthBinding.setInt(width);
         }
 
+        int widthDelta = this.width() - contentWidth;
+        if (widthDelta > 0) {
+            widthDelta -= this.expandWidthsIfNeeded(drawables, widthDelta);
+        } else if (widthDelta < 0) {
+            widthDelta += this.shrinkWidthsIfNeeded(drawables, Math.abs(widthDelta));
+        }
+
         int heightDelta = this.height() - contentHeight;
         if (heightDelta > 0) {
             heightDelta -= this.expandHeightsIfNeeded(drawables, heightDelta);
         } else if (heightDelta < 0) {
-            heightDelta += this.shrinkHeightsIfNeeded(drawables, heightDelta);
+            heightDelta += this.shrinkHeightsIfNeeded(drawables, Math.abs(heightDelta));
         }
 
-        // ХЕРОВАЯ ИДЕЯ - НАДО НЕ ВСЕ СУММАРНО УМЕНЬШАТЬ, А ТОЛЬКО ТЕ ВЬЮХИ КОТОРЫЕ БОЛЬШЕ ИЛИ МЕНЬШЕ ЭТОГО ВИДСА
-//        int widthDelta = this.width() - contentWidth;
-//        if (widthDelta > 0) {
-//            widthDelta -= this.expandWidthsIfNeeded(drawables, widthDelta);
-//        } else if (widthDelta < 0) {
-//            widthDelta += this.shrinkWidthsIfNeeded(drawables, widthDelta);
-//        }
-//        contentWidth += widthDelta;
+        contentWidth += widthDelta;
         contentHeight += heightDelta;
 
         CGSize size = new CGSize(contentWidth, contentHeight);
@@ -694,24 +694,23 @@ public class CGStack extends CGSomeDrawable {
             int width = Math.max(contentWidth, this.minWidth());
             this.widthBinding.setInt(width);
         }
+        
+        int widthDelta = this.width() - contentWidth;
+        if (widthDelta > 0) {
+            widthDelta -= this.expandWidthsIfNeeded(drawables, widthDelta);
+        } else if (widthDelta < 0) {
+            widthDelta += this.shrinkWidthsIfNeeded(drawables, widthDelta);
+        }
 
-        // ХЕРОВАЯ ИДЕЯ - НАДО НЕ ВСЕ СУММАРНО УМЕНЬШАТЬ, А ТОЛЬКО ТЕ ВЬЮХИ КОТОРЫЕ БОЛЬШЕ ИЛИ МЕНЬШЕ ЭТОГО ВИДСА
-//        int widthDelta = this.width() - contentWidth;
-//        if (widthDelta > 0) {
-//            widthDelta -= this.expandWidthsIfNeeded(drawables, widthDelta);
-//        } else if (widthDelta < 0) {
-//            widthDelta += this.shrinkWidthsIfNeeded(drawables, widthDelta);
-//        }
-//
-//        int heightDelta = this.height() - contentHeight;
-//        if (heightDelta > 0) {
-//            heightDelta -= this.expandHeightsIfNeeded(drawables, heightDelta);
-//        } else if (heightDelta < 0) {
-//            heightDelta += this.shrinkHeightsIfNeeded(drawables, heightDelta);
-//        }
-//
-//        contentWidth += widthDelta;
-//        contentHeight += heightDelta;
+        int heightDelta = this.height() - contentHeight;
+        if (heightDelta > 0) {
+            heightDelta -= this.expandHeightsIfNeeded(drawables, heightDelta);
+        } else if (heightDelta < 0) {
+            heightDelta += this.shrinkHeightsIfNeeded(drawables, heightDelta);
+        }
+
+        contentWidth += widthDelta;
+        contentHeight += heightDelta;
 
         CGSize size = new CGSize(contentWidth, contentHeight);
         this.contentSize.setCGSize(size);
@@ -728,23 +727,39 @@ public class CGStack extends CGSomeDrawable {
             }
         });
 
-        int expandiblesCount = expandibles.length;
+        if (this.axis.getInt() == AXIS_HORIZONTAL) {
+            int expandiblesCount = expandibles.length;
 
-        while (expandiblesCount > 0 && delta > 0) {
-            int sliceToShare = delta / expandibles.length;
-            for (int i = 0; i < expandiblesCount; i++) {
-                CGSomeDrawable view = (CGSomeDrawable)expandibles[i];
-                int spaceToGrow = view.maxWidth() - view.width();
-                spaceToGrow = Math.min(spaceToGrow, sliceToShare);
-                view.widthBinding.setInt(view.width() + spaceToGrow);
-                delta -= spaceToGrow;
-                if (view.width() == view.maxWidth()) {
-                    expandiblesCount--;
+            while (expandiblesCount > 0 && delta > 0) {
+                int sliceToShare = delta / expandibles.length;
+                for (int i = 0; i < expandiblesCount; i++) {
+                    CGSomeDrawable view = (CGSomeDrawable) expandibles[i];
+                    int spaceToGrow = view.maxWidth() - view.width();
+                    spaceToGrow = Math.min(spaceToGrow, sliceToShare);
+                    view.widthBinding.setInt(view.width() + spaceToGrow);
+                    delta -= spaceToGrow;
+                    if (view.width() == view.maxWidth()) {
+                        expandiblesCount--;
+                    }
                 }
             }
+
+            return delta;
         }
 
-        return delta;
+        int maxDelta = 0;
+        for (int i = 0; i < expandibles.length; i++) {
+            CGSomeDrawable view = (CGSomeDrawable) expandibles[i];
+            int viewDelta = view.maxWidth() - view.width();
+            viewDelta = Math.min(viewDelta, delta);
+
+            int width = view.width() + viewDelta;
+            view.widthBinding.setInt(width);
+
+            maxDelta = Math.max(maxDelta, viewDelta);
+        }
+
+        return delta - maxDelta;
     }
 
     private int expandHeightsIfNeeded(CGDrawable[] views, int delta) {
@@ -755,28 +770,40 @@ public class CGStack extends CGSomeDrawable {
             }
         });
 
-        int expandiblesCount = expandibles.length;
-
-        while (expandiblesCount > 0 && delta > 0) {
-            int sliceToShare = delta / expandibles.length;
-            for (int i = 0; i < expandiblesCount; i++) {
-                CGSomeDrawable view = (CGSomeDrawable)expandibles[i];
-                int spaceToGrow = view.maxHeight() - view.height();
-                spaceToGrow = Math.min(spaceToGrow, sliceToShare);
-                view.heightBinding.setInt(view.height() + spaceToGrow);
-                delta -= spaceToGrow;
-                if (view.height() == view.maxHeight()) {
-                    expandiblesCount--;
+        if (this.axis.getInt() == AXIS_VERTICAL) {
+            int expandiblesCount = expandibles.length;
+            while (expandiblesCount > 0 && delta > 0) {
+                int sliceToShare = delta / expandibles.length;
+                for (int i = 0; i < expandiblesCount; i++) {
+                    CGSomeDrawable view = (CGSomeDrawable) expandibles[i];
+                    int spaceToGrow = view.maxHeight() - view.height();
+                    spaceToGrow = Math.min(spaceToGrow, sliceToShare);
+                    view.heightBinding.setInt(view.height() + spaceToGrow);
+                    delta -= spaceToGrow;
+                    if (view.height() == view.maxHeight()) {
+                        expandiblesCount--;
+                    }
                 }
             }
+            return delta;
         }
 
-        return delta;
+        int maxDelta = 0;
+        for (int i = 0; i < expandibles.length; i++) {
+            CGSomeDrawable view = (CGSomeDrawable) expandibles[i];
+            int viewDelta = view.maxHeight() - view.height();
+            viewDelta = Math.min(viewDelta, delta);
+
+            int height = view.height() + viewDelta;
+            view.heightBinding.setInt(height);
+
+            maxDelta = Math.max(maxDelta, viewDelta);
+        }
+
+        return delta - maxDelta;
     }
 
     private int shrinkWidthsIfNeeded(CGDrawable[] views, int delta) {
-        delta = Math.abs(delta);
-
         Object[] shrinkables = S.filter(views, new S.Filter() {
             public boolean filter(Object object) {
                 CGDrawable view = (CGDrawable) object;
@@ -784,28 +811,40 @@ public class CGStack extends CGSomeDrawable {
             }
         });
 
-        int shrinkablesCount = shrinkables.length;
-
-        while (shrinkablesCount > 0 && delta > 0) {
-            int sliceToShare = delta / shrinkables.length;
-            for (int i = 0; i < shrinkablesCount; i++) {
-                CGSomeDrawable view = (CGSomeDrawable)shrinkables[i];
-                int spaceToShrink = view.width() - view.minWidth();
-                spaceToShrink = Math.min(spaceToShrink, sliceToShare);
-                view.widthBinding.setInt(view.width() - spaceToShrink);
-                delta -= spaceToShrink;
-                if (view.width() == view.minWidth()) {
-                    shrinkablesCount--;
+        if (this.axis.getInt() == AXIS_HORIZONTAL) {
+            int shrinkablesCount = shrinkables.length;
+            while (shrinkablesCount > 0 && delta > 0) {
+                int sliceToShare = delta / shrinkables.length;
+                for (int i = 0; i < shrinkablesCount; i++) {
+                    CGSomeDrawable view = (CGSomeDrawable) shrinkables[i];
+                    int spaceToShrink = view.width() - view.minWidth();
+                    spaceToShrink = Math.min(spaceToShrink, sliceToShare);
+                    view.widthBinding.setInt(view.width() - spaceToShrink);
+                    delta -= spaceToShrink;
+                    if (view.width() == view.minWidth()) {
+                        shrinkablesCount--;
+                    }
                 }
             }
+            return delta;
+        }
+        
+        int maxDelta = 0;
+        for (int i = 0; i < shrinkables.length; i++) {
+            CGSomeDrawable view = (CGSomeDrawable) shrinkables[i];
+            int viewDelta = view.width() - view.minWidth();
+            viewDelta = Math.min(viewDelta, delta);
+
+            int width = view.width() - viewDelta;
+            view.widthBinding.setInt(width);
+
+            maxDelta = Math.max(maxDelta, viewDelta);
         }
 
-        return delta;
+        return delta - maxDelta;
     }
 
     private int shrinkHeightsIfNeeded(CGDrawable[] views, int delta) {
-        delta = Math.abs(delta);
-        
         Object[] shrinkables = S.filter(views, new S.Filter() {
             public boolean filter(Object object) {
                 CGDrawable view = (CGDrawable) object;
@@ -813,23 +852,39 @@ public class CGStack extends CGSomeDrawable {
             }
         });
 
-        int shrinkablesCount = shrinkables.length;
-
-        while (shrinkablesCount > 0 && delta > 0) {
-            int sliceToShare = delta / shrinkables.length;
-            for (int i = 0; i < shrinkablesCount; i++) {
-                CGSomeDrawable view = (CGSomeDrawable)shrinkables[i];
-                int spaceToShrink = view.height() - view.minHeight();
-                spaceToShrink = Math.min(spaceToShrink, sliceToShare);
-                view.heightBinding.setInt(view.height() - spaceToShrink);
-                delta -= spaceToShrink;
-                if (view.height() == view.minHeight()) {
-                    shrinkablesCount--;
+        if (this.axis().getInt() == AXIS_HORIZONTAL) {
+            int shrinkablesCount = shrinkables.length;
+            while (shrinkablesCount > 0 && delta > 0) {
+                int sliceToShare = delta / shrinkables.length;
+                for (int i = 0; i < shrinkablesCount; i++) {
+                    CGSomeDrawable view = (CGSomeDrawable) shrinkables[i];
+                    int spaceToShrink = view.height() - view.minHeight();
+                    spaceToShrink = Math.min(spaceToShrink, sliceToShare);
+                    view.heightBinding.setInt(view.height() - spaceToShrink);
+                    delta -= spaceToShrink;
+                    if (view.height() == view.minHeight()) {
+                        shrinkablesCount--;
+                    }
                 }
             }
+
+            return delta;
         }
 
-        return delta;
+
+        int maxDelta = 0;
+        for (int i = 0; i < shrinkables.length; i++) {
+            CGSomeDrawable view = (CGSomeDrawable) shrinkables[i];
+            int viewDelta = view.height() - view.minHeight();
+            viewDelta = Math.min(viewDelta, delta);
+
+            int height = view.height() - viewDelta;
+            view.heightBinding.setInt(height);
+
+            maxDelta = Math.max(maxDelta, viewDelta);
+        }
+
+        return delta - maxDelta;
     }
     
     protected void updateIntrinsicContentSize() {
