@@ -37,6 +37,24 @@ import ru.asolovyov.tummyui.graphics.views.CGText;
  * @author Администратор
  */
 public class Canvas extends UIMIDlet {
+    protected Displayable content() {
+        // TODO управление памятью,
+        // TODO отписка от подписок,
+        return CG.Canvas(
+                testHStackWithOneViewFillsCanvas()
+//                this.textStylesIteratingHorizontalStackOfLabels()
+          ).backgroundColor(CGColor.RED);
+    }
+
+
+    private CGDrawable testHStackWithOneViewFillsCanvas() {
+        return CG.HStack(CG.Rect().backgroundColor(CGColor.GREEN));
+    }
+
+    private CGDrawable testVStackWithOneViewFillsCanvas() {
+        return CG.VStack(CG.Rect().backgroundColor(CGColor.GREEN));
+    }
+    
     Clock clock;
     int i = 0;
     Int arcColor = new Int(0xFFFF00);
@@ -74,15 +92,6 @@ public class Canvas extends UIMIDlet {
     // TODO запилить движок анимаций: сделать здоровенный метод в CG, типа animate(delay, duration, view, frame, bgcolor, borderColor, cornerRadius, inset итп)
     // TODO сделать DisplayLink, это таймер который тикает раз в 33мс. В методе анимейт создавать объект анимации, который сушает дисплейЛинк и на каждый тик
     // меняет переданные параметры на некоторую дельту = дюрейщен/33
-    
-    protected Displayable content() {
-        // TODO управление памятью,
-        // TODO отписка от подписок,
-        return CG.Canvas(
-                this.textStylesIteratingHorizontalStackOfLabels()
-          ).backgroundColor(0xFFFFFF);
-    }
-
 
     /*
      * !!! ТЕСТ КЕЙСЫ !!!
@@ -90,7 +99,6 @@ public class Canvas extends UIMIDlet {
 
     private CGDrawable textStylesIteratingHorizontalStackOfLabels() {
         return CG.HStack(
-                new Int(CG.CENTER),
                 new CGStack(
                 CGStack.AXIS_VERTICAL,
                 new Object[]{ new Integer(Font.SIZE_SMALL), new Integer(Font.SIZE_MEDIUM) },

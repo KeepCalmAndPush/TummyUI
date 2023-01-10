@@ -29,4 +29,8 @@ public final class CGSize {
     public CGSize copy() {
         return new CGSize(this);
     }
+
+    public String toString() {
+        return (super.toString() + " width: " + width + ", height: " + height);
+    }
 }

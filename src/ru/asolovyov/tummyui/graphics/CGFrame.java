@@ -66,5 +66,7 @@ public final class CGFrame {
         return ("x"+x+"y"+y+"width"+width+"height"+height).hashCode();
     }
 
-    
+    public String toString() {
+        return super.toString() + " CGFRAME x: " + x + ", y: " + y + ", width: " + width + ", height: " + height;
+    }
 }

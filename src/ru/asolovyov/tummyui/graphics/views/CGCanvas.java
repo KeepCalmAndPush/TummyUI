@@ -9,6 +9,7 @@ import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
 import ru.asolovyov.combime.bindings.Bool;
 import ru.asolovyov.combime.bindings.Int;
+import ru.asolovyov.combime.common.S;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.combime.operators.sequence.Drop;
 import ru.asolovyov.combime.operators.timing.Debounce;
@@ -38,21 +39,26 @@ public class CGCanvas extends Canvas {
 
     public CGCanvas(CGDrawable[] content) {
         super();
+        
         this.content = content;
+        S.println("CANVAS HAS " + content.length + " CHILDs");
+
         if (content.length == 1) {
             CGDrawable child = content[0];
-            CGFrame frame = child.frame();
             
-            frame.width = Math.min(this.getWidth(), child.maxWidth());
-            frame.height = Math.min(this.getHeight(), child.maxHeight());
-            child.width(frame.width);
-            child.height(frame.height);
+            int widthToSet = Math.min(this.getWidth(), child.maxWidth());
+            int heightToSet = Math.min(this.getHeight(), child.maxHeight());
+
+            S.println("CANVAS WILL SET CHILD Width: " + widthToSet + ", Height: " + heightToSet);
+
+            child.frame(0, 0, widthToSet, heightToSet);
         }
+        
         for (int i = 0; i < this.content.length; i++) {
             CGDrawable drawable = content[i];
             drawable.canvas(this);
         }
-        this.backgroundColor(0);
+
         this.needsRepaint.to(new Debounce(33)).sink(new Sink() {
             protected void onValue(Object value) {
                 repaint();

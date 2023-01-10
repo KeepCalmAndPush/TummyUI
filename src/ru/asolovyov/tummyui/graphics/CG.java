@@ -127,76 +127,76 @@ public class CG {
         return new CGCanvas(content);
     }
     
-    public static CGStack VStack(Int alignment, CGDrawable[] content) {
-        return new CGStack(new Int(CGStack.AXIS_VERTICAL), alignment, new Arr(content));
+    public static CGStack VStack(CGDrawable[] content) {
+        return new CGStack(new Int(CGStack.AXIS_VERTICAL), new Arr(content));
     }
 
-    public static CGStack VStack(Int alignment, CGDrawable d1) {
-        return new CGStack(new Int(CGStack.AXIS_VERTICAL), alignment, new Arr(new CGDrawable[] {d1}));
+    public static CGStack VStack(CGDrawable d1) {
+        return new CGStack(new Int(CGStack.AXIS_VERTICAL), new Arr(new CGDrawable[] {d1}));
     }
 
-    public static CGStack VStack(Int alignment, CGDrawable d1, CGDrawable d2) {
-        return new CGStack(new Int(CGStack.AXIS_VERTICAL), alignment, new Arr(new CGDrawable[] {d1, d2}));
+    public static CGStack VStack(CGDrawable d1, CGDrawable d2) {
+        return new CGStack(new Int(CGStack.AXIS_VERTICAL), new Arr(new CGDrawable[] {d1, d2}));
     }
 
-    public static CGStack VStack(Int alignment, CGDrawable d1, CGDrawable d2, CGDrawable d3) {
-        return new CGStack(new Int(CGStack.AXIS_VERTICAL), alignment, new Arr(new CGDrawable[] {d1, d2, d3}));
+    public static CGStack VStack(CGDrawable d1, CGDrawable d2, CGDrawable d3) {
+        return new CGStack(new Int(CGStack.AXIS_VERTICAL), new Arr(new CGDrawable[] {d1, d2, d3}));
     }
 
-    public static CGStack VStack(Int alignment, CGDrawable d1, CGDrawable d2, CGDrawable d3, CGDrawable d4) {
-        return new CGStack(new Int(CGStack.AXIS_VERTICAL), alignment, new Arr(new CGDrawable[] {d1, d2, d3, d4}));
+    public static CGStack VStack(CGDrawable d1, CGDrawable d2, CGDrawable d3, CGDrawable d4) {
+        return new CGStack(new Int(CGStack.AXIS_VERTICAL), new Arr(new CGDrawable[] {d1, d2, d3, d4}));
     }
 
-    public static CGStack VStack(Int alignment, CGDrawable d1, CGDrawable d2, CGDrawable d3, CGDrawable d4, CGDrawable d5) {
-        return new CGStack(new Int(CGStack.AXIS_VERTICAL), alignment, new Arr(new CGDrawable[] {d1, d2, d3, d4, d5}));
+    public static CGStack VStack(CGDrawable d1, CGDrawable d2, CGDrawable d3, CGDrawable d4, CGDrawable d5) {
+        return new CGStack(new Int(CGStack.AXIS_VERTICAL), new Arr(new CGDrawable[] {d1, d2, d3, d4, d5}));
     }
 
-    public static CGStack HStack(Int alignment, CGDrawable[] content) {
-        return new CGStack(new Int(CGStack.AXIS_HORIZONTAL), alignment, new Arr(content));
+    public static CGStack HStack(CGDrawable[] content) {
+        return new CGStack(new Int(CGStack.AXIS_HORIZONTAL), new Arr(content));
     }
 
-    public static CGStack HStack(Int alignment, CGDrawable d1) {
-        return new CGStack(new Int(CGStack.AXIS_HORIZONTAL), alignment, new Arr(new CGDrawable[] {d1}));
+    public static CGStack HStack(CGDrawable d1) {
+        return new CGStack(new Int(CGStack.AXIS_HORIZONTAL), new Arr(new CGDrawable[] {d1}));
     }
 
-    public static CGStack HStack(Int alignment, CGDrawable d1, CGDrawable d2) {
-        return new CGStack(new Int(CGStack.AXIS_HORIZONTAL), alignment, new Arr(new CGDrawable[] {d1, d2}));
+    public static CGStack HStack(CGDrawable d1, CGDrawable d2) {
+        return new CGStack(new Int(CGStack.AXIS_HORIZONTAL), new Arr(new CGDrawable[] {d1, d2}));
     }
 
-    public static CGStack HStack(Int alignment, CGDrawable d1, CGDrawable d2, CGDrawable d3) {
-        return new CGStack(new Int(CGStack.AXIS_HORIZONTAL), alignment, new Arr(new CGDrawable[] {d1, d2, d3}));
+    public static CGStack HStack(CGDrawable d1, CGDrawable d2, CGDrawable d3) {
+        return new CGStack(new Int(CGStack.AXIS_HORIZONTAL), new Arr(new CGDrawable[] {d1, d2, d3}));
     }
 
-    public static CGStack HStack(Int alignment, CGDrawable d1, CGDrawable d2, CGDrawable d3, CGDrawable d4) {
-        return new CGStack(new Int(CGStack.AXIS_HORIZONTAL), alignment, new Arr(new CGDrawable[] {d1, d2, d3, d4}));
+    public static CGStack HStack(CGDrawable d1, CGDrawable d2, CGDrawable d3, CGDrawable d4) {
+        return new CGStack(new Int(CGStack.AXIS_HORIZONTAL), new Arr(new CGDrawable[] {d1, d2, d3, d4}));
     }
 
-    public static CGStack HStack(Int alignment, CGDrawable d1, CGDrawable d2, CGDrawable d3, CGDrawable d4, CGDrawable d5) {
-        return new CGStack(new Int(CGStack.AXIS_HORIZONTAL), alignment, new Arr(new CGDrawable[] {d1, d2, d3, d4, d5}));
+    public static CGStack HStack(CGDrawable d1, CGDrawable d2, CGDrawable d3, CGDrawable d4, CGDrawable d5) {
+        return new CGStack(new Int(CGStack.AXIS_HORIZONTAL), new Arr(new CGDrawable[] {d1, d2, d3, d4, d5}));
     }
 
-    public static CGStack ZStack(Int alignment, CGDrawable[] content) {
-        return new CGStack(new Int(CGStack.AXIS_Z), alignment, new Arr(content));
+    public static CGStack ZStack(CGDrawable[] content) {
+        return new CGStack(new Int(CGStack.AXIS_Z), new Arr(content));
     }
 
-    public static CGStack ZStack(Int alignment, CGDrawable d1) {
-        return new CGStack(new Int(CGStack.AXIS_Z), alignment, new Arr(new CGDrawable[] {d1}));
+    public static CGStack ZStack(CGDrawable d1) {
+        return new CGStack(new Int(CGStack.AXIS_Z), new Arr(new CGDrawable[] {d1}));
     }
 
-    public static CGStack ZStack(Int alignment, CGDrawable d1, CGDrawable d2) {
-        return new CGStack(new Int(CGStack.AXIS_Z), alignment, new Arr(new CGDrawable[] {d1, d2}));
+    public static CGStack ZStack(CGDrawable d1, CGDrawable d2) {
+        return new CGStack(new Int(CGStack.AXIS_Z), new Arr(new CGDrawable[] {d1, d2}));
     }
 
-    public static CGStack ZStack(Int alignment, CGDrawable d1, CGDrawable d2, CGDrawable d3) {
-        return new CGStack(new Int(CGStack.AXIS_Z), alignment, new Arr(new CGDrawable[] {d1, d2, d3}));
+    public static CGStack ZStack(CGDrawable d1, CGDrawable d2, CGDrawable d3) {
+        return new CGStack(new Int(CGStack.AXIS_Z), new Arr(new CGDrawable[] {d1, d2, d3}));
     }
 
-    public static CGStack ZStack(Int alignment, CGDrawable d1, CGDrawable d2, CGDrawable d3, CGDrawable d4) {
-        return new CGStack(new Int(CGStack.AXIS_Z), alignment, new Arr(new CGDrawable[] {d1, d2, d3, d4}));
+    public static CGStack ZStack(CGDrawable d1, CGDrawable d2, CGDrawable d3, CGDrawable d4) {
+        return new CGStack(new Int(CGStack.AXIS_Z), new Arr(new CGDrawable[] {d1, d2, d3, d4}));
     }
 
-    public static CGStack ZStack(Int alignment, CGDrawable d1, CGDrawable d2, CGDrawable d3, CGDrawable d4, CGDrawable d5) {
-        return new CGStack(new Int(CGStack.AXIS_Z), alignment, new Arr(new CGDrawable[] {d1, d2, d3, d4, d5}));
+    public static CGStack ZStack(CGDrawable d1, CGDrawable d2, CGDrawable d3, CGDrawable d4, CGDrawable d5) {
+        return new CGStack(new Int(CGStack.AXIS_Z), new Arr(new CGDrawable[] {d1, d2, d3, d4, d5}));
     }
 
     public static class MultilineText {

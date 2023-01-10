@@ -7,6 +7,7 @@ package ru.asolovyov.tummyui.graphics.views;
 import javax.microedition.lcdui.Graphics;
 import ru.asolovyov.combime.bindings.Bool;
 import ru.asolovyov.combime.bindings.Int;
+import ru.asolovyov.combime.common.S;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.tummyui.bindings.Frame;
 import ru.asolovyov.tummyui.bindings.Insets;
@@ -113,6 +114,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
 
                 originBinding.setCGPoint(new CGPoint(frame.x, frame.y));
 
+                S.println(CGSomeDrawable.this + " DID SET FRAME " + frame + " + WILL updateIntrinsicContentSize()");
                 updateIntrinsicContentSize();
 
                 needsRelayout(frame);
@@ -528,6 +530,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     protected void updateIntrinsicContentSize() {
+        S.println(this + "WILL updateIntrinsicContentSize()");
         this.intrinsicContentSizeBinding.setCGSize(this.frame().getCGSize());
     }
 
