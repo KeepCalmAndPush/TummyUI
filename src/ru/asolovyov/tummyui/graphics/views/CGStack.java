@@ -633,6 +633,9 @@ public class CGStack extends CGSomeDrawable {
         }
 
         int widthDelta = this.width() - contentWidth;
+        int remainingWidthDelta = this.adjustDimensions(drawables, false, widthDelta);
+        widthDelta += (widthDelta > 0) ? +remainingWidthDelta : -remainingWidthDelta;
+
         if (widthDelta > 0) {
             widthDelta -= this.expandWidthsIfNeeded(drawables, widthDelta);
         } else if (widthDelta < 0) {
@@ -640,11 +643,8 @@ public class CGStack extends CGSomeDrawable {
         }
 
         int heightDelta = this.height() - contentHeight;
-        if (heightDelta > 0) {
-            heightDelta -= this.expandHeightsIfNeeded(drawables, heightDelta);
-        } else if (heightDelta < 0) {
-            heightDelta += this.shrinkHeightsIfNeeded(drawables, Math.abs(heightDelta));
-        }
+        int remainingHeightDelta = this.adjustDimensions(drawables, true, heightDelta);
+        heightDelta += (heightDelta > 0) ? +remainingHeightDelta : -remainingHeightDelta;
 
         contentWidth += widthDelta;
         contentHeight += heightDelta;
@@ -718,207 +718,52 @@ public class CGStack extends CGSomeDrawable {
         return size;
     }
 
-    // TODO вот тут надо еще и ориджины/инсеты двигать
-    private int expandWidthsIfNeeded(CGDrawable[] views, int delta) {
-        Object[] expandibles = S.filter(views, new S.Filter() {
-            public boolean filter(Object object) {
-                CGDrawable view = (CGDrawable) object;
-                return view.maxWidth() > view.width();
-            }
-        });
-
-        if (this.axis.getInt() == AXIS_HORIZONTAL) {
-            int expandiblesCount = expandibles.length;
-
-            while (expandiblesCount > 0 && delta > 0) {
-                int sliceToShare = delta / expandibles.length;
-                for (int i = 0; i < expandiblesCount; i++) {
-                    CGSomeDrawable view = (CGSomeDrawable) expandibles[i];
-                    int spaceToGrow = view.maxWidth() - view.width();
-                    spaceToGrow = Math.min(spaceToGrow, sliceToShare);
-                    view.widthBinding.setInt(view.width() + spaceToGrow);
-                    delta -= spaceToGrow;
-                    if (view.width() == view.maxWidth()) {
-                        expandiblesCount--;
-                    }
-                }
-            }
-
-            return delta;
-        }
-
-        int maxDelta = 0;
-        for (int i = 0; i < expandibles.length; i++) {
-            CGSomeDrawable view = (CGSomeDrawable) expandibles[i];
-            int viewDelta = view.maxWidth() - view.width();
-            viewDelta = Math.min(viewDelta, delta);
-
-            int width = view.width() + viewDelta;
-            view.widthBinding.setInt(width);
-
-            maxDelta = Math.max(maxDelta, viewDelta);
-        }
-
-        return delta - maxDelta;
-    }
-
-    private int expandHeightsIfNeeded(CGDrawable[] views, int delta) {
-        Object[] expandibles = S.filter(views, new S.Filter() {
-            public boolean filter(Object object) {
-                CGDrawable view = (CGDrawable) object;
-                return view.maxHeight() > view.height();
-            }
-        });
-
-        if (this.axis.getInt() == AXIS_VERTICAL) {
-            int expandiblesCount = expandibles.length;
-            while (expandiblesCount > 0 && delta > 0) {
-                int sliceToShare = delta / expandibles.length;
-                for (int i = 0; i < expandiblesCount; i++) {
-                    CGSomeDrawable view = (CGSomeDrawable) expandibles[i];
-                    int spaceToGrow = view.maxHeight() - view.height();
-                    spaceToGrow = Math.min(spaceToGrow, sliceToShare);
-                    view.heightBinding.setInt(view.height() + spaceToGrow);
-                    delta -= spaceToGrow;
-                    if (view.height() == view.maxHeight()) {
-                        expandiblesCount--;
-                    }
-                }
-            }
-            return delta;
-        }
-
-        int maxDelta = 0;
-        for (int i = 0; i < expandibles.length; i++) {
-            CGSomeDrawable view = (CGSomeDrawable) expandibles[i];
-            int viewDelta = view.maxHeight() - view.height();
-            viewDelta = Math.min(viewDelta, delta);
-
-            int height = view.height() + viewDelta;
-            view.heightBinding.setInt(height);
-
-            maxDelta = Math.max(maxDelta, viewDelta);
-        }
-
-        return delta - maxDelta;
-    }
-
-    private int shrinkWidthsIfNeeded(CGDrawable[] views, int delta) {
-        Object[] shrinkables = S.filter(views, new S.Filter() {
-            public boolean filter(Object object) {
-                CGDrawable view = (CGDrawable) object;
-                return view.minWidth() < view.width();
-            }
-        });
-
-        if (this.axis.getInt() == AXIS_HORIZONTAL) {
-            int shrinkablesCount = shrinkables.length;
-            while (shrinkablesCount > 0 && delta > 0) {
-                int sliceToShare = delta / shrinkables.length;
-                for (int i = 0; i < shrinkablesCount; i++) {
-                    CGSomeDrawable view = (CGSomeDrawable) shrinkables[i];
-                    int spaceToShrink = view.width() - view.minWidth();
-                    spaceToShrink = Math.min(spaceToShrink, sliceToShare);
-                    view.widthBinding.setInt(view.width() - spaceToShrink);
-                    delta -= spaceToShrink;
-                    if (view.width() == view.minWidth()) {
-                        shrinkablesCount--;
-                    }
-                }
-            }
-            return delta;
-        }
-        
-        int maxDelta = 0;
-        for (int i = 0; i < shrinkables.length; i++) {
-            CGSomeDrawable view = (CGSomeDrawable) shrinkables[i];
-            int viewDelta = view.width() - view.minWidth();
-            viewDelta = Math.min(viewDelta, delta);
-
-            int width = view.width() - viewDelta;
-            view.widthBinding.setInt(width);
-
-            maxDelta = Math.max(maxDelta, viewDelta);
-        }
-
-        return delta - maxDelta;
-    }
-
-    private int shrinkHeightsIfNeeded(CGDrawable[] views, int delta) {
-        Object[] shrinkables = S.filter(views, new S.Filter() {
-            public boolean filter(Object object) {
-                CGDrawable view = (CGDrawable) object;
-                return view.minHeight() < view.height();
-            }
-        });
-
-        if (this.axis().getInt() == AXIS_HORIZONTAL) {
-            int shrinkablesCount = shrinkables.length;
-            while (shrinkablesCount > 0 && delta > 0) {
-                int sliceToShare = delta / shrinkables.length;
-                for (int i = 0; i < shrinkablesCount; i++) {
-                    CGSomeDrawable view = (CGSomeDrawable) shrinkables[i];
-                    int spaceToShrink = view.height() - view.minHeight();
-                    spaceToShrink = Math.min(spaceToShrink, sliceToShare);
-                    view.heightBinding.setInt(view.height() - spaceToShrink);
-                    delta -= spaceToShrink;
-                    if (view.height() == view.minHeight()) {
-                        shrinkablesCount--;
-                    }
-                }
-            }
-
-            return delta;
-        }
-
-
-        int maxDelta = 0;
-        for (int i = 0; i < shrinkables.length; i++) {
-            CGSomeDrawable view = (CGSomeDrawable) shrinkables[i];
-            int viewDelta = view.height() - view.minHeight();
-            viewDelta = Math.min(viewDelta, delta);
-
-            int height = view.height() - viewDelta;
-            view.heightBinding.setInt(height);
-
-            maxDelta = Math.max(maxDelta, viewDelta);
-        }
-
-        return delta - maxDelta;
-    }
-
-    private int adjustWidthsIfNeeded(CGDrawable[] views, final int delta) {
+    // TODO ВОЗМОЖНО вот тут надо еще и ориджины/инсеты двигать
+       private int adjustDimensions(CGDrawable[] views, final boolean isHeight, final int delta) {
         if (delta == 0) { return delta; }
 
         final boolean isExpanding = delta > 0;
 
         int remainingDelta = Math.abs(delta);
-        
+
         Object[] adjustables = S.filter(views, new S.Filter() {
             public boolean filter(Object object) {
                 CGDrawable view = (CGDrawable) object;
                 if (isExpanding) {
-                    return view.maxWidth() > view.width();
+                    return isHeight ?
+                        view.maxHeight() > view.height() :
+                        view.maxWidth() > view.width();
                 }
-                return view.width() > view.minWidth();
+                return isHeight ?
+                        view.height() > view.minHeight() :
+                        view.width() > view.minWidth();
             }
         });
 
-        if (this.axis.getInt() != AXIS_HORIZONTAL) {
+        boolean isAxisDimension = this.axis.getInt() == (isHeight ? AXIS_VERTICAL : AXIS_HORIZONTAL);
+
+        if (false == isAxisDimension) {
             int maxDelta = 0;
             for (int i = 0; i < adjustables.length; i++) {
                 CGSomeDrawable view = (CGSomeDrawable) adjustables[i];
-                int viewDelta = 0, width = 0;
+                int viewDelta = 0;
+                Int valueBinding = isHeight ? view.heightBinding : view.widthBinding;
+                int value = valueBinding.getInt();
+
                 if (isExpanding) {
-                    viewDelta = view.maxWidth() - view.width();
+                    viewDelta = isHeight ?
+                                view.maxHeight() - view.height() :
+                                view.maxWidth() - view.width();
                 } else {
-                    viewDelta = view.width() - view.minWidth();
+                    viewDelta = isHeight ?
+                                view.height() - view.minHeight() :
+                                view.width() - view.minWidth();
                 }
 
                 viewDelta = Math.min(viewDelta, remainingDelta);
 
-                width = view.width() + (isExpanding ? viewDelta : -viewDelta);
-                view.widthBinding.setInt(width);
+                value += (isExpanding ? +viewDelta : -viewDelta);
+                valueBinding.setInt(value);
 
                 maxDelta = Math.max(maxDelta, Math.abs(viewDelta));
             }
@@ -931,92 +776,22 @@ public class CGStack extends CGSomeDrawable {
             int sliceToShare = remainingDelta / adjustables.length;
             for (int i = 0; i < adjustablesCount; i++) {
                 CGSomeDrawable view = (CGSomeDrawable) adjustables[i];
-                int spaceToAdjust = 0, extremeWidth = 0, width = view.width();
-
-                if (isExpanding) {
-                    extremeWidth = view.maxWidth();
-                    spaceToAdjust = view.maxWidth() - view.width();
-                } else {
-                    extremeWidth = view.minWidth();
-                    spaceToAdjust = view.width() - view.minWidth();
-                }
-
-                spaceToAdjust = Math.min(spaceToAdjust, sliceToShare);
-                width = width + (isExpanding ? spaceToAdjust : -spaceToAdjust);
-
-                view.widthBinding.setInt(width);
-
-                remainingDelta -= spaceToAdjust;
-                if (view.width() == extremeWidth) {
-                    adjustablesCount--;
-                }
-            }
-        }
-
-        return remainingDelta;
-    }
-    
-    private int adjustHeightsIfNeeded(CGDrawable[] views, final int delta) {
-        if (delta == 0) { return delta; }
-
-        final boolean isExpanding = delta > 0;
-
-        int remainingDelta = Math.abs(delta);
-
-        Object[] adjustables = S.filter(views, new S.Filter() {
-            public boolean filter(Object object) {
-                CGDrawable view = (CGDrawable) object;
-                if (isExpanding) {
-                    return view.maxHeight() > view.height();
-                }
-                return view.height() > view.minHeight();
-            }
-        });
-
-        if (this.axis.getInt() != AXIS_HORIZONTAL) {
-            int maxDelta = 0;
-            for (int i = 0; i < adjustables.length; i++) {
-                CGSomeDrawable view = (CGSomeDrawable) adjustables[i];
-                int viewDelta = 0, height = 0;
-                if (isExpanding) {
-                    viewDelta = view.maxHeight() - view.height();
-                } else {
-                    viewDelta = view.height() - view.minHeight();
-                }
-
-                viewDelta = Math.min(viewDelta, remainingDelta);
-
-                height = view.height() + (isExpanding ? viewDelta : -viewDelta);
-                view.heightBinding.setInt(height);
-
-                maxDelta = Math.max(maxDelta, Math.abs(viewDelta));
-            }
-
-            return remainingDelta - maxDelta;
-        }
-
-        int adjustablesCount = adjustables.length;
-        while (adjustablesCount > 0 && remainingDelta > 0) {
-            int sliceToShare = remainingDelta / adjustables.length;
-            for (int i = 0; i < adjustablesCount; i++) {
-                CGSomeDrawable view = (CGSomeDrawable) adjustables[i];
-                int spaceToAdjust = 0, extremeHeight = 0, height = view.height();
-
-                if (isExpanding) {
-                    extremeHeight = view.maxHeight();
-                    spaceToAdjust = view.maxHeight() - view.height();
-                } else {
-                    extremeHeight = view.minHeight();
-                    spaceToAdjust = view.height() - view.minHeight();
-                }
+                int extremeValue = isExpanding
+                        ? isHeight ? view.maxHeight() : view.maxWidth()
+                        : isHeight ? view.minHeight() : view.minWidth();
+                
+                Int valueBinding = isHeight ? view.heightBinding : view.widthBinding;
+                int value = valueBinding.getInt();
+                int spaceToAdjust = isExpanding 
+                        ? extremeValue - value
+                        : value - extremeValue;
 
                 spaceToAdjust = Math.min(spaceToAdjust, sliceToShare);
-                height = height + (isExpanding ? spaceToAdjust : -spaceToAdjust);
-
-                view.heightBinding.setInt(height);
+                value += isExpanding ? +spaceToAdjust : -spaceToAdjust;
+                valueBinding.setInt(value);
 
                 remainingDelta -= spaceToAdjust;
-                if (view.height() == extremeHeight) {
+                if (value == extremeValue) {
                     adjustablesCount--;
                 }
             }
