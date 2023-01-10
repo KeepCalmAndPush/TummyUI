@@ -5,6 +5,8 @@
 
 package ru.asolovyov.tummyui.graphics;
 
+import ru.asolovyov.combime.common.S;
+
 /**
  *
  * @author Администратор
@@ -31,6 +33,6 @@ public final class CGSize {
     }
 
     public String toString() {
-        return (super.toString() + " width: " + width + ", height: " + height);
+        return (S.noPackage(super.toString()) + " " + width + "," + height);
     }
 }

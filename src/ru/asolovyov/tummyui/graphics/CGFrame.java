@@ -5,6 +5,8 @@
 
 package ru.asolovyov.tummyui.graphics;
 
+import ru.asolovyov.combime.common.S;
+
 /**
  *
  * @author Администратор
@@ -67,6 +69,6 @@ public final class CGFrame {
     }
 
     public String toString() {
-        return super.toString() + " CGFRAME x: " + x + ", y: " + y + ", width: " + width + ", height: " + height;
+        return S.noPackage(super.toString()) + " (" + x + "," + y + "; " + width + "," + height + ")";
     }
 }

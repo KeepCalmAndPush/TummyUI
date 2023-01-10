@@ -113,8 +113,8 @@ public abstract class CGSomeDrawable implements CGDrawable {
                 heightBinding.setInt(frame.height);
 
                 originBinding.setCGPoint(new CGPoint(frame.x, frame.y));
-
-                S.println(CGSomeDrawable.this + " DID SET FRAME " + frame + " + WILL updateIntrinsicContentSize()");
+                
+                S.println(CGSomeDrawable.this + " DID SET FRAME " + frame);
                 updateIntrinsicContentSize();
 
                 needsRelayout(frame);
@@ -427,6 +427,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
         this.widthBinding = width;
         this.widthBinding.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
+                S.println(CGSomeDrawable.this + " NEW WIDTH! " + value);
                 CGFrame frame = frame();
                 frame.width = ((Integer)value).intValue();
                 frameBinding.setCGFrame(frame);
@@ -443,6 +444,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
         this.heightBinding = height;
         this.heightBinding.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
+                S.println(CGSomeDrawable.this + " NEW HEIGHT! " + value);
                 CGFrame frame = frame();
                 frame.height = ((Integer)value).intValue();
                 frameBinding.setCGFrame(frame);
@@ -530,7 +532,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     protected void updateIntrinsicContentSize() {
-        S.println(this + "WILL updateIntrinsicContentSize()");
+        S.println(this + " WILL updateIntrinsicContentSize()");
         this.intrinsicContentSizeBinding.setCGSize(this.frame().getCGSize());
     }
 
@@ -698,5 +700,14 @@ public abstract class CGSomeDrawable implements CGDrawable {
         animations.run();
 
         // TODO посчитать дельты!
+    }
+
+    public String toString() {
+        return S.noPackage(super.toString()) + " " + frame()
+//                + ", x: " + minX() + "-" + maxX()
+//                + ", y: " + minY() + "-" + maxY()
+//                + "; wi: " + minWidth() + "-" + maxWidth()
+//                + ", he: " + minHeight() + "-" + maxHeight()
+                ;
     }
 }

@@ -187,7 +187,7 @@ public class CGStack extends CGSomeDrawable {
     public void draw(Graphics g) {
         super.draw(g);
 
-        S.println("CGSTACK DRAW!");
+        S.println(this + "CGSTACK DRAW!");
         
         if (this.axis.getInt() == AXIS_HORIZONTAL) {
             this.hDraw(g);
@@ -199,7 +199,7 @@ public class CGStack extends CGSomeDrawable {
     }
 
     private void pushFrameToChildren() {
-        S.println("CGSTACK WILL DRAW N VIEWS: " + this.drawables.getArray().length);
+        S.println(this + " WILL DRAW N VIEWS: " + this.drawables.getArray().length);
         
         CGDrawable[] drawables_ = (CGDrawable[]) this.drawables.getArray();
         for (int i = 0; i < drawables_.length; i++) {
@@ -243,8 +243,9 @@ public class CGStack extends CGSomeDrawable {
         this.drawables.forEach(new Arr.Enumerator() {
             public void onElement(Object element) {
                 CGDrawable child = (CGDrawable) element;
-                CGFrame childFrame = child.intrinsicAwareFrame().copy();
+                CGFrame childFrame = child.intrinsicAwareFrame();
 
+                S.println("WILL DRAW " + child + " " + childFrame);
                 CGInsets contentInsets = contentInset();
 
                 childFrame.x = nextLeft;
@@ -540,51 +541,83 @@ public class CGStack extends CGSomeDrawable {
             contentHeight += spaces;
         }
 
+        S.println("1 BEFORE MASSIVE CALCULATIONS CONTENT SIZE IS: " + contentWidth + "x" + contentHeight);
+
         contentWidth = Math.min(contentWidth, this.maxContentWidthBinding.getInt());
         contentHeight = Math.min(contentHeight, this.maxContentHeightBinding.getInt());
 
-        this.adjustFrameToContentSize(contentWidth, contentHeight);
+        S.println("2 BEFORE MASSIVE CALCULATIONS CONTENT SIZE IS: " + contentWidth + "x" + contentHeight);
+        
+        CGSize size = this.adjustFrameToContentSize(contentWidth, contentHeight);
+        S.println("CGSize size = this.adjustFrameToContentSize(contentWidth, contentHeight);");
+        S.println(size);
 
-        int delta = this.width() - contentWidth;
+        int delta = size.width - contentWidth;
+        S.println("DELTA WIDTH " + delta);
+
         int remainingDelta = this.adjustChildrenDimensions(drawables, false, delta);
-        delta += (delta > 0) ? +remainingDelta : -remainingDelta;
-        contentWidth += delta;
 
-        delta = this.height() - contentHeight;
+        delta += (delta > 0) ? -remainingDelta : +remainingDelta;
+        contentWidth += delta;
+        S.println("DELTA WIDTH " + delta);
+
+        delta = size.height - contentHeight;
+        S.println("DELTA HEIGHT " + delta);
+
         remainingDelta = this.adjustChildrenDimensions(drawables, true, delta);
-        delta += (delta > 0) ? +remainingDelta : -remainingDelta;
+
+        delta += (delta > 0) ? -remainingDelta : +remainingDelta;
+        S.println("DELTA HEIGHT " + delta);
         contentHeight += delta;
 
-        CGSize size = new CGSize(contentWidth, contentHeight);
-        this.contentSize.setCGSize(size);
+        S.println("AFTER MASSIVE CALCULATIONS CONTENT SIZE IS: " + contentWidth + "x" + contentHeight);
 
-        return size;
+        CGSize contentSize = new CGSize(contentWidth, contentHeight);
+        this.contentSize.setCGSize(contentSize);
+
+        CGFrame frame = this.frame();
+        frame.width = size.width;
+        frame.height = size.height;
+        S.println("AFTER MASSIVE CALCULATIONS FRAME IS: " + frame);
+        this.frameBinding.setCGFrame(frame);
+
+        return contentSize;
     }
 
-    private void adjustFrameToContentSize(int contentWidth, int contentHeight) {
+    private CGSize adjustFrameToContentSize(int contentWidth, int contentHeight) {
+        CGSize size = this.getFrame().getCGFrame().getCGSize();
+        S.println("adjustFrameToContentSize " + size);
+        
         if (this.height() < contentHeight && this.hasGrowableHeight()) {
+            S.println("1 adjustFrameToContentSize");
             int height = Math.min(contentHeight, this.maxHeight());
-            this.heightBinding.setInt(height);
+            size.height = height;
         } else if (contentHeight > this.height() && this.hasShrinkableHeight()) {
+            S.println("2 adjustFrameToContentSize");
             int height = Math.max(contentHeight, this.minHeight());
-            this.heightBinding.setInt(height);
+            size.height = height;
         }
 
         if (contentWidth > this.width() && this.hasGrowableWidth()) {
+            S.println("3 adjustFrameToContentSize");
             int width = Math.min(contentWidth, this.maxWidth());
-            this.widthBinding.setInt(width);
-        } else if (this.width() > contentWidth && this.hasShrinkableWidth()) {
+            size.width = width;
+        } else if (contentWidth > this.width() && this.hasShrinkableWidth()) {
+            S.println("4 adjustFrameToContentSize");
             int width = Math.max(contentWidth, this.minWidth());
-            this.widthBinding.setInt(width);
+            size.width = width;
         }
-    }
 
-    // TODO БЛЯЯЯЯЯЯЯЯЯЯ НАДО СТАВИТЬ ФРЕЙМ ТОЛЬКО ОДИН РАЗ. СПЕРВА ЕГО ВЫЧИСЛИТЬ, А ТОЛЬКО ПОТОМ ПРОСЕТАТЬ!
+        return size;
+    }
+    
     // TODO ВОЗМОЖНО вот тут надо еще и ориджины/инсеты двигать
     private int adjustChildrenDimensions(CGDrawable[] views, final boolean isHeight, final int delta) {
         if (delta == 0) { return delta; }
 
         final boolean isExpanding = delta > 0;
+        S.println("IS EXPANDING " + isExpanding);
+        S.println("IS HEIGT " + isHeight);
 
         int remainingDelta = Math.abs(delta);
 
@@ -602,9 +635,12 @@ public class CGStack extends CGSomeDrawable {
             }
         });
 
+        S.println(adjustables.length + " ADJUSTABLES: " + adjustables);
+
         boolean isAxisDimension = this.axis.getInt() == (isHeight ? AXIS_VERTICAL : AXIS_HORIZONTAL);
 
         if (false == isAxisDimension) {
+            S.println("if (false == isAxisDimension) {");
             int maxDelta = 0;
             for (int i = 0; i < adjustables.length; i++) {
                 CGSomeDrawable view = (CGSomeDrawable) adjustables[i];
@@ -625,6 +661,7 @@ public class CGStack extends CGSomeDrawable {
                 viewDelta = Math.min(viewDelta, remainingDelta);
 
                 value += (isExpanding ? +viewDelta : -viewDelta);
+                S.println("VALUE BINDING WILL SET " + value);
                 valueBinding.setInt(value);
 
                 maxDelta = Math.max(maxDelta, Math.abs(viewDelta));
@@ -632,6 +669,8 @@ public class CGStack extends CGSomeDrawable {
 
             return remainingDelta - maxDelta;
         }
+
+        S.println("IS isAxisDimension ");
 
         int adjustablesCount = adjustables.length;
         while (adjustablesCount > 0 && remainingDelta > 0) {
@@ -644,12 +683,15 @@ public class CGStack extends CGSomeDrawable {
                 
                 Int valueBinding = isHeight ? view.heightBinding : view.widthBinding;
                 int value = valueBinding.getInt();
+
                 int spaceToAdjust = isExpanding 
                         ? extremeValue - value
                         : value - extremeValue;
 
                 spaceToAdjust = Math.min(spaceToAdjust, sliceToShare);
                 value += isExpanding ? +spaceToAdjust : -spaceToAdjust;
+
+                S.println("VALUE BINDING WILL SET " + value);
                 valueBinding.setInt(value);
 
                 remainingDelta -= spaceToAdjust;
