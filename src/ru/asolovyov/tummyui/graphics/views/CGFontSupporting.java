@@ -6,7 +6,6 @@
 package ru.asolovyov.tummyui.graphics.views;
 
 import javax.microedition.lcdui.Font;
-import ru.asolovyov.combime.bindings.Int;
 import ru.asolovyov.combime.bindings.Obj;
 
 /**

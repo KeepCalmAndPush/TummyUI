@@ -15,6 +15,8 @@ import java.lang.Math.*;
 import java.util.Vector;
 import ru.asolovyov.combime.operators.mapping.Map;
 import ru.asolovyov.threading.DispatchQueue;
+import ru.asolovyov.tummyui.bindings.Frame;
+import ru.asolovyov.tummyui.bindings.Point;
 import ru.asolovyov.tummyui.data.List;
 import ru.asolovyov.tummyui.graphics.CG;
 import ru.asolovyov.tummyui.graphics.CGFrame;
@@ -204,8 +206,8 @@ public class CGStack extends CGSomeDrawable {
         CGDrawable[] drawables_ = (CGDrawable[]) this.drawables.getArray();
         for (int i = 0; i < drawables_.length; i++) {
             CGDrawable drawable = drawables_[i];
-            if (drawable.getGeometryReader() != null) {
-                drawable.getGeometryReader().read(drawable, frame());
+            if (drawable.geometryReader() != null) {
+                drawable.geometryReader().read(drawable, frame());
             }
         }
     }
@@ -427,9 +429,9 @@ public class CGStack extends CGSomeDrawable {
     }
     
     private void moveContentByKeyPress(int keyCode) {
-        CGInsets contentInset = contentInsetBinding.getCGInsets();
+        CGInsets contentInset = this.contentInset();
 
-        CGPoint contentOffset = contentOffsetBinding.getCGPoint();
+        CGPoint contentOffset = this.contentOffset();
         CGSize contentSize = contentSize().getCGSize();
 
         CGFrame thisFrame = frame();
@@ -469,7 +471,7 @@ public class CGStack extends CGSomeDrawable {
 
         S.println("\nCONTENT OFFSET NOW: " + contentOffset.x + "; " + contentOffset.y + "\n");
 
-        contentOffsetBinding.setCGPoint(contentOffset);
+        contentOffsetBinding.sendValue(new Point(contentOffset));
     }
     
     private void scheduleKeyRepeatedHandling(final Integer keyCode) {
@@ -582,13 +584,13 @@ public class CGStack extends CGSomeDrawable {
         frame.width = size.width;
         frame.height = size.height;
         S.println("AFTER MASSIVE CALCULATIONS FRAME IS: " + frame);
-        this.frameBinding.setCGFrame(frame);
+        this.frameBinding.sendValue(new Frame(frame));
 
         return contentSize;
     }
 
     private CGSize adjustFrameToContentSize(int contentWidth, int contentHeight) {
-        CGSize size = this.getFrame().getCGFrame().getCGSize();
+        CGSize size = this.frame().getCGSize();
         S.println("adjustFrameToContentSize " + size);
         
         if (this.height() < contentHeight && this.hasGrowableHeight()) {
@@ -723,6 +725,6 @@ public class CGStack extends CGSomeDrawable {
         CGSize size = this.contentSize().getCGSize();
         S.println(this + " DID UPDATE SIZES, NOW HAS: " + size);
 
-        this.intrinsicContentSizeBinding.setCGSize(size);
+        this.intrinsicContentSizeBinding.sendValue(size);
     }
 }

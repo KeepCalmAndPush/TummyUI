@@ -24,9 +24,9 @@ public class CGRectangle extends CGSomeDrawable {
             return;
         }
 
-        CGInsets insets = this.contentInsetBinding.getCGInsets();
+        CGInsets insets = this.contentInset();
 
-        int foregroundColor = this.getColor();
+        int foregroundColor = this.color();
         if (foregroundColor != CG.NULL) {
             g.setColor(foregroundColor);
             g.fillRoundRect(
@@ -38,9 +38,9 @@ public class CGRectangle extends CGSomeDrawable {
                     cornerRadius().height);
         }
 
-        int strokeColor = this.getBorderColor();
+        int strokeColor = this.borderColor();
         if (strokeColor != CG.NULL) {
-            g.setStrokeStyle(this.getStrokeStyle());
+            g.setStrokeStyle(this.strokeStyle());
             g.setColor(strokeColor);
 
             g.drawRoundRect(

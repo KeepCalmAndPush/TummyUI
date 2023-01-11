@@ -11,6 +11,7 @@ import ru.asolovyov.combime.bindings.Int;
 import ru.asolovyov.combime.bindings.Obj;
 import ru.asolovyov.combime.bindings.Str;
 import ru.asolovyov.combime.common.Sink;
+import ru.asolovyov.tummyui.bindings.Size;
 import ru.asolovyov.tummyui.graphics.CG;
 import ru.asolovyov.tummyui.graphics.CG.MultilineText;
 import ru.asolovyov.tummyui.graphics.CGFrame;
@@ -73,7 +74,7 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
             return;
         }
         g.setFont(getFont());
-        g.setColor(this.getColor());
+        g.setColor(this.color());
 
         CGInsets contentInset = contentInset();
 
@@ -133,7 +134,7 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
 
         CGSize size = CG.stringSize(this.text.getString(), this.getFont(), new CGSize(width, Integer.MAX_VALUE));
 
-        CGInsets insets = this.contentInsetBinding.getCGInsets();
+        CGInsets insets = this.contentInset();
 
         this.width(size.width + insets.horizontal());
         this.height(size.height + insets.vertical());
@@ -158,6 +159,6 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
             size.height = CG.stringSize(text, font, new CGSize(size.width, Integer.MAX_VALUE)).height;
         }
 
-        intrinsicContentSizeBinding.setCGSize(size);
+        intrinsicContentSizeBinding.sendValue(size);
     }
 }

@@ -32,6 +32,22 @@ public final class CGFrame {
         this.height = frame.height;
     }
 
+    public CGFrame origin(CGPoint origin) {
+        CGFrame copy = this.copy();
+        copy.x = origin.x;
+        copy.y = origin.y;
+
+        return this;
+    }
+
+    public CGFrame size(CGSize size) {
+        CGFrame copy = this.copy();
+        copy.width = size.width;
+        copy.height = size.height;
+
+        return this;
+    }
+
     public CGFrame copy() {
         return new CGFrame(this);
     }

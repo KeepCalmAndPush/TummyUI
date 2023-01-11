@@ -41,10 +41,10 @@ public interface CGDrawable {
     public void needsRelayout(CGFrame frame);
 
     public CGDrawable readGeometry(GeometryReader reader);
-    public GeometryReader getGeometryReader();
+    public GeometryReader geometryReader();
 
     public CGDrawable handleKeyboard(KeyboardHandler handler);
-    public KeyboardHandler getKeyboardHandler();
+    public KeyboardHandler keyboardHandler();
 
     public CGCanvas canvas();
     public CGDrawable canvas(CGCanvas canvas);
@@ -87,6 +87,10 @@ public interface CGDrawable {
     public CGDrawable x(Int x);
     public CGDrawable x(int x);
 
+    public int y();
+    public CGDrawable y(Int y);
+    public CGDrawable y(int y);
+
     public int minX();
     public CGDrawable minX(Int minX);
     public CGDrawable minX(int minX);
@@ -94,11 +98,7 @@ public interface CGDrawable {
     public int maxX();
     public CGDrawable maxX(Int maxX);
     public CGDrawable maxX(int maxX);
-
-    public int y();
-    public CGDrawable y(Int y);
-    public CGDrawable y(int y);
-
+    
     public int minY();
     public CGDrawable minY(Int minY);
     public CGDrawable minY(int minY);
@@ -135,14 +135,7 @@ public interface CGDrawable {
     public boolean hasGrowableWidth();
     public boolean hasShrinkableHeight();
     public boolean hasGrowableHeight();
-
-    // TODO отрефачить в реактив: просто просетываем Х,
-    // а просетывалка Х прокидывается в пару операторов, которые клэмпят в допустимый диапазон
-    public int updateX(int x);
-    public int updateY(int y);
-    public int updateWidth(int width);
-    public int updateHeight(int height);
-
+    
     public boolean isVisible();
     public CGDrawable isVisible(boolean isVisible);
     public CGDrawable isVisible(Bool isVisible);

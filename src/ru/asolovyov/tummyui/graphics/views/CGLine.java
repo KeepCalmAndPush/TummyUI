@@ -23,16 +23,16 @@ public class CGLine extends CGSomeDrawable {
             return;
         }
 
-        CGInsets insets = this.contentInsetBinding.getCGInsets();
+        CGInsets insets = this.contentInset();
 
-        int color = this.getColor();
+        int color = this.color();
         
         if (color == CG.NULL) {
             return;
         }
 
         g.setColor(color);
-        g.setStrokeStyle(this.getStrokeStyle());
+        g.setStrokeStyle(this.strokeStyle());
         g.drawLine(
                 frame.x + insets.left,
                 frame.y + insets.top,

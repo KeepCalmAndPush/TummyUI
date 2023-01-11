@@ -33,7 +33,7 @@ public class CGImage extends CGSomeDrawable {
     public CGImage image(Obj image) {
         this.image = image;
         Image iImage = (Image)image.getObject();
-        this.frameBinding.setCGFrame(new CGFrame(0, 0, iImage.getWidth(), iImage.getHeight()));
+        this.frame(new CGFrame(0, 0, iImage.getWidth(), iImage.getHeight()));
         
         this.image.sink(new Sink() {
             protected void onValue(Object value) {
@@ -48,7 +48,7 @@ public class CGImage extends CGSomeDrawable {
         CGFrame frame = this.frame();
         Image originalImage = (Image)this.image.getObject();
 
-        CGInsets insets = this.contentInsetBinding.getCGInsets();
+        CGInsets insets = this.contentInset();
         g.drawImage(
                 originalImage,
                 frame.x + insets.left,

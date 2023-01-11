@@ -49,9 +49,9 @@ public class CGArc extends CGSomeDrawable {
             return;
         }
 
-        CGInsets insets = this.contentInsetBinding.getCGInsets();
+        CGInsets insets = this.contentInset();
 
-        int fillColor = this.getColor();
+        int fillColor = this.color();
         if (fillColor != CG.NULL) {
             g.setColor(fillColor);
             g.fillArc(
@@ -64,10 +64,10 @@ public class CGArc extends CGSomeDrawable {
                 );
         }
 
-        int color = this.getColor();
+        int color = this.color();
         if (color != CG.NULL) {
             g.setColor(color);
-            g.setStrokeStyle(this.getStrokeStyle());
+            g.setStrokeStyle(this.strokeStyle());
             g.drawArc(
                 frame.x + insets.left,
                 frame.y + insets.top,
