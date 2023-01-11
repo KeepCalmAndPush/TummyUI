@@ -199,19 +199,33 @@ public abstract class CGSomeDrawable implements CGDrawable {
             }
         });
 
-        Publisher.merge(new IPublisher[]{
+        Publisher.combineLatest(new IPublisher[]{
             this.xBinding.switchToLatest().removeDuplicates(), 
             this.yBinding.switchToLatest().removeDuplicates(),
             this.widthBinding.switchToLatest().removeDuplicates(),
             this.heightBinding.switchToLatest().removeDuplicates(),
         }).sink(new Sink() {
             protected void onValue(Object value) {
-                int[] values = ((int[])value);
+                Object[] values = ((Object[])value);
+                int[] ints = new int[values.length];
+
+                S.println("MASEV " + values + " COUNT " + values.length);
+                for (int i = 0; i < values.length; i++) {
+                    S.print(values[i] + " ");
+                    ints[i] = values[i] == null ? 0 : ((Integer)values[i]).intValue();
+                }
+                S.println("");
+                /*
+MASEV [Ljava.lang.Object;@fe41703f COUNT 5
+null 0 null null null
+TRACE: <at java.lang.NullPointerException:   0>, startApp threw an Exception
+java.lang.NullPointerException:   0
+                 */
                 CGFrame frame = frame();
-                frame.x = values[0];
-                frame.y = values[1];
-                frame.width = values[2];
-                frame.height = values[3];
+                frame.x = ints[0];
+                frame.y = ints[1];
+                frame.width = ints[2];
+                frame.height = ints[3];
                 frameBinding.sendValue(new Frame(frame));
             }
         });
@@ -447,7 +461,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     public boolean isVisible() {
-        return ((Boolean)this.isVisible.getValue()).booleanValue();
+        return ((Bool)this.isVisible.getValue()).getBoolean();
     }
 
     public CGDrawable sizeToFit() {
@@ -455,12 +469,12 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     public CGSize intrinsicContentSize() {
-        return (CGSize)this.intrinsicContentSizeBinding.getValue();
+        return (CGSize)this.intrinsicContentSizeBinding.getValue(); //SIC!
     }
 
     protected void updateIntrinsicContentSize() {
         S.println(this + " WILL updateIntrinsicContentSize()");
-        this.intrinsicContentSizeBinding.sendValue(this.frame().getCGSize());
+        this.intrinsicContentSizeBinding.sendValue(this.frame().getCGSize()); //SIC!
     }
 
     public CGDrawable readGeometry(GeometryReader reader) {
@@ -517,7 +531,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     public CGPoint origin() {
-        return (CGPoint)this.originBinding.getValue();
+        return ((Point)this.originBinding.getValue()).getCGPoint();
     }
 
     public CGDrawable contentOffset(Point offset) {
@@ -542,12 +556,11 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     public CGPoint contentOffset() {
-        return (CGPoint)this.contentOffsetBinding.getValue();
+        return ((Point)this.contentOffsetBinding.getValue()).getCGPoint();
     }
 
     public CGInsets contentInset() {
-        S.println("TYPE " + this.contentInsetBinding.getValue());
-        return (CGInsets)this.contentInsetBinding.getValue();
+        return ((Insets)this.contentInsetBinding.getValue()).getCGInsets();
     }
 
     public CGDrawable stroke(int strokeStyle) {
@@ -573,7 +586,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     public CGSize cornerRadius() {
-        return (CGSize)this.cornerRadiusBinding.getValue();
+        return ((Size)this.cornerRadiusBinding.getValue()).getCGSize();
     }
 
     public CGDrawable borderColor(int borderColorHex) {
@@ -611,6 +624,6 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     private int intValueFrom(CurrentValueSubject binding) {
-        return ((Integer)binding.getValue()).intValue();
+        return ((Int)binding.getValue()).getInt();
     }
 }
