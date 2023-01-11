@@ -29,7 +29,7 @@ public class CGCanvas extends Canvas {
         return needsRepaint;
     }
 
-    private Int keyPressed = (Int) new Int(null).to(new Drop(1)); //TODO оформить в оператор-метод
+    private Int keyPressed = (Int) new Int(null).to(new Drop(1)); //TODO оформить в оператор-метод .drop(1)
     private Int keyReleased = (Int) new Int(null).to(new Drop(1));
     private Int keyRepeated = (Int) new Int(null).to(new Drop(1));
 

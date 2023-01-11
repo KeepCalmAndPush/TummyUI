@@ -28,7 +28,7 @@ import ru.asolovyov.tummyui.graphics.views.CGText;
  * 3) Геометри ридер
  * 4) Чтение нажатия клавиш
  * 5) Тексты - с переносом и без
- * 6) РЕСАЙЗИНГ МАСКИ! Контейнер больше вьюхи -> растягивание/центрирование вьюхи
+ * 6) РЕСАЙЗИНГ! Контейнер больше вьюхи -> растягивание/центрирование вьюхи
  *    Контейнер меньше вьюхи -> сжатие вьюхи/выезд вьюхи за границу контейнера(центрирование)
  *    Флексибл вьюхи и тянутся и сжимаются
  *    Гровабл тянутся
@@ -41,14 +41,46 @@ public class Canvas extends UIMIDlet {
         // TODO управление памятью,
         // TODO отписка от подписок,
         return CG.Canvas(
-                testVStackWithOneViewFillsCanvas()
-                /*
-                testHStackWithOneViewFillsCanvas(),
-                textStylesIteratingHorizontalStackOfLabels(),
-                 */
+                testHStackWithTwoViewsWithOneFixedWidthFillsCanvas()
+//                testVStackWithTwoViewsViewFillsCanvas()
+//                testHStackWithTwoViewsViewFillsCanvas()
+//                testVStackWithOneViewFillsCanvas()
+//                testZStackWithOneViewFillsCanvas()
+//                testZStackWithTwoViewsFillsCanvasAndRespectsOrder()
+//                testHStackWithOneViewFillsCanvas()
+//                БЕСКОНЕЧНЫЙ ЦИКЛ, ВИДАТЬ ПРОБЛЕМЫ СО ВКЛАДЫВАНИЕМ СТЭКОВ
+//                textStylesIteratingHorizontalStackOfLabels()
           ).backgroundColor(CGColor.RED);
     }
 
+    //ЕСЛИ ВЬЮХА С ЗАДАННЫМ МАКС ВИДС НЕ НА ПЕРВОМ МЕСТЕ, ТО БЕСКОНЕЧНЫЙ ЦИКЛ
+    private CGDrawable testHStackWithTwoViewsWithOneFixedWidthFillsCanvas() {
+        return CG.HStack(
+                CG.Rect().backgroundColor(CGColor.BLUE),
+                CG.Rect().backgroundColor(CGColor.YELLOW).maxWidth(20)//,
+//                CG.Rect().backgroundColor(CGColor.GREEN).maxWidth(30)
+                ).frame(0, 0, 100, 100).maxHeight(100).maxWidth(100).borderColor(CGColor.BLACK)
+                ;
+
+//        return CG.HStack(
+//                CG.Rect().backgroundColor(CGColor.BLUE).width(50),
+//                CG.Rect().backgroundColor(CGColor.YELLOW)
+//                );
+    }
+
+    private CGDrawable testVStackWithTwoViewsViewFillsCanvas() {
+        return CG.VStack(
+                CG.Rect().backgroundColor(CGColor.BLUE),
+                CG.Rect().backgroundColor(CGColor.YELLOW)
+                );
+    }
+
+    private CGDrawable testHStackWithTwoViewsViewFillsCanvas() {
+        return CG.HStack(
+                CG.Rect().backgroundColor(CGColor.BLUE),
+                CG.Rect().backgroundColor(CGColor.YELLOW)
+                );
+    }
 
     private CGDrawable testHStackWithOneViewFillsCanvas() {
         return CG.HStack(CG.Rect().backgroundColor(CGColor.GREEN));
@@ -56,6 +88,21 @@ public class Canvas extends UIMIDlet {
 
     private CGDrawable testVStackWithOneViewFillsCanvas() {
         return CG.VStack(CG.Rect().backgroundColor(CGColor.GREEN));
+    }
+
+    private CGDrawable testZStackWithOneViewFillsCanvas() {
+        return CG.ZStack(CG.Rect().backgroundColor(CGColor.GREEN));
+    }
+
+    //TODO FAIL! НЕТ ЖЕЛТОЙ ВЬЮХИ! (возможно сломался zDraw) СИНЯЯ РАСТЯНУТА!
+    private CGDrawable testZStackWithTwoViewsFillsCanvasAndRespectsOrder() {
+        return CG.ZStack(
+                CG.Rect().backgroundColor(CGColor.YELLOW)
+//                .frame(0, 0, 60, 60)
+                ,
+                CG.Rect().backgroundColor(CGColor.BLUE)
+                .frame(20, 20, 60, 60)
+                );
     }
     
     Clock clock;

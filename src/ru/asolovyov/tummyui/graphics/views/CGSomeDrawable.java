@@ -447,6 +447,10 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     public CGDrawable width(int width) {
+        //TODO ИМПЕРАТИВНАЯ ХУЙНЯ!
+        if (width == width()) {
+            return this;
+        }
         return width(new Int(width));
     }
 
@@ -464,6 +468,10 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
     
     public CGDrawable height(int height) {
+        //TODO ИМПЕРАТИВНАЯ ХУЙНЯ!
+        if (height == height()) {
+            return this;
+        }
         return height(new Int(height));
     }
 
