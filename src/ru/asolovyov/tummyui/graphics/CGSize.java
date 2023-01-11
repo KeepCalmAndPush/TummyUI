@@ -33,6 +33,6 @@ public final class CGSize {
     }
 
     public String toString() {
-        return (S.noPackage(super.toString()) + " " + width + "," + height);
+        return (S.stripPackageName(super.toString()) + " " + width + "," + height);
     }
 }

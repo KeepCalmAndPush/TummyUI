@@ -177,12 +177,22 @@ public abstract class CGSomeDrawable implements CGDrawable {
 
     public CGFrame intrinsicAwareFrame() {
         CGFrame frame = this.frame();
+        S.println(this + " WILL SAY ITS INTRAWARE FRAME!");
+
         CGSize size = this.intrinsicContentSize();
         CGInsets insets = this.contentInsetBinding.getCGInsets();
 
-        frame.width = size.width + insets.left + insets.right;
-        frame.height = size.height + insets.top + insets.bottom;
-        
+        int width = size.width + insets.left + insets.right;
+        int height = size.height + insets.top + insets.bottom;
+
+        width = Math.max(width, frame.width);
+        height = Math.max(height, frame.height);
+
+        frame.width = width;
+        frame.height = height;
+
+        S.println(this + " INTRAWARE FRAME IS " + frame);
+
         return frame;
     }
 
@@ -703,7 +713,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     public String toString() {
-        return S.noPackage(super.toString()) + " " + frame()
+        return S.stripPackageName(super.toString()) + " " + frame()
 //                + ", x: " + minX() + "-" + maxX()
 //                + ", y: " + minY() + "-" + maxY()
 //                + "; wi: " + minWidth() + "-" + maxWidth()

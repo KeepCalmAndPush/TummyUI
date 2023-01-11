@@ -41,8 +41,11 @@ public class Canvas extends UIMIDlet {
         // TODO управление памятью,
         // TODO отписка от подписок,
         return CG.Canvas(
-                testHStackWithOneViewFillsCanvas()
-//                this.textStylesIteratingHorizontalStackOfLabels()
+                testVStackWithOneViewFillsCanvas()
+                /*
+                testHStackWithOneViewFillsCanvas(),
+                textStylesIteratingHorizontalStackOfLabels(),
+                 */
           ).backgroundColor(CGColor.RED);
     }
 

@@ -509,9 +509,12 @@ public class CGStack extends CGSomeDrawable {
         Object[] objDrawables = this.drawables.getArray();
         CGDrawable[] drawables = new CGDrawable[objDrawables.length];
 
+        S.println("LETS COUNT CONTENT SIZE OF " + drawables.length + " SUBVIEWS!");
         for (int i = 0; i < drawables.length; i++) {
             CGDrawable drawable = (CGDrawable)objDrawables[i];
             drawables[i] = drawable;
+
+            S.println(i + "-th subview is " + drawable);
 
             int width = drawable.intrinsicAwareFrame().width;
             int height = drawable.intrinsicAwareFrame().height;
@@ -644,9 +647,9 @@ public class CGStack extends CGSomeDrawable {
             int maxDelta = 0;
             for (int i = 0; i < adjustables.length; i++) {
                 CGSomeDrawable view = (CGSomeDrawable) adjustables[i];
+                S.println("WILL ADJUST SIZE OF " + view);
                 int viewDelta = 0;
-                Int valueBinding = isHeight ? view.heightBinding : view.widthBinding;
-                int value = valueBinding.getInt();
+                int value = isHeight ? view.height() : view.width();
 
                 if (isExpanding) {
                     viewDelta = isHeight ?
@@ -661,8 +664,13 @@ public class CGStack extends CGSomeDrawable {
                 viewDelta = Math.min(viewDelta, remainingDelta);
 
                 value += (isExpanding ? +viewDelta : -viewDelta);
-                S.println("VALUE BINDING WILL SET " + value);
-                valueBinding.setInt(value);
+                S.println("ADJUST VALUE BINDING WILL SET " + value);
+
+                if (isHeight) {
+                    view.height(value);
+                } else {
+                    view.width(value);
+                }
 
                 maxDelta = Math.max(maxDelta, Math.abs(viewDelta));
             }
@@ -680,9 +688,7 @@ public class CGStack extends CGSomeDrawable {
                 int extremeValue = isExpanding
                         ? isHeight ? view.maxHeight() : view.maxWidth()
                         : isHeight ? view.minHeight() : view.minWidth();
-                
-                Int valueBinding = isHeight ? view.heightBinding : view.widthBinding;
-                int value = valueBinding.getInt();
+                int value = isHeight ? view.height() : view.width();
 
                 int spaceToAdjust = isExpanding 
                         ? extremeValue - value
@@ -692,7 +698,12 @@ public class CGStack extends CGSomeDrawable {
                 value += isExpanding ? +spaceToAdjust : -spaceToAdjust;
 
                 S.println("VALUE BINDING WILL SET " + value);
-                valueBinding.setInt(value);
+
+                if (isHeight) {
+                    view.height(value);
+                } else {
+                    view.width(value);
+                }
 
                 remainingDelta -= spaceToAdjust;
                 if (value == extremeValue) {

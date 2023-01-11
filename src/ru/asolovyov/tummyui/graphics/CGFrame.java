@@ -69,6 +69,6 @@ public final class CGFrame {
     }
 
     public String toString() {
-        return S.noPackage(super.toString()) + " (" + x + "," + y + "; " + width + "," + height + ")";
+        return S.stripPackageName(super.toString()) + " (" + x + "," + y + "; " + width + "," + height + ")";
     }
 }
