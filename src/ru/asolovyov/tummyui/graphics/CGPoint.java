@@ -29,4 +29,19 @@ public final class CGPoint {
     public CGPoint copy() {
         return new CGPoint(this);
     }
+
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj instanceof CGPoint) {
+            CGPoint frame = (CGPoint)obj;
+            return (x == frame.x) && (y == frame.y);
+        }
+        return false;
+    }
+
+    public int hashCode() {
+        return ("x"+x+"y"+y).hashCode();
+    }
 }

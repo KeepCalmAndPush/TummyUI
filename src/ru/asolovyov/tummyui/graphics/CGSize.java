@@ -35,4 +35,19 @@ public final class CGSize {
     public String toString() {
         return (S.stripPackageName(super.toString()) + " " + width + "," + height);
     }
+
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj instanceof CGSize) {
+            CGSize frame = (CGSize)obj;
+            return (width == frame.width) && (height == frame.height);
+        }
+        return false;
+    }
+
+    public int hashCode() {
+        return ("width"+width+"height"+height).hashCode();
+    }
 }

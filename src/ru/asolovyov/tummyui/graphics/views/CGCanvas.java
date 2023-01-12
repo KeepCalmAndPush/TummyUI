@@ -41,7 +41,7 @@ public class CGCanvas extends Canvas {
         super();
         
         this.content = content;
-        S.println("CANVAS HAS " + content.length + " CHILDs");
+        S.println("CANVAS HAS " + content.length + " CHILDren");
 
         if (content.length == 1) {
             CGDrawable child = content[0];

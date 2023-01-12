@@ -41,13 +41,13 @@ public class Canvas extends UIMIDlet {
         // TODO управление памятью,
         // TODO отписка от подписок,
         return CG.Canvas(
-                testHStackWithTwoViewsWithOneFixedWidthFillsCanvas()
+//                testHStackWithTwoViewsWithOneFixedWidthFillsCanvas()
 //                testVStackWithTwoViewsViewFillsCanvas()
 //                testHStackWithTwoViewsViewFillsCanvas()
 //                testVStackWithOneViewFillsCanvas()
 //                testZStackWithOneViewFillsCanvas()
 //                testZStackWithTwoViewsFillsCanvasAndRespectsOrder()
-//                testHStackWithOneViewFillsCanvas()
+                testHStackWithOneViewFillsCanvas()
 //                БЕСКОНЕЧНЫЙ ЦИКЛ, ВИДАТЬ ПРОБЛЕМЫ СО ВКЛАДЫВАНИЕМ СТЭКОВ
 //                textStylesIteratingHorizontalStackOfLabels()
           ).backgroundColor(CGColor.RED);
@@ -83,7 +83,10 @@ public class Canvas extends UIMIDlet {
     }
 
     private CGDrawable testHStackWithOneViewFillsCanvas() {
-        return CG.HStack(CG.Rect().backgroundColor(CGColor.GREEN));
+        return CG.HStack(
+                CG.Rect().backgroundColor(CGColor.GREEN)
+                )
+                .backgroundColor(CGColor.ORANGE);
     }
 
     private CGDrawable testVStackWithOneViewFillsCanvas() {

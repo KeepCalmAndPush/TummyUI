@@ -54,4 +54,19 @@ public class CGInsets {
     public int deltaY() {
         return +top - bottom;
     }
+
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj instanceof CGInsets) {
+            CGInsets frame = (CGInsets)obj;
+            return (top == frame.top) && (left == frame.left) && (bottom == frame.bottom) && (right == frame.right);
+        }
+        return false;
+    }
+
+    public int hashCode() {
+        return (top + "" + left + "" + bottom + "" + right).hashCode();
+    }
 }

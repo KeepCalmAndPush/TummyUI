@@ -12,7 +12,6 @@ import ru.asolovyov.combime.common.S;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.tummyui.bindings.Size;
 import java.lang.Math.*;
-import java.util.Vector;
 import ru.asolovyov.combime.operators.mapping.Map;
 import ru.asolovyov.threading.DispatchQueue;
 import ru.asolovyov.tummyui.bindings.Frame;
@@ -201,8 +200,6 @@ public class CGStack extends CGSomeDrawable {
     }
 
     private void pushFrameToChildren() {
-        S.println(this + " WILL DRAW N VIEWS: " + this.drawables.getArray().length);
-        
         CGDrawable[] drawables_ = (CGDrawable[]) this.drawables.getArray();
         for (int i = 0; i < drawables_.length; i++) {
             CGDrawable drawable = drawables_[i];

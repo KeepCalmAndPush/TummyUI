@@ -102,16 +102,25 @@ public abstract class CGSomeDrawable implements CGDrawable {
         }
     }
 
+    public CGFrame frame() {
+        return ((Frame)this.frameBinding.getValue()).getCGFrame();
+    }
+
     public CGDrawable frame(int x, int y, int width, int height) {
-        return this.frame(new Frame(new CGFrame(x, y, width, height)));
+        CGFrame frame = new CGFrame(x, y, width, height);
+        S.println(this + " will be given a frame comps " + frame);
+        
+        return this.frame(new Frame(frame));
     }
 
     public CGDrawable frame(Frame frame) {
+        S.println(this + " will be given a Frame " + frame.getCGFrame());
         this.frameBinding.sendValue(frame);
         return this;
     }
 
     public CGDrawable frame(CGFrame frame) {
+        S.println(this + " will be given a CGFrame " + frame);
         ((Frame)this.frameBinding.getValue()).setCGFrame(frame);
         return this;
     }
@@ -140,14 +149,11 @@ public abstract class CGSomeDrawable implements CGDrawable {
 
     public void needsRelayout(CGFrame frame) {
         if (this.canvas() != null) {
+            this.updateIntrinsicContentSize();
             this.canvas().repaint(frame);
         }
     }
-
-    public CGFrame frame() {
-        return ((Frame)this.frameBinding.getValue()).getCGFrame();
-    }
-
+    
     public CGFrame intrinsicAwareFrame() {
         CGFrame frame = this.frame();
         S.println(this + " WILL SAY ITS INTRAWARE FRAME!");
@@ -181,7 +187,9 @@ public abstract class CGSomeDrawable implements CGDrawable {
     private void setupSubscriptions() {
         this.frameBinding.switchToLatest().removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
-                needsRedraw();
+                S.println(CGSomeDrawable.this + " DID RECEIVE frame switchToLatest().removeDuplicates() " + value);
+                CGFrame frame = (CGFrame)value;
+                x(frame.x); y(frame.y); width(frame.width); height(frame.height);
             }
         });
         
@@ -209,28 +217,25 @@ public abstract class CGSomeDrawable implements CGDrawable {
                 Object[] values = ((Object[])value);
                 int[] ints = new int[values.length];
 
-                S.println("MASEV " + values + " COUNT " + values.length);
+                S.println("XYWH MASEV " + values + " COUNT " + values.length + " in " + CGSomeDrawable.this);
                 for (int i = 0; i < values.length; i++) {
-                    S.print(values[i] + " ");
-                    ints[i] = values[i] == null ? 0 : ((Integer)values[i]).intValue();
+                    Object obj = values[i];
+                    S.print(obj + " ");
+                    ints[i] = values[i] == null ? 0 : ((Integer)obj).intValue();
                 }
                 S.println("");
-                /*
-MASEV [Ljava.lang.Object;@fe41703f COUNT 5
-null 0 null null null
-TRACE: <at java.lang.NullPointerException:   0>, startApp threw an Exception
-java.lang.NullPointerException:   0
-                 */
+
                 CGFrame frame = frame();
-                frame.x = ints[0];
-                frame.y = ints[1];
-                frame.width = ints[2];
-                frame.height = ints[3];
-                frameBinding.sendValue(new Frame(frame));
+                frame.x = values[0] == null ? frame.x : ((Integer)values[0]).intValue();
+                frame.y = values[1] == null ? frame.y : ((Integer)values[1]).intValue();
+                frame.width = values[2] == null ? frame.width : ((Integer)values[2]).intValue();
+                frame.height = values[3] == null ? frame.height : ((Integer)values[3]).intValue();
+
+                frame(frame);
             }
         });
 
-        Publisher.merge(new IPublisher[]{
+        Publisher.combineLatest(new IPublisher[]{
                     this.minXBinding.switchToLatest().removeDuplicates(),
                     this.minYBinding.switchToLatest().removeDuplicates(),
                     this.maxXBinding.switchToLatest().removeDuplicates(),
@@ -249,6 +254,9 @@ java.lang.NullPointerException:   0
                     this.isVisible.switchToLatest().removeDuplicates()
                 }).sink(new Sink() {
                     protected void onValue(Object value) {
+                        Object[] values = ((Object[])value);                        
+                        S.println("GREAT MASEV " + values + " COUNT " + values.length + " in " + CGSomeDrawable.this);
+
                         needsRedraw();
                     }
                 });
