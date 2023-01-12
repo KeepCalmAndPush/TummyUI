@@ -65,7 +65,7 @@ public class CGStack extends CGSomeDrawable {
         this.maxContentWidthBinding.sink(new Sink() {
             protected void onValue(Object value) {
                 updateIntrinsicContentSize();
-                needsRedraw();
+                needsRelayout();
             }
         });
         return this;
@@ -76,7 +76,7 @@ public class CGStack extends CGSomeDrawable {
         this.maxContentHeightBinding.sink(new Sink() {
             protected void onValue(Object value) {
                 updateIntrinsicContentSize();
-                needsRedraw();
+                needsRelayout();
             }
         });
         return this;
@@ -91,7 +91,7 @@ public class CGStack extends CGSomeDrawable {
         this.spacing.sink(new Sink() {
             protected void onValue(Object value) {
                 updateIntrinsicContentSize();
-                needsRedraw();
+                needsRelayout();
             }
         });
         return this;
@@ -164,7 +164,7 @@ public class CGStack extends CGSomeDrawable {
 
         this.alignment.sink(new Sink() {
             protected void onValue(Object value) {
-                needsRedraw();
+                needsRelayout();
             }
         });
 
@@ -646,9 +646,10 @@ public class CGStack extends CGSomeDrawable {
             int maxDelta = 0;
             for (int i = 0; i < adjustables.length; i++) {
                 CGSomeDrawable view = (CGSomeDrawable) adjustables[i];
-                S.println("WILL ADJUST SIZE OF " + view);
                 int viewDelta = 0;
                 int value = isHeight ? view.height() : view.width();
+
+                S.println("WILL ADJUST " + (isHeight ? "HEIGHT" : "WIDTH") + " OF " + view + " CUR VALUE " + value);
 
                 if (isExpanding) {
                     viewDelta = isHeight ?
@@ -674,6 +675,7 @@ public class CGStack extends CGSomeDrawable {
                 maxDelta = Math.max(maxDelta, Math.abs(viewDelta));
             }
 
+            S.println("REMAINIG DELTA " + remainingDelta + "; MAX DELTA " + maxDelta);
             return remainingDelta - maxDelta;
         }
 
@@ -689,6 +691,8 @@ public class CGStack extends CGSomeDrawable {
                         : isHeight ? view.minHeight() : view.minWidth();
                 int value = isHeight ? view.height() : view.width();
 
+                S.println("WILL ADJUST " + (isHeight ? "HEIGHT" : "WIDTH") + " OF " + view + " CUR VALUE " + value);
+                
                 int spaceToAdjust = isExpanding 
                         ? extremeValue - value
                         : value - extremeValue;
@@ -704,6 +708,8 @@ public class CGStack extends CGSomeDrawable {
                     view.width(value);
                 }
 
+                S.println("REMAINIG DELTA " + remainingDelta + "; spaceToAdjust " + spaceToAdjust);
+
                 remainingDelta -= spaceToAdjust;
                 if (value == extremeValue) {
                     adjustablesCount--;
@@ -711,6 +717,7 @@ public class CGStack extends CGSomeDrawable {
             }
         }
 
+         S.println("REMAINIG DELTA " + remainingDelta);
         return remainingDelta;
     }
     

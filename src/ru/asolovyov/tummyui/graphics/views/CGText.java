@@ -115,7 +115,7 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
         this.font = font;
         this.font.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
-                needsRedraw();
+                needsRelayout();
             }
         });
         return this;

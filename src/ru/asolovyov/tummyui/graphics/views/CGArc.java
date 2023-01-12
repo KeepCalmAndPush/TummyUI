@@ -25,7 +25,7 @@ public class CGArc extends CGSomeDrawable {
         this.startAngleBinding = startAngleBinding;
         this.startAngleBinding.sink(new Sink() {
             protected void onValue(Object value) {
-                needsRedraw();
+                needsRelayout();
             }
         });
         return this;
@@ -35,7 +35,7 @@ public class CGArc extends CGSomeDrawable {
         this.endAngleBinding = endAngleBinding;
         this.endAngleBinding.sink(new Sink() {
             protected void onValue(Object value) {
-                needsRedraw();
+                needsRelayout();
             }
         });
         return this;

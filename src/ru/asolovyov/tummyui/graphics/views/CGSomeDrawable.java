@@ -27,22 +27,14 @@ import ru.asolovyov.tummyui.graphics.CGSize;
  * @author Администратор
  */
 public abstract class CGSomeDrawable implements CGDrawable {
-
-    public CGSomeDrawable() {
-        super();
-    }
-
     protected CurrentValueSubject/*!!!<CGSize>!!!*/ intrinsicContentSizeBinding = new Size(CGSize.zero());
-
-    protected CurrentValueSubject/*<Frame>*/ frameBinding = new CurrentValueSubject(new Frame(CGFrame.zero()));
-    protected CurrentValueSubject/*<Point>*/ originBinding = new CurrentValueSubject(new Point(CGPoint.zero()));
-
-    protected CurrentValueSubject/*<Int>*/ widthBinding = new CurrentValueSubject(new Int(0));
-    protected CurrentValueSubject/*<Int>*/ heightBinding = new CurrentValueSubject(new Int(0));
 
     protected CurrentValueSubject/*<Int>*/ xBinding = new CurrentValueSubject(new Int(0));
     protected CurrentValueSubject/*<Int>*/ yBinding = new CurrentValueSubject(new Int(0));
 
+    protected CurrentValueSubject/*<Int>*/ widthBinding = new CurrentValueSubject(new Int(0));
+    protected CurrentValueSubject/*<Int>*/ heightBinding = new CurrentValueSubject(new Int(0));
+    
     protected CurrentValueSubject/*<Int>*/ minXBinding = new CurrentValueSubject(new Int(0));
     protected CurrentValueSubject/*<Int>*/ minYBinding = new CurrentValueSubject(new Int(0));
 
@@ -69,110 +61,9 @@ public abstract class CGSomeDrawable implements CGDrawable {
 
     private KeyboardHandler keyboardHandler;
     private GeometryReader geometryReader;
-
-    public void draw(Graphics g) {
-        CGFrame frame = intrinsicAwareFrame();
-        if (frame == null) {
-            return;
-        }
-
-        int backgroundColor = this.backgroundColor();
-        if (backgroundColor != CG.NULL) {
-            g.setColor(backgroundColor);
-            g.fillRoundRect(
-                    frame.x,
-                    frame.y,
-                    frame.width,
-                    frame.height,
-                    cornerRadius().width,
-                    cornerRadius().height);
-        }
-
-        int borderColor = this.borderColor();
-        if (borderColor != CG.NULL) {
-            g.setStrokeStyle(this.strokeStyle());
-            g.setColor(borderColor);
-            g.drawRoundRect(
-                    frame.x,
-                    frame.y,
-                    frame.width,
-                    frame.height,
-                    cornerRadius().width,
-                    cornerRadius().height);
-        }
-    }
-
-    public CGFrame frame() {
-        return ((Frame)this.frameBinding.getValue()).getCGFrame();
-    }
-
-    public CGDrawable frame(int x, int y, int width, int height) {
-        CGFrame frame = new CGFrame(x, y, width, height);
-        S.println(this + " will be given a frame comps " + frame);
-        
-        return this.frame(new Frame(frame));
-    }
-
-    public CGDrawable frame(Frame frame) {
-        S.println(this + " will be given a Frame " + frame.getCGFrame());
-        this.frameBinding.sendValue(frame);
-        return this;
-    }
-
-    public CGDrawable frame(CGFrame frame) {
-        S.println(this + " will be given a CGFrame " + frame);
-        ((Frame)this.frameBinding.getValue()).setCGFrame(frame);
-        return this;
-    }
-
-    public CGDrawable backgroundColor(int colorHex) {
-        return this.backgroundColor(new Int(colorHex));
-    }
-
-    public CGDrawable backgroundColor(Int backgroundColorHex) {
-        this.backgroundColor.sendValue(backgroundColorHex);
-        return this;
-    }
-
-    public CGDrawable color(int colorHex) {
-        return this.color(new Int(colorHex));
-    }
-
-    public CGDrawable color(Int backgroundColorHex) {
-        this.color.sendValue(backgroundColorHex);
-        return this;
-    }
-
-    public void needsRedraw() {
-        this.needsRelayout(this.frame());
-    }
-
-    public void needsRelayout(CGFrame frame) {
-        if (this.canvas() != null) {
-            this.updateIntrinsicContentSize();
-            this.canvas().repaint(frame);
-        }
-    }
     
-    public CGFrame intrinsicAwareFrame() {
-        CGFrame frame = this.frame();
-        S.println(this + " WILL SAY ITS INTRAWARE FRAME!");
-
-        CGSize size = this.intrinsicContentSize();
-        CGInsets insets = this.contentInset();
-
-        int width = size.width + insets.left + insets.right;
-        int height = size.height + insets.top + insets.bottom;
-
-        width = Math.max(width, frame.width);
-        height = Math.max(height, frame.height);
-
-        frame.width = width;
-        frame.height = height;
-
-        S.println(this + " INTRAWARE FRAME IS " + frame);
-
-        return frame;
+    public CGSomeDrawable() {
+        super();
     }
 
     public CGDrawable canvas(CGCanvas canvas) {
@@ -183,32 +74,16 @@ public abstract class CGSomeDrawable implements CGDrawable {
         canvas.needsRepaint().setBool(true);
         return this;
     }
-    
-    private void setupSubscriptions() {
-        this.frameBinding.switchToLatest().removeDuplicates().sink(new Sink() {
-            protected void onValue(Object value) {
-                S.println(CGSomeDrawable.this + " DID RECEIVE frame switchToLatest().removeDuplicates() " + value);
-                CGFrame frame = (CGFrame)value;
-                x(frame.x); y(frame.y); width(frame.width); height(frame.height);
-            }
-        });
-        
-        this.originBinding.switchToLatest().removeDuplicates().sink(new Sink() {
-            protected void onValue(Object value) {
-                CGPoint origin = (CGPoint)value;
-                CGFrame frame = frame().origin(origin);
-                frameBinding.sendValue(new Frame(frame));
-            }
-        });
 
+    private void setupSubscriptions() {
         this.intrinsicContentSizeBinding.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
-                needsRedraw();
+                needsRelayout();
             }
         });
 
         Publisher.combineLatest(new IPublisher[]{
-            this.xBinding.switchToLatest().removeDuplicates(), 
+            this.xBinding.switchToLatest().removeDuplicates(),
             this.yBinding.switchToLatest().removeDuplicates(),
             this.widthBinding.switchToLatest().removeDuplicates(),
             this.heightBinding.switchToLatest().removeDuplicates(),
@@ -254,12 +129,120 @@ public abstract class CGSomeDrawable implements CGDrawable {
                     this.isVisible.switchToLatest().removeDuplicates()
                 }).sink(new Sink() {
                     protected void onValue(Object value) {
-                        Object[] values = ((Object[])value);                        
+                        Object[] values = ((Object[])value);
                         S.println("GREAT MASEV " + values + " COUNT " + values.length + " in " + CGSomeDrawable.this);
-
-                        needsRedraw();
+                        needsRelayout();
                     }
                 });
+    }
+
+    public void draw(Graphics g) {
+        CGFrame frame = intrinsicAwareFrame();
+        if (frame == null) {
+            return;
+        }
+
+        int backgroundColor = this.backgroundColor();
+        if (backgroundColor != CG.NULL) {
+            g.setColor(backgroundColor);
+            g.fillRoundRect(
+                    frame.x,
+                    frame.y,
+                    frame.width,
+                    frame.height,
+                    cornerRadius().width,
+                    cornerRadius().height);
+        }
+
+        int borderColor = this.borderColor();
+        if (borderColor != CG.NULL) {
+            g.setStrokeStyle(this.strokeStyle());
+            g.setColor(borderColor);
+            g.drawRoundRect(
+                    frame.x,
+                    frame.y,
+                    frame.width,
+                    frame.height,
+                    cornerRadius().width,
+                    cornerRadius().height);
+        }
+    }
+
+    public CGFrame frame() {
+        CGFrame frame = new CGFrame(x(), y(), width(), height());
+        return frame;
+    }
+
+    public CGDrawable frame(int x, int y, int width, int height) {
+        S.println(this + " will be given a frame comps " + x + " " + y + " " + width + " " + height);
+        
+        x(x); y(y);
+        width(width);
+        height(height);
+        
+        return this;
+    }
+
+    public CGDrawable frame(Frame frame) {
+        S.println(this + " will be given a Frame " + frame.getCGFrame());
+        this.frameBinding.sendValue(frame);
+        return this;
+    }
+
+    public CGDrawable frame(CGFrame frame) {
+        S.println(this + " will be given a CGFrame " + frame);
+        ((Frame)this.frameBinding.getValue()).setCGFrame(frame);
+        return this;
+    }
+
+    public CGDrawable backgroundColor(int colorHex) {
+        return this.backgroundColor(new Int(colorHex));
+    }
+
+    public CGDrawable backgroundColor(Int backgroundColorHex) {
+        this.backgroundColor.sendValue(backgroundColorHex);
+        return this;
+    }
+
+    public CGDrawable color(int colorHex) {
+        return this.color(new Int(colorHex));
+    }
+
+    public CGDrawable color(Int backgroundColorHex) {
+        this.color.sendValue(backgroundColorHex);
+        return this;
+    }
+
+    public void needsRelayout() {
+        this.needsRelayout(this.frame());
+    }
+
+    public void needsRelayout(CGFrame frame) {
+        if (this.canvas() != null) {
+            this.updateIntrinsicContentSize();
+            this.canvas().repaint(frame);
+        }
+    }
+    
+    public CGFrame intrinsicAwareFrame() {
+        CGFrame frame = this.frame();
+        S.println(this + " WILL SAY ITS INTRAWARE FRAME!");
+
+        CGSize size = this.intrinsicContentSize();
+        CGInsets insets = this.contentInset();
+
+        int width = size.width + insets.left + insets.right;
+        int height = size.height + insets.top + insets.bottom;
+
+        width = Math.max(width, frame.width);
+        height = Math.max(height, frame.height);
+
+        frame.width = width;
+        frame.height = height;
+
+        S.println(this + " INTRAWARE FRAME IS " + frame);
+
+        return frame;
     }
 
     public CGCanvas canvas() {
@@ -419,6 +402,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     public CGDrawable width(int width) {
+        S.println(this + " WILL SET WIDTH " + width);
         return width(new Int(width));
     }
 
@@ -428,10 +412,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
     
     public CGDrawable height(int height) {
-        //TODO ИМПЕРАТИВНАЯ ХУЙНЯ!
-        if (height == height()) {
-            return this;
-        }
+        S.println(this + " WILL SET HEIGHT " + height);
         return height(new Int(height));
     }
 

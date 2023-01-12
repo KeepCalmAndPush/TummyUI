@@ -37,7 +37,7 @@ public interface CGDrawable {
     public CGDrawable stroke(int strokeStyle);
     public CGDrawable stroke(Int strokeStyle);
 
-    public void needsRedraw();
+    public void needsRelayout();
     public void needsRelayout(CGFrame frame);
 
     public CGDrawable readGeometry(GeometryReader reader);
