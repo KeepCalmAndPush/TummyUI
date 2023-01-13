@@ -6,7 +6,7 @@
 package ru.asolovyov.tummyui.bindings;
 
 import ru.asolovyov.combime.api.IPublisher;
-import ru.asolovyov.combime.bindings.PassthroughSubjectValueWrapper;
+import ru.asolovyov.combime.bindings.CurrentValueSubjectWrapper;
 import ru.asolovyov.combime.operators.Operator;
 import ru.asolovyov.combime.subjects.CurrentValueSubject;
 import ru.asolovyov.tummyui.graphics.CGSize;
@@ -15,7 +15,7 @@ import ru.asolovyov.tummyui.graphics.CGSize;
  *
  * @author Администратор
  */
-public class Size extends PassthroughSubjectValueWrapper {
+public class Size extends CurrentValueSubjectWrapper {
     public Size(CGSize value) {
         super(new CurrentValueSubject(value));
     }

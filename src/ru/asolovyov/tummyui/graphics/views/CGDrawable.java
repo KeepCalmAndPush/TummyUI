@@ -64,11 +64,9 @@ public interface CGDrawable {
     public CGFrame intrinsicAwareFrame();
 
     public CGFrame frame();
-    public CGDrawable frame(Frame frame);
     public CGDrawable frame(int x, int y, int width, int height);
 
     public CGPoint origin();
-    public CGDrawable origin(Point origin);
     public CGDrawable origin(int x, int y);
 
     public CGPoint contentOffset();

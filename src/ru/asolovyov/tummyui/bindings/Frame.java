@@ -6,7 +6,7 @@
 package ru.asolovyov.tummyui.bindings;
 
 import ru.asolovyov.combime.api.IPublisher;
-import ru.asolovyov.combime.bindings.PassthroughSubjectValueWrapper;
+import ru.asolovyov.combime.bindings.CurrentValueSubjectWrapper;
 import ru.asolovyov.combime.operators.Operator;
 import ru.asolovyov.combime.subjects.CurrentValueSubject;
 import ru.asolovyov.tummyui.graphics.CGFrame;
@@ -15,7 +15,7 @@ import ru.asolovyov.tummyui.graphics.CGFrame;
  *
  * @author Администратор
  */
-public class Frame extends PassthroughSubjectValueWrapper {
+public class Frame extends CurrentValueSubjectWrapper {
     public Frame(CGFrame value) {
         super(new CurrentValueSubject(value));
     }

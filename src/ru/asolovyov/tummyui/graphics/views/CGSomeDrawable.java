@@ -59,10 +59,15 @@ public abstract class CGSomeDrawable implements CGDrawable {
     protected CurrentValueSubject/*<Bool>*/ isVisible = new CurrentValueSubject(new Bool(true));
     private CGCanvas canvas;
 
-    private boolean didSetX = false;
-    private boolean didSetY = false;
-    private boolean didSetWidth = false;
-    private boolean didSetHeight = false;
+    //TODO ОТРЕФАЧИТЬ ИМПЕРАТИВНОЕ ГОВНО
+    private boolean mayInferMinX = true;
+    private boolean mayInferMaxX = true;
+    private boolean mayInferMinY = true;
+    private boolean mayInferMaxY = true;
+    private boolean mayInferMinWidth = true;
+    private boolean mayInferMaxWidth = true;
+    private boolean mayInferMinHeight = true;
+    private boolean mayInferMaxHeight = true;
 
     private KeyboardHandler keyboardHandler;
     private GeometryReader geometryReader;
@@ -87,23 +92,26 @@ public abstract class CGSomeDrawable implements CGDrawable {
             }
         });
 
-        Publisher.combineLatest(new IPublisher[]{
+        Publisher xyWidthHeight = (Publisher) Publisher.combineLatest(new IPublisher[]{
             this.xBinding.switchToLatest().removeDuplicates(),
             this.yBinding.switchToLatest().removeDuplicates(),
             this.widthBinding.switchToLatest().removeDuplicates(),
             this.heightBinding.switchToLatest().removeDuplicates(),
-        }).sink(new Sink() {
+        });
+
+        xyWidthHeight.sink(new Sink() {
             protected void onValue(Object value) {
                 Object[] values = ((Object[])value);
-                int[] ints = new int[values.length];
+                S.println("XYWH 4: " + S.arrayToString(values));
+                needsRelayout();
+            }
+        });
 
-                S.println("MASEV " + values + " COUNT " + values.length + " in " + CGSomeDrawable.this);
-                for (int i = 0; i < values.length; i++) {
-                    Object obj = values[i];
-                    S.print(obj + " ");
-                    ints[i] = values[i] == null ? 0 : ((Integer)obj).intValue();
-                }
-                S.println("");
+        //БЛЯТЬ ВТОРОЙ СУБСКРИПШЕН НЕ ПОДКЛЮЧАЕТСЯ!
+        xyWidthHeight.drop(1).prefix(1).sink(new Sink() {
+            protected void onValue(Object value) {
+                Object[] values = ((Object[])value);
+                S.println("XYWH 4 P2D1: " + S.arrayToString(values));
 
                 CGFrame frame = frame();
                 frame.x = values[0] == null ? frame.x : ((Integer)values[0]).intValue();
@@ -111,43 +119,57 @@ public abstract class CGSomeDrawable implements CGDrawable {
                 frame.width = values[2] == null ? frame.width : ((Integer)values[2]).intValue();
                 frame.height = values[3] == null ? frame.height : ((Integer)values[3]).intValue();
 
-                if (values[0] != null && !didSetX) {
-                    didSetX = true;
-                    if (minX() == 0) minX(frame.x);
-                    if (maxX() == Integer.MAX_VALUE) maxX(frame.x);
+                if (values[0] != null) {
+                    S.println("0 " + mayInferMinX + mayInferMaxX);
+                    if (mayInferMinX) {
+                        mayInferMinX = false;
+                        minX(frame.x);
+                    }
+                    if (mayInferMaxX) {
+                        mayInferMaxX = false;
+                        maxX(frame.x);
+                    }
                 }
 
-                if (values[1] != null && !didSetY) {
-                    didSetY = true;
-                    if (minY() == 0) minY(frame.y);
-                    if (maxY() == Integer.MAX_VALUE) maxY(frame.y);
+                if (values[1] != null) {
+                    S.println("1 " + mayInferMinY + mayInferMaxY);
+                    if (mayInferMinY) {
+                        mayInferMinY = false;
+                        minY(frame.y);
+                    }
+                    if (mayInferMaxY) {
+                        mayInferMaxY = false;
+                        maxY(frame.y);
+                    }
                 }
 
-                if (values[2] != null && !didSetWidth) {
-                    didSetWidth = true;
-                    if (minWidth() == 0) minWidth(frame.width);
-                    if (maxWidth() == Integer.MAX_VALUE) maxWidth(frame.width);
+                if (values[2] != null) {
+                    S.println("2 " + mayInferMinWidth + mayInferMaxWidth);
+                    if (mayInferMinWidth) {
+                        mayInferMinWidth = false;
+                        minWidth(frame.width);
+                    }
+                    if (mayInferMaxWidth) {
+                        mayInferMaxWidth = false;
+                        maxWidth(frame.width);
+                    }
                 }
 
-                if (values[3] != null && !didSetHeight) {
-                    didSetHeight = true;
-                    if (minHeight() == 0) minHeight(frame.height);
-                    if (maxHeight() == Integer.MAX_VALUE) maxHeight(frame.height);
+                if (values[3] != null) {
+                    S.println("3 " + mayInferMinHeight + mayInferMaxHeight);
+                    if (mayInferMinHeight) {
+                        mayInferMinHeight = false;
+                        minHeight(frame.height);
+                    }
+                    if (mayInferMaxHeight) {
+                        mayInferMaxHeight = false;
+                        maxHeight(frame.height);
+                    }
                 }
-
-                needsRelayout();
             }
         });
 
-        Publisher.combineLatest(new IPublisher[]{
-                    this.minXBinding.switchToLatest().removeDuplicates(),
-                    this.minYBinding.switchToLatest().removeDuplicates(),
-                    this.maxXBinding.switchToLatest().removeDuplicates(),
-                    this.maxYBinding.switchToLatest().removeDuplicates(),
-                    this.minWidthBinding.switchToLatest().removeDuplicates(),
-                    this.minHeightBinding.switchToLatest().removeDuplicates(),
-                    this.maxWidthBinding.switchToLatest().removeDuplicates(),
-                    this.maxHeightBinding.switchToLatest().removeDuplicates(),
+        Publisher.combineLatest(new IPublisher[] {
                     this.color.switchToLatest().removeDuplicates(),
                     this.backgroundColor.switchToLatest().removeDuplicates(),
                     this.borderColor.switchToLatest().removeDuplicates(),
@@ -158,11 +180,70 @@ public abstract class CGSomeDrawable implements CGDrawable {
                     this.isVisible.switchToLatest().removeDuplicates()
                 }).sink(new Sink() {
                     protected void onValue(Object value) {
-//                        Object[] values = ((Object[])value);
-//                        S.println("GREAT MASEV " + values + " COUNT " + values.length + " in " + CGSomeDrawable.this);
+                        Object[] values = ((Object[])value);
+                        S.println("8 COLORS: " + S.arrayToString(values));
+
                         needsRelayout();
                     }
                 });
+
+        Publisher minsMaxes = (Publisher) Publisher.combineLatest(new IPublisher[]{
+                    this.minXBinding.switchToLatest().removeDuplicates(),
+                    this.minYBinding.switchToLatest().removeDuplicates(),
+                    this.maxXBinding.switchToLatest().removeDuplicates(),
+                    this.maxYBinding.switchToLatest().removeDuplicates(),
+                    this.minWidthBinding.switchToLatest().removeDuplicates(),
+                    this.minHeightBinding.switchToLatest().removeDuplicates(),
+                    this.maxWidthBinding.switchToLatest().removeDuplicates(),
+                    this.maxHeightBinding.switchToLatest().removeDuplicates()
+        });
+
+        minsMaxes.sink(new Sink() {
+            protected void onValue(Object value) {
+                Object[] values = ((Object[])value);
+                S.println("8 MINMAX: " + S.arrayToString(values));
+                needsRelayout();
+            }
+        });
+
+        minsMaxes.prefix(2).drop(1).sink(new Sink() {
+            protected void onValue(Object value) {
+                Object[] values = ((Object[]) value);
+                S.println("8 MINMAX P2 D1: " + S.arrayToString(values));
+                if (values[0] != null) {
+                    mayInferMinX = false;
+                    S.println("mayInferMinX = false;");
+                }
+                if (values[1] != null) {
+                    mayInferMaxX = false;
+                    S.println("mayInferMaxX = false;");
+                }
+                if (values[2] != null) {
+                    mayInferMinY = false;
+                    S.println("mayInferMinY = false;");
+                }
+                if (values[3] != null) {
+                    mayInferMaxY = false;
+                    S.println("mayInferMaxY = false;");
+                }
+                if (values[4] != null) {
+                    mayInferMinWidth = false;
+                    S.println("mayInferMinWidth= false;");
+                }
+                if (values[5] != null) {
+                    mayInferMaxWidth = false;
+                    S.println("mayInferMaxWidth = false;");
+                }
+                if (values[6] != null) {
+                    mayInferMinHeight = false;
+                    S.println("mayInferMinHeight = false;");
+                }
+                if (values[7] != null) {
+                    mayInferMaxHeight = false;
+                    S.println("mayInferMaxHeight = false;");
+                }
+            }
+        });
     }
 
     public CGDrawable width(Int width) {

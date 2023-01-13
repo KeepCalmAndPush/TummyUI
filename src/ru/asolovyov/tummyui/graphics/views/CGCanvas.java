@@ -51,6 +51,7 @@ public class CGCanvas extends Canvas {
             int heightToSet = Math.min(this.getHeight(), child.maxHeight());
 
             S.println("CANVAS WILL SET CHILD Width: " + widthToSet + ", Height: " + heightToSet);
+            S.println(child + " " + child.minWidth() + "-" + child.maxWidth() + "; " + child.minHeight() + "-" + child.maxHeight());
 
             child.frame(0, 0, widthToSet, heightToSet);
         }

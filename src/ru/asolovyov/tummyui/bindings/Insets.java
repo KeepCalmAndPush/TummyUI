@@ -6,7 +6,7 @@
 package ru.asolovyov.tummyui.bindings;
 
 import ru.asolovyov.combime.api.IPublisher;
-import ru.asolovyov.combime.bindings.PassthroughSubjectValueWrapper;
+import ru.asolovyov.combime.bindings.CurrentValueSubjectWrapper;
 import ru.asolovyov.combime.operators.Operator;
 import ru.asolovyov.combime.subjects.CurrentValueSubject;
 import ru.asolovyov.tummyui.graphics.CGInsets;
@@ -15,7 +15,7 @@ import ru.asolovyov.tummyui.graphics.CGInsets;
  *
  * @author Администратор
  */
-public class Insets extends PassthroughSubjectValueWrapper {
+public class Insets extends CurrentValueSubjectWrapper {
     public Insets(CGInsets value) {
         super(new CurrentValueSubject(value));
     }
