@@ -61,7 +61,7 @@ public class Canvas extends UIMIDlet {
                 CG.Rect().backgroundColor(CGColor.YELLOW)//.maxWidth(20)//,
 //                CG.Rect().backgroundColor(CGColor.GREEN).maxWidth(30)
                 )
-                .frame(0, 0, 128, 128)
+                .width(128).height(160)
 //                .maxHeight(128)
 //                .maxWidth(128)
                 .borderColor(CGColor.BLACK)

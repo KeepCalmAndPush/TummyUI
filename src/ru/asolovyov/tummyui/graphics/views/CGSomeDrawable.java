@@ -29,14 +29,11 @@ import ru.asolovyov.tummyui.graphics.CGSize;
 public abstract class CGSomeDrawable implements CGDrawable {
     protected CurrentValueSubject/*!!!<CGSize>!!!*/ intrinsicContentSizeBinding = new Size(CGSize.zero());
 
-    protected CurrentValueSubject/*<Frame>*/ frameBinding = new CurrentValueSubject(new Frame(CGFrame.zero()));
-    protected CurrentValueSubject/*<Point>*/ originBinding = new CurrentValueSubject(new Point(CGPoint.zero()));
-
-    protected CurrentValueSubject/*<Int>*/ widthBinding = new CurrentValueSubject(new Int(0));
-    protected CurrentValueSubject/*<Int>*/ heightBinding = new CurrentValueSubject(new Int(0));
-
     protected CurrentValueSubject/*<Int>*/ xBinding = new CurrentValueSubject(new Int(0));
     protected CurrentValueSubject/*<Int>*/ yBinding = new CurrentValueSubject(new Int(0));
+    
+    protected CurrentValueSubject/*<Int>*/ widthBinding = new CurrentValueSubject(new Int(0));
+    protected CurrentValueSubject/*<Int>*/ heightBinding = new CurrentValueSubject(new Int(0));
 
     protected CurrentValueSubject/*<Int>*/ minXBinding = new CurrentValueSubject(new Int(0));
     protected CurrentValueSubject/*<Int>*/ minYBinding = new CurrentValueSubject(new Int(0));
@@ -84,22 +81,6 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     private void setupSubscriptions() {
-        this.frameBinding.switchToLatest().removeDuplicates().sink(new Sink() {
-            protected void onValue(Object value) {
-                S.println(CGSomeDrawable.this + " DID RECEIVE frame switchToLatest().removeDuplicates() " + value);
-                CGFrame frame = (CGFrame)value;
-                x(frame.x); y(frame.y); width(frame.width); height(frame.height);
-            }
-        });
-
-        this.originBinding.switchToLatest().removeDuplicates().sink(new Sink() {
-            protected void onValue(Object value) {
-                CGPoint origin = (CGPoint)value;
-                CGFrame frame = frame().origin(origin);
-                frameBinding.sendValue(new Frame(frame));
-            }
-        });
-
         this.intrinsicContentSizeBinding.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
                 needsRelayout();
@@ -116,7 +97,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
                 Object[] values = ((Object[])value);
                 int[] ints = new int[values.length];
 
-                S.println("XYWH MASEV " + values + " COUNT " + values.length + " in " + CGSomeDrawable.this);
+                S.println("MASEV " + values + " COUNT " + values.length + " in " + CGSomeDrawable.this);
                 for (int i = 0; i < values.length; i++) {
                     Object obj = values[i];
                     S.print(obj + " ");
@@ -154,7 +135,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
                     if (maxHeight() == Integer.MAX_VALUE) maxHeight(frame.height);
                 }
 
-                frame(frame);
+                needsRelayout();
             }
         });
 
@@ -272,7 +253,11 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     public CGFrame frame() {
-        return ((Frame)this.frameBinding.getValue()).getCGFrame();
+        return new CGFrame(
+                intValueFrom(xBinding),
+                intValueFrom(yBinding),
+                intValueFrom(widthBinding),
+                intValueFrom(heightBinding));
     }
 
     public CGDrawable frame(int x, int y, int width, int height) {
@@ -284,13 +269,18 @@ public abstract class CGSomeDrawable implements CGDrawable {
 
     public CGDrawable frame(Frame frame) {
         S.println(this + " will be given a Frame " + frame.getCGFrame());
-        this.frameBinding.sendValue(frame);
+//        this.frameBinding.sendValue(frame);
         return this;
     }
 
     public CGDrawable frame(CGFrame frame) {
         S.println(this + " will be given a CGFrame " + frame);
-        ((Frame)this.frameBinding.getValue()).setCGFrame(frame);
+//        ((Frame)this.frameBinding.getValue()).setCGFrame(frame);
+        this.x(frame.x);
+        this.y(frame.y);
+        this.width(frame.width);
+        this.height(frame.height);
+        
         return this;
     }
 
@@ -361,7 +351,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     public CGDrawable origin(Point origin) {
-        this.originBinding.sendValue(origin);
+//        this.originBinding.sendValue(origin);
         return this;
     }
 
@@ -565,7 +555,10 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     public CGPoint origin() {
-        return ((Point)this.originBinding.getValue()).getCGPoint();
+        return new CGPoint(
+                intValueFrom(xBinding),
+                intValueFrom(yBinding)
+                );
     }
 
     public CGDrawable contentOffset(Point offset) {

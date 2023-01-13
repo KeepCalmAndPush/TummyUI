@@ -593,7 +593,8 @@ public class CGStack extends CGSomeDrawable {
         frame.width = size.width;
         frame.height = size.height;
         S.println("AFTER MASSIVE CALCULATIONS FRAME IS: " + frame);
-        this.frameBinding.sendValue(new Frame(frame));
+//        this.frameBinding.sendValue(new Frame(frame));
+        this.frame(frame);
 
         return contentSize;
     }
