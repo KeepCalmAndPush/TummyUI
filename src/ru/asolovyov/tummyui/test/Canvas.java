@@ -41,15 +41,16 @@ public class Canvas extends UIMIDlet {
         // TODO управление памятью,
         // TODO отписка от подписок,
         return CG.Canvas(
-//                testHStackWithTwoViewsWithOneFixedWidthFillsCanvas()
+                testHStackWithTwoViewsWithOneFixedWidthFillsCanvas()
 //                testVStackWithTwoViewsViewFillsCanvas()
 //                testHStackWithTwoViewsViewFillsCanvas()
 //                testVStackWithOneViewFillsCanvas()
 //                testZStackWithOneViewFillsCanvas()
 //                testZStackWithTwoViewsFillsCanvasAndRespectsOrder()
-                testHStackWithOneViewFillsCanvas()
+//                testHStackWithOneViewFillsCanvas()
 //                БЕСКОНЕЧНЫЙ ЦИКЛ, ВИДАТЬ ПРОБЛЕМЫ СО ВКЛАДЫВАНИЕМ СТЭКОВ
 //                textStylesIteratingHorizontalStackOfLabels()
+//                testFrameSetsViaSeaparateBindings()
           ).backgroundColor(CGColor.RED);
     }
 
@@ -57,9 +58,14 @@ public class Canvas extends UIMIDlet {
     private CGDrawable testHStackWithTwoViewsWithOneFixedWidthFillsCanvas() {
         return CG.HStack(
                 CG.Rect().backgroundColor(CGColor.BLUE),
-                CG.Rect().backgroundColor(CGColor.YELLOW).maxWidth(20)//,
+                CG.Rect().backgroundColor(CGColor.YELLOW)//.maxWidth(20)//,
 //                CG.Rect().backgroundColor(CGColor.GREEN).maxWidth(30)
-                ).frame(0, 0, 100, 100).maxHeight(100).maxWidth(100).borderColor(CGColor.BLACK)
+                )
+                .frame(0, 0, 128, 128)
+//                .maxHeight(128)
+//                .maxWidth(128)
+                .borderColor(CGColor.BLACK)
+                .backgroundColor(CGColor.ORANGE)
                 ;
 
 //        return CG.HStack(
@@ -106,6 +112,27 @@ public class Canvas extends UIMIDlet {
                 CG.Rect().backgroundColor(CGColor.BLUE)
                 .frame(20, 20, 60, 60)
                 );
+    }
+
+    private CGDrawable testFrameSetsViaSeaparateBindings() {
+        /*
+         * CGRectangle@f4819689 CGFrame@168c00 (0,0; 0,0) WILL SET WIDTH 100
+            83 CVS sendValue 100
+            84 CVS sendValue 100
+            19 CVS sendValue ru.asolovyov.combime.bindings.Int@f188ac1a subscriptions: 0
+            CGRectangle@f4819689 CGFrame@168c00 (0,0; 0,0) WILL SET HEIGHT 100
+            85 CVS sendValue 100
+            86 CVS sendValue 100
+            22 CVS sendValue ru.asolovyov.combime.bindings.Int@e8b7ef9f subscriptions: 0
+         */
+        return CG.Rect()
+                .backgroundColor(CGColor.GREEN_YELLOW)
+//                .frame(10, 10, 100, 100)
+                .x(10)
+                .y(10)
+                .width(100)
+                .height(100)
+                ;
     }
     
     Clock clock;

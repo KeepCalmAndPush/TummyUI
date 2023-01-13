@@ -5,6 +5,8 @@
 
 package ru.asolovyov.tummyui.graphics;
 
+import ru.asolovyov.combime.common.S;
+
 /**
  *
  * @author Администратор
@@ -42,6 +44,10 @@ public final class CGPoint {
     }
 
     public int hashCode() {
-        return ("x"+x+"y"+y).hashCode();
+        return ("" + x + y).hashCode();
+    }
+
+    public String toString() {
+        return (S.stripPackageName(super.toString()) + " " + x + "," + y);
     }
 }

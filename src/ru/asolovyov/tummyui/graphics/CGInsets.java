@@ -67,6 +67,6 @@ public class CGInsets {
     }
 
     public int hashCode() {
-        return (top + "" + left + "" + bottom + "" + right).hashCode();
+        return ("" + top + left + bottom + right).hashCode();
     }
 }

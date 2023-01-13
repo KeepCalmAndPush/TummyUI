@@ -32,6 +32,10 @@ public class CGStack extends CGSomeDrawable {
         public abstract CGDrawable itemFor(Object viewModel);
     }
 
+    {
+        this.drawables = new Arr(new CGDrawable[]{});
+    }
+
     public final static int AXIS_HORIZONTAL = 0;
     public final static int AXIS_VERTICAL = 1;
     public final static int AXIS_Z = 2;
@@ -39,7 +43,7 @@ public class CGStack extends CGSomeDrawable {
     private int nextLeft = 0;
     private int nextTop = 0;
     
-    protected Arr drawables = new Arr(new CGDrawable[]{});
+    protected Arr drawables;
     protected Int alignment = new Int(CG.LEFT);
     protected Int axis = new Int(AXIS_HORIZONTAL);
 
@@ -121,11 +125,14 @@ public class CGStack extends CGSomeDrawable {
         this.factory = factory;
         this.models = models;
 
+        S.println(" CGStack(Int axis, Int alignment, Arr models, DrawableFactory factory) " + drawables);
+
         this.models.to(
                 new Map() {
                     public Object mapValue(Object value) {
                         Object[] models = (Object[]) value;
                         CGDrawable[] drawables = new CGDrawable[models.length];
+                        S.println("KEK CGDrawable[] drawables = new CGDrawable[models.length]; " + drawables);
                         for (int i = 0; i < models.length; i++) {
                             Object model = models[i];
 
@@ -151,6 +158,7 @@ public class CGStack extends CGSomeDrawable {
 
     public CGStack(Int axis, Int alignment, Arr drawables) {
         super();
+        S.println("KEK CGSTACK WILL SET DRAWABLES: " + drawables);
         this.axis = axis;
         this.alignment = alignment;
         this.drawables = drawables;
@@ -200,9 +208,10 @@ public class CGStack extends CGSomeDrawable {
     }
 
     private void pushFrameToChildren() {
-        CGDrawable[] drawables_ = (CGDrawable[]) this.drawables.getArray();
-        for (int i = 0; i < drawables_.length; i++) {
-            CGDrawable drawable = drawables_[i];
+        S.println("KEK DRAWABLES " + this.drawables.getArray());
+        CGDrawable[] drawables = (CGDrawable[]) this.drawables.getArray();
+        for (int i = 0; i < drawables.length; i++) {
+            CGDrawable drawable = drawables[i];
             if (drawable.geometryReader() != null) {
                 drawable.geometryReader().read(drawable, frame());
             }
@@ -211,7 +220,9 @@ public class CGStack extends CGSomeDrawable {
 
     public void needsRelayout(CGFrame frame) {
         super.needsRelayout(frame);
-        this.pushFrameToChildren();
+        if (this.canvas() != null) {
+            this.pushFrameToChildren();
+        }
     }
 
     private void hDraw(Graphics g) {
@@ -507,6 +518,7 @@ public class CGStack extends CGSomeDrawable {
 
         Object[] objDrawables = this.drawables.getArray();
         CGDrawable[] drawables = new CGDrawable[objDrawables.length];
+        S.println("KEK CGSize updateContentSizeAndChildrenDimensions() " + drawables);
 
         S.println("LETS COUNT CONTENT SIZE OF " + drawables.length + " SUBVIEWS!");
         for (int i = 0; i < drawables.length; i++) {

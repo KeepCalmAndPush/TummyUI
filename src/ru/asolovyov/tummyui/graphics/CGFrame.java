@@ -81,7 +81,7 @@ public final class CGFrame {
     }
 
     public int hashCode() {
-        return ("x"+x+"y"+y+"width"+width+"height"+height).hashCode();
+        return ("" + x + y + width + height).hashCode();
     }
 
     public String toString() {

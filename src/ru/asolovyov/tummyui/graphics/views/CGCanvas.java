@@ -25,8 +25,9 @@ public class CGCanvas extends Canvas {
     private CGDrawable[] content;
     private Int backgroundColor;
     private Bool needsRepaint = new Bool(false);
-    public Bool needsRepaint() {
-        return needsRepaint;
+
+    public void setNeedsRepaint() {
+        this.needsRepaint.setBool(true);
     }
 
     private Int keyPressed = (Int) new Int(null).to(new Drop(1)); //TODO оформить в оператор-метод .drop(1)

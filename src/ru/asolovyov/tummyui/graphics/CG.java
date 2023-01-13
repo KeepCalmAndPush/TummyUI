@@ -160,6 +160,7 @@ public class CG {
     }
 
     public static CGStack HStack(CGDrawable d1, CGDrawable d2) {
+        S.println("KEK CGStack(Int axis, Int alignment, Arr drawables) " + new Arr(new CGDrawable[] {d1, d2}));
         return new CGStack(new Int(CGStack.AXIS_HORIZONTAL), new Arr(new CGDrawable[] {d1, d2}));
     }
 

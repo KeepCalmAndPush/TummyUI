@@ -29,12 +29,15 @@ import ru.asolovyov.tummyui.graphics.CGSize;
 public abstract class CGSomeDrawable implements CGDrawable {
     protected CurrentValueSubject/*!!!<CGSize>!!!*/ intrinsicContentSizeBinding = new Size(CGSize.zero());
 
-    protected CurrentValueSubject/*<Int>*/ xBinding = new CurrentValueSubject(new Int(0));
-    protected CurrentValueSubject/*<Int>*/ yBinding = new CurrentValueSubject(new Int(0));
+    protected CurrentValueSubject/*<Frame>*/ frameBinding = new CurrentValueSubject(new Frame(CGFrame.zero()));
+    protected CurrentValueSubject/*<Point>*/ originBinding = new CurrentValueSubject(new Point(CGPoint.zero()));
 
     protected CurrentValueSubject/*<Int>*/ widthBinding = new CurrentValueSubject(new Int(0));
     protected CurrentValueSubject/*<Int>*/ heightBinding = new CurrentValueSubject(new Int(0));
-    
+
+    protected CurrentValueSubject/*<Int>*/ xBinding = new CurrentValueSubject(new Int(0));
+    protected CurrentValueSubject/*<Int>*/ yBinding = new CurrentValueSubject(new Int(0));
+
     protected CurrentValueSubject/*<Int>*/ minXBinding = new CurrentValueSubject(new Int(0));
     protected CurrentValueSubject/*<Int>*/ minYBinding = new CurrentValueSubject(new Int(0));
 
@@ -59,23 +62,44 @@ public abstract class CGSomeDrawable implements CGDrawable {
     protected CurrentValueSubject/*<Bool>*/ isVisible = new CurrentValueSubject(new Bool(true));
     private CGCanvas canvas;
 
+    private boolean didSetX = false;
+    private boolean didSetY = false;
+    private boolean didSetWidth = false;
+    private boolean didSetHeight = false;
+
     private KeyboardHandler keyboardHandler;
     private GeometryReader geometryReader;
     
     public CGSomeDrawable() {
         super();
+        this.setupSubscriptions();
     }
 
     public CGDrawable canvas(CGCanvas canvas) {
         this.canvas = canvas;
-        this.setupSubscriptions();
 
         this.startHandlingKeyboard();
-        canvas.needsRepaint().setBool(true);
+        canvas.setNeedsRepaint();
         return this;
     }
 
     private void setupSubscriptions() {
+        this.frameBinding.switchToLatest().removeDuplicates().sink(new Sink() {
+            protected void onValue(Object value) {
+                S.println(CGSomeDrawable.this + " DID RECEIVE frame switchToLatest().removeDuplicates() " + value);
+                CGFrame frame = (CGFrame)value;
+                x(frame.x); y(frame.y); width(frame.width); height(frame.height);
+            }
+        });
+
+        this.originBinding.switchToLatest().removeDuplicates().sink(new Sink() {
+            protected void onValue(Object value) {
+                CGPoint origin = (CGPoint)value;
+                CGFrame frame = frame().origin(origin);
+                frameBinding.sendValue(new Frame(frame));
+            }
+        });
+
         this.intrinsicContentSizeBinding.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
                 needsRelayout();
@@ -106,6 +130,30 @@ public abstract class CGSomeDrawable implements CGDrawable {
                 frame.width = values[2] == null ? frame.width : ((Integer)values[2]).intValue();
                 frame.height = values[3] == null ? frame.height : ((Integer)values[3]).intValue();
 
+                if (values[0] != null && !didSetX) {
+                    didSetX = true;
+                    if (minX() == 0) minX(frame.x);
+                    if (maxX() == Integer.MAX_VALUE) maxX(frame.x);
+                }
+
+                if (values[1] != null && !didSetY) {
+                    didSetY = true;
+                    if (minY() == 0) minY(frame.y);
+                    if (maxY() == Integer.MAX_VALUE) maxY(frame.y);
+                }
+
+                if (values[2] != null && !didSetWidth) {
+                    didSetWidth = true;
+                    if (minWidth() == 0) minWidth(frame.width);
+                    if (maxWidth() == Integer.MAX_VALUE) maxWidth(frame.width);
+                }
+
+                if (values[3] != null && !didSetHeight) {
+                    didSetHeight = true;
+                    if (minHeight() == 0) minHeight(frame.height);
+                    if (maxHeight() == Integer.MAX_VALUE) maxHeight(frame.height);
+                }
+
                 frame(frame);
             }
         });
@@ -129,11 +177,66 @@ public abstract class CGSomeDrawable implements CGDrawable {
                     this.isVisible.switchToLatest().removeDuplicates()
                 }).sink(new Sink() {
                     protected void onValue(Object value) {
-                        Object[] values = ((Object[])value);
-                        S.println("GREAT MASEV " + values + " COUNT " + values.length + " in " + CGSomeDrawable.this);
+//                        Object[] values = ((Object[])value);
+//                        S.println("GREAT MASEV " + values + " COUNT " + values.length + " in " + CGSomeDrawable.this);
                         needsRelayout();
                     }
                 });
+    }
+
+    public CGDrawable width(Int width) {
+        S.println(this + " KEK WILL SET WIDTH BINDING " + width);
+        this.widthBinding.sendValue(width);
+        return this;
+    }
+
+    public CGDrawable width(int width) {
+        S.println(this + " KEK WILL SET WIDTH " + width);
+        return width(new Int(width));
+    }
+
+    public CGDrawable height(Int height) {
+        this.heightBinding.sendValue(height);
+        return this;
+    }
+
+    public CGDrawable height(int height) {
+        S.println(this + " KEK WILL SET HEIGHT " + height);
+        return height(new Int(height));
+    }
+
+    public int width() {
+        return this.intValueFrom(widthBinding);
+    }
+
+    public int height() {
+        return this.intValueFrom(heightBinding);
+    }
+
+    public int x() {
+        return this.intValueFrom(xBinding);
+    }
+
+    public int y() {
+        return this.intValueFrom(yBinding);
+    }
+
+    public CGDrawable x(Int x) {
+        this.xBinding.sendValue(x);
+        return this;
+    }
+
+    public CGDrawable x(int x) {
+        return x(new Int(x));
+    }
+
+    public CGDrawable y(Int y) {
+        this.yBinding.sendValue(y);
+        return this;
+    }
+
+    public CGDrawable y(int y) {
+        return y(new Int(y));
     }
 
     public void draw(Graphics g) {
@@ -169,18 +272,14 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     public CGFrame frame() {
-        CGFrame frame = new CGFrame(x(), y(), width(), height());
-        return frame;
+        return ((Frame)this.frameBinding.getValue()).getCGFrame();
     }
 
     public CGDrawable frame(int x, int y, int width, int height) {
-        S.println(this + " will be given a frame comps " + x + " " + y + " " + width + " " + height);
+        CGFrame frame = new CGFrame(x, y, width, height);
+        S.println(this + " will be given a frame comps " + frame);
         
-        x(x); y(y);
-        width(width);
-        height(height);
-        
-        return this;
+        return this.frame(new Frame(frame));
     }
 
     public CGDrawable frame(Frame frame) {
@@ -266,24 +365,6 @@ public abstract class CGSomeDrawable implements CGDrawable {
         return this;
     }
 
-    public CGDrawable x(Int x) {
-        this.xBinding.sendValue(x);
-        return this;
-    }
-
-    public CGDrawable x(int x) {
-        return x(new Int(x));
-    }
-
-    public CGDrawable y(Int y) {
-        this.yBinding.sendValue(y);
-        return this;
-    }
-
-    public CGDrawable y(int y) {
-        return y(new Int(y));
-    }
-
     public CGDrawable minX(Int minX) {
         this.minXBinding.sendValue(minX);
         return this;
@@ -356,14 +437,6 @@ public abstract class CGSomeDrawable implements CGDrawable {
         return maxHeight(new Int(maxHeight));
     }
 
-    public int x() {
-        return this.intValueFrom(xBinding);
-    }
-
-    public int y() {
-        return this.intValueFrom(yBinding);
-    }
-
     public int minX() {
         return this.intValueFrom(minXBinding);
     }
@@ -394,34 +467,6 @@ public abstract class CGSomeDrawable implements CGDrawable {
 
     public int maxHeight() {
         return this.intValueFrom(maxHeightBinding);
-    }
-
-    public CGDrawable width(Int width) {
-        this.widthBinding.sendValue(width);
-        return this;
-    }
-
-    public CGDrawable width(int width) {
-        S.println(this + " WILL SET WIDTH " + width);
-        return width(new Int(width));
-    }
-
-    public CGDrawable height(Int height) {
-        this.heightBinding.sendValue(height);
-        return this;
-    }
-    
-    public CGDrawable height(int height) {
-        S.println(this + " WILL SET HEIGHT " + height);
-        return height(new Int(height));
-    }
-
-    public int width() {
-        return this.intValueFrom(widthBinding);
-    }
-    
-    public int height() {
-        return this.intValueFrom(heightBinding);
     }
 
     public boolean hasGrowableWidth() {
@@ -614,5 +659,9 @@ public abstract class CGSomeDrawable implements CGDrawable {
 
     private int intValueFrom(CurrentValueSubject binding) {
         return ((Int)binding.getValue()).getInt();
+    }
+
+    private void intValueTo(CurrentValueSubject binding, int value) {
+        ((Int)binding.getValue()).setInt(value);
     }
 }

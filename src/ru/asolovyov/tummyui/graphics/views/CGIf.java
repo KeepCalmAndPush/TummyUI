@@ -27,7 +27,7 @@ public class CGIf extends CGSomeDrawable {
         this.conditionBinding.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
                 if (canvas() != null) {
-                    canvas().needsRepaint().setBool(true);
+                    canvas().setNeedsRepaint();
                 }
                 //TODO вычислить рект, описывающий старый и новый фоейм, и перерисовывать именно его
             }
