@@ -50,13 +50,16 @@ public interface CGDrawable {
     public CGDrawable canvas(CGCanvas canvas);
 
     public CGDrawable sizeToFit();
-    
+
+    public int color();
     public CGDrawable color(int backgroundColorHex);
     public CGDrawable color(Int backgroundColorHex);
 
+    public int backgroundColor();
     public CGDrawable backgroundColor(int backgroundColorHex);
     public CGDrawable backgroundColor(Int backgroundColorHex);
-    
+
+    public int borderColor();
     public CGDrawable borderColor(int borderColorHex);
     public CGDrawable borderColor(Int borderColorHex);
 

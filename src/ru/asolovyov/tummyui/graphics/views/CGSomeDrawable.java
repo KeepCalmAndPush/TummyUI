@@ -93,10 +93,10 @@ public abstract class CGSomeDrawable implements CGDrawable {
         });
 
         Publisher xyWidthHeight = (Publisher) Publisher.combineLatest(new IPublisher[]{
-            this.xBinding.switchToLatest().removeDuplicates(),
-            this.yBinding.switchToLatest().removeDuplicates(),
-            this.widthBinding.switchToLatest().removeDuplicates(),
-            this.heightBinding.switchToLatest().removeDuplicates(),
+            this.xBinding.switchToLatest(),
+            this.yBinding.switchToLatest(),
+            this.widthBinding.switchToLatest(),
+            this.heightBinding.switchToLatest(),
         });
 
         xyWidthHeight.sink(new Sink() {
@@ -108,7 +108,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
         });
 
         //БЛЯТЬ ВТОРОЙ СУБСКРИПШЕН НЕ ПОДКЛЮЧАЕТСЯ!
-        xyWidthHeight.drop(1).prefix(1).sink(new Sink() {
+        xyWidthHeight.drop(1).sink(new Sink() {
             protected void onValue(Object value) {
                 Object[] values = ((Object[])value);
                 S.println("XYWH 4 P2D1: " + S.arrayToString(values));
@@ -169,15 +169,16 @@ public abstract class CGSomeDrawable implements CGDrawable {
             }
         });
 
+        //
         Publisher.combineLatest(new IPublisher[] {
-                    this.color.switchToLatest().removeDuplicates(),
-                    this.backgroundColor.switchToLatest().removeDuplicates(),
-                    this.borderColor.switchToLatest().removeDuplicates(),
-                    this.strokeStyle.switchToLatest().removeDuplicates(),
-                    this.contentOffsetBinding.switchToLatest().removeDuplicates(),
-                    this.contentInsetBinding.switchToLatest().removeDuplicates(),
-                    this.cornerRadiusBinding.switchToLatest().removeDuplicates(),
-                    this.isVisible.switchToLatest().removeDuplicates()
+                    this.color.switchToLatest(),
+                    this.backgroundColor.switchToLatest(),
+                    this.borderColor.switchToLatest(),
+                    this.strokeStyle.switchToLatest(),
+                    this.contentOffsetBinding.switchToLatest(),
+                    this.contentInsetBinding.switchToLatest(),
+                    this.cornerRadiusBinding.switchToLatest(),
+                    this.isVisible.switchToLatest()
                 }).sink(new Sink() {
                     protected void onValue(Object value) {
                         Object[] values = ((Object[])value);
@@ -188,14 +189,14 @@ public abstract class CGSomeDrawable implements CGDrawable {
                 });
 
         Publisher minsMaxes = (Publisher) Publisher.combineLatest(new IPublisher[]{
-                    this.minXBinding.switchToLatest().removeDuplicates(),
-                    this.minYBinding.switchToLatest().removeDuplicates(),
-                    this.maxXBinding.switchToLatest().removeDuplicates(),
-                    this.maxYBinding.switchToLatest().removeDuplicates(),
-                    this.minWidthBinding.switchToLatest().removeDuplicates(),
-                    this.minHeightBinding.switchToLatest().removeDuplicates(),
-                    this.maxWidthBinding.switchToLatest().removeDuplicates(),
-                    this.maxHeightBinding.switchToLatest().removeDuplicates()
+                    this.minXBinding.switchToLatest(),
+                    this.minYBinding.switchToLatest(),
+                    this.maxXBinding.switchToLatest(),
+                    this.maxYBinding.switchToLatest(),
+                    this.minWidthBinding.switchToLatest(),
+                    this.minHeightBinding.switchToLatest(),
+                    this.maxWidthBinding.switchToLatest(),
+                    this.maxHeightBinding.switchToLatest()
         });
 
         minsMaxes.sink(new Sink() {
@@ -206,7 +207,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
             }
         });
 
-        minsMaxes.prefix(2).drop(1).sink(new Sink() {
+        minsMaxes.drop(1).sink(new Sink() {
             protected void onValue(Object value) {
                 Object[] values = ((Object[]) value);
                 S.println("8 MINMAX P2 D1: " + S.arrayToString(values));
@@ -365,6 +366,10 @@ public abstract class CGSomeDrawable implements CGDrawable {
         return this;
     }
 
+    public int backgroundColor() {
+        return intValueFrom(this.backgroundColor);
+    }
+
     public CGDrawable backgroundColor(int colorHex) {
         return this.backgroundColor(new Int(colorHex));
     }
@@ -372,6 +377,10 @@ public abstract class CGSomeDrawable implements CGDrawable {
     public CGDrawable backgroundColor(Int backgroundColorHex) {
         this.backgroundColor.sendValue(backgroundColorHex);
         return this;
+    }
+
+    public int color() {
+        return intValueFrom(this.color);
     }
 
     public CGDrawable color(int colorHex) {
@@ -419,15 +428,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
         return canvas;
     }
 
-    protected int color() {
-        return this.intValueFrom(color);
-    }
-
-    protected int backgroundColor() {
-        return this.intValueFrom(backgroundColor);
-    }
-
-    protected int borderColor() {
+    public int borderColor() {
         return this.intValueFrom(borderColor);
     }
 
@@ -724,11 +725,15 @@ public abstract class CGSomeDrawable implements CGDrawable {
 
     public String toString() {
         return S.stripPackageName(super.toString()) + " " + frame()
-//                + ", x: " + minX() + "-" + maxX()
-//                + ", y: " + minY() + "-" + maxY()
-//                + "; wi: " + minWidth() + "-" + maxWidth()
-//                + ", he: " + minHeight() + "-" + maxHeight()
+                + ", {x: " + minX() + "..." + orMax(maxX())
+                + ", y: " + minY() + "..." + orMax(maxY())
+                + "; wi: " + minWidth() + "..." + orMax(maxWidth())
+                + ", he: " + minHeight() + "..." + orMax(maxHeight()) + "}"
                 ;
+    }
+
+    private String orMax(int value) {
+        return value == Integer.MAX_VALUE ? "INF" : "" + value;
     }
 
     private int intValueFrom(CurrentValueSubject binding) {

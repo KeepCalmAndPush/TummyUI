@@ -7,7 +7,6 @@ package ru.asolovyov.tummyui.test;
 
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Font;
-import javax.microedition.lcdui.Image;
 import ru.asolovyov.combime.bindings.Bool;
 import ru.asolovyov.combime.bindings.Int;
 import ru.asolovyov.threading.Clock;
@@ -15,10 +14,9 @@ import ru.asolovyov.tummyui.forms.UIMIDlet;
 import ru.asolovyov.tummyui.graphics.CG;
 import ru.asolovyov.tummyui.graphics.CGColor;
 import ru.asolovyov.tummyui.graphics.views.CGDrawable;
-import ru.asolovyov.tummyui.graphics.CGFrame;
 import ru.asolovyov.tummyui.graphics.CGSize;
+import ru.asolovyov.tummyui.graphics.views.CGRectangle;
 import ru.asolovyov.tummyui.graphics.views.CGStack;
-import ru.asolovyov.tummyui.graphics.views.CGText;
 
 /**
  * TODO тест-кейсы
@@ -41,9 +39,9 @@ public class Canvas extends UIMIDlet {
         // TODO управление памятью,
         // TODO отписка от подписок,
         return CG.Canvas(
-                testHStackWithTwoViewsWithOneFixedWidthFillsCanvas()
+//                testHStackWithTwoViewsWithOneFixedWidthFillsCanvas()
 //                testVStackWithTwoViewsViewFillsCanvas()
-//                testHStackWithTwoViewsViewFillsCanvas()
+                testHStackWithTwoViewsViewFillsCanvas()
 //                testVStackWithOneViewFillsCanvas()
 //                testZStackWithOneViewFillsCanvas()
 //                testZStackWithTwoViewsFillsCanvasAndRespectsOrder()
@@ -115,6 +113,16 @@ public class Canvas extends UIMIDlet {
                 );
     }
 
+    private CGDrawable kek = CG.Rect()
+                .backgroundColor(CGColor.GREEN_YELLOW)
+//                .frame(10, 10, 100, 100)
+                .width(100)
+                .height(100)
+                .maxWidth(132)
+                .maxHeight(176)
+                ;
+
+//    int color = CGColor.WHITE_SMOKE;
     private CGDrawable testFrameSetsViaSeaparateBindings() {
         /*
          * CGRectangle@f4819689 CGFrame@168c00 (0,0; 0,0) WILL SET WIDTH 100
@@ -126,14 +134,19 @@ public class Canvas extends UIMIDlet {
             86 CVS sendValue 100
             22 CVS sendValue ru.asolovyov.combime.bindings.Int@e8b7ef9f subscriptions: 0
          */
-        return CG.Rect()
-                .backgroundColor(CGColor.GREEN_YELLOW)
-//                .frame(10, 10, 100, 100)
-                .x(10)
-                .y(10)
-                .width(100)
-                .height(100)
-                ;
+        clock = new Clock(500);
+        clock.add(new Runnable() {
+            public void run() {
+//                color -= 10;
+                kek
+                        .width(kek.width() + 1)
+                        .height(kek.height() + 1)
+//                        .backgroundColor(kek.backgroundColor() - 10)
+                        ;
+            }
+        });
+
+        return kek;
     }
     
     Clock clock;
@@ -153,21 +166,21 @@ public class Canvas extends UIMIDlet {
      )
      *
      */
-    {
-        clock = new Clock(500);
-        clock.add(new Runnable() {
-            public void run() {
-                int j = i++%2;
-                cond.setBool(j == 0);
-                
-                if (j == 0) {
-                    int arc = arcColor.getInt();
-                    arcColor.setInt(backColor.getInt());
-                    backColor.setInt(arc);
-                }
-            }
-        });
-    }
+//    {
+//        clock = new Clock(500);
+//        clock.add(new Runnable() {
+//            public void run() {
+//                int j = i++%2;
+//                cond.setBool(j == 0);
+//
+//                if (j == 0) {
+//                    int arc = arcColor.getInt();
+//                    arcColor.setInt(backColor.getInt());
+//                    backColor.setInt(arc);
+//                }
+//            }
+//        });
+//    }
 
     
     // TODO запилить движок анимаций: сделать здоровенный метод в CG, типа animate(delay, duration, view, frame, bgcolor, borderColor, cornerRadius, inset итп)
