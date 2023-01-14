@@ -14,7 +14,6 @@ import ru.asolovyov.tummyui.bindings.Size;
 import java.lang.Math.*;
 import ru.asolovyov.combime.operators.mapping.Map;
 import ru.asolovyov.threading.DispatchQueue;
-import ru.asolovyov.tummyui.bindings.Frame;
 import ru.asolovyov.tummyui.bindings.Point;
 import ru.asolovyov.tummyui.data.List;
 import ru.asolovyov.tummyui.graphics.CG;
@@ -225,7 +224,7 @@ public class CGStack extends CGSomeDrawable {
         }
     }
 
-    private void hDraw(Graphics g) {
+    private void hDraw(Graphics g) {        
         final Graphics graphics = g;
 
         final CGFrame thisFrame = frame();
@@ -593,9 +592,11 @@ public class CGStack extends CGSomeDrawable {
         frame.width = size.width;
         frame.height = size.height;
         S.println("AFTER MASSIVE CALCULATIONS FRAME IS: " + frame);
-//        this.frameBinding.sendValue(new Frame(frame));
-        this.frame(frame);
 
+        if (!frame.equals(frame())) {
+            this.frame(frame);
+        }
+        
         return contentSize;
     }
 
@@ -680,8 +681,10 @@ public class CGStack extends CGSomeDrawable {
                 S.println("ADJUST VALUE BINDING WILL SET " + value);
 
                 if (isHeight) {
+                    if (value != view.height())
                     view.height(value);
                 } else {
+                    if (value != view.width())
                     view.width(value);
                 }
 

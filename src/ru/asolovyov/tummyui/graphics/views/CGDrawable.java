@@ -8,7 +8,6 @@ package ru.asolovyov.tummyui.graphics.views;
 import javax.microedition.lcdui.Graphics;
 import ru.asolovyov.combime.bindings.Bool;
 import ru.asolovyov.combime.bindings.Int;
-import ru.asolovyov.tummyui.bindings.Frame;
 import ru.asolovyov.tummyui.bindings.Insets;
 import ru.asolovyov.tummyui.bindings.Point;
 import ru.asolovyov.tummyui.bindings.Size;

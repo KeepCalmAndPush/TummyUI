@@ -15,7 +15,6 @@ import ru.asolovyov.tummyui.graphics.CG;
 import ru.asolovyov.tummyui.graphics.CGColor;
 import ru.asolovyov.tummyui.graphics.views.CGDrawable;
 import ru.asolovyov.tummyui.graphics.CGSize;
-import ru.asolovyov.tummyui.graphics.views.CGRectangle;
 import ru.asolovyov.tummyui.graphics.views.CGStack;
 
 /**
@@ -39,30 +38,29 @@ public class Canvas extends UIMIDlet {
         // TODO управление памятью,
         // TODO отписка от подписок,
         return CG.Canvas(
-//                testHStackWithTwoViewsWithOneFixedWidthFillsCanvas()
+                testHStackWithTwoViewsWithOneFixedWidthFillsCanvas() //FAIL
 //                testVStackWithTwoViewsViewFillsCanvas()
-                testHStackWithTwoViewsViewFillsCanvas()
+//                testHStackWithTwoViewsViewFillsCanvas()
 //                testVStackWithOneViewFillsCanvas()
 //                testZStackWithOneViewFillsCanvas()
 //                testZStackWithTwoViewsFillsCanvasAndRespectsOrder()
-//                testHStackWithOneViewFillsCanvas()
+//                testHStackWithOneViewFillsCanvas() //ок но чота бесконечные рассчеты
 //                БЕСКОНЕЧНЫЙ ЦИКЛ, ВИДАТЬ ПРОБЛЕМЫ СО ВКЛАДЫВАНИЕМ СТЭКОВ
 //                textStylesIteratingHorizontalStackOfLabels()
-//                testFrameSetsViaSeaparateBindings()
+//                testFrameSetsByMaxWidthMaxHeight()
+//                testRectFillsCanvasWhenNoDimensionsSet()
+//                testRectFillsCanvasWhenSmallMinsSet()
+//                testRectFrameOk()
           ).backgroundColor(CGColor.RED);
     }
 
     //ЕСЛИ ВЬЮХА С ЗАДАННЫМ МАКС ВИДС НЕ НА ПЕРВОМ МЕСТЕ, ТО БЕСКОНЕЧНЫЙ ЦИКЛ
     private CGDrawable testHStackWithTwoViewsWithOneFixedWidthFillsCanvas() {
         return CG.HStack(
-                CG.Rect().backgroundColor(CGColor.BLUE),
+                CG.Rect().backgroundColor(CGColor.BLUE).width(20),
                 CG.Rect().backgroundColor(CGColor.YELLOW)//.maxWidth(20)//,
 //                CG.Rect().backgroundColor(CGColor.GREEN).maxWidth(30)
                 )
-//                .maxHeight(160)
-//                .width(128).height(128)
-//                .maxHeight(128)
-//                .maxWidth(128)
                 .borderColor(CGColor.BLACK)
                 .backgroundColor(CGColor.ORANGE)
                 ;
@@ -113,17 +111,17 @@ public class Canvas extends UIMIDlet {
                 );
     }
 
-    private CGDrawable kek = CG.Rect()
-                .backgroundColor(CGColor.GREEN_YELLOW)
-//                .frame(10, 10, 100, 100)
-                .width(100)
-                .height(100)
-                .maxWidth(132)
-                .maxHeight(176)
-                ;
+//    private CGDrawable kek = CG.Rect()
+//                .backgroundColor(CGColor.GREEN_YELLOW)
+////                .frame(10, 10, 100, 100)
+////                .width(100)
+////                .height(100)
+//                .maxWidth(132)
+//                .maxHeight(176)
+//                ;
 
 //    int color = CGColor.WHITE_SMOKE;
-    private CGDrawable testFrameSetsViaSeaparateBindings() {
+    private CGDrawable testFrameSetsByMaxWidthMaxHeight() {
         /*
          * CGRectangle@f4819689 CGFrame@168c00 (0,0; 0,0) WILL SET WIDTH 100
             83 CVS sendValue 100
@@ -134,19 +132,45 @@ public class Canvas extends UIMIDlet {
             86 CVS sendValue 100
             22 CVS sendValue ru.asolovyov.combime.bindings.Int@e8b7ef9f subscriptions: 0
          */
-        clock = new Clock(500);
-        clock.add(new Runnable() {
-            public void run() {
-//                color -= 10;
-                kek
-                        .width(kek.width() + 1)
-                        .height(kek.height() + 1)
-//                        .backgroundColor(kek.backgroundColor() - 10)
-                        ;
-            }
-        });
+//        clock = new Clock(100500);
+//        clock.add(new Runnable() {
+//            public void run() {
+////                color -= 10;
+//                kek
+//                        .width(kek.width() + 1)
+//                        .height(kek.height() + 1)
+////                        .backgroundColor(kek.backgroundColor() - 10)
+//                        ;
+//            }
+//        });
 
-        return kek;
+//        return kek;
+
+        return CG.Rect()
+                .backgroundColor(CGColor.GREEN)
+                .maxWidth(132)
+                .maxHeight(176)
+                ;
+    }
+
+    private CGDrawable testRectFillsCanvasWhenNoDimensionsSet() {
+        return CG.Rect()
+                .backgroundColor(CGColor.GREEN)
+                ;
+    }
+
+    private CGDrawable testRectFillsCanvasWhenSmallMinsSet() {
+        return CG.Rect()
+                .backgroundColor(CGColor.GREEN)
+                .minWidth(100).minHeight(100)
+                ;
+    }
+
+    private CGDrawable testRectFrameOk() {
+        return CG.Rect()
+                .backgroundColor(CGColor.GREEN)
+                .frame(10, 10, 100, 100)
+                ;
     }
     
     Clock clock;

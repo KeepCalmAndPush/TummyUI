@@ -12,7 +12,6 @@ import ru.asolovyov.combime.common.S;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.combime.publishers.Publisher;
 import ru.asolovyov.combime.subjects.CurrentValueSubject;
-import ru.asolovyov.tummyui.bindings.Frame;
 import ru.asolovyov.tummyui.bindings.Insets;
 import ru.asolovyov.tummyui.bindings.Point;
 import ru.asolovyov.tummyui.bindings.Size;
@@ -29,23 +28,23 @@ import ru.asolovyov.tummyui.graphics.CGSize;
 public abstract class CGSomeDrawable implements CGDrawable {
     protected CurrentValueSubject/*!!!<CGSize>!!!*/ intrinsicContentSizeBinding = new Size(CGSize.zero());
 
-    protected CurrentValueSubject/*<Int>*/ xBinding = new CurrentValueSubject(new Int(0));
-    protected CurrentValueSubject/*<Int>*/ yBinding = new CurrentValueSubject(new Int(0));
+    protected CurrentValueSubject/*<Int>*/ xBinding = new CurrentValueSubject(new Int(CG.NULL));
+    protected CurrentValueSubject/*<Int>*/ yBinding = new CurrentValueSubject(new Int(CG.NULL));
     
-    protected CurrentValueSubject/*<Int>*/ widthBinding = new CurrentValueSubject(new Int(0));
-    protected CurrentValueSubject/*<Int>*/ heightBinding = new CurrentValueSubject(new Int(0));
+    protected CurrentValueSubject/*<Int>*/ widthBinding = new CurrentValueSubject(new Int(CG.NULL));
+    protected CurrentValueSubject/*<Int>*/ heightBinding = new CurrentValueSubject(new Int(CG.NULL));
 
-    protected CurrentValueSubject/*<Int>*/ minXBinding = new CurrentValueSubject(new Int(0));
-    protected CurrentValueSubject/*<Int>*/ minYBinding = new CurrentValueSubject(new Int(0));
+    protected CurrentValueSubject/*<Int>*/ minXBinding = new CurrentValueSubject(new Int(CG.NULL));
+    protected CurrentValueSubject/*<Int>*/ minYBinding = new CurrentValueSubject(new Int(CG.NULL));
 
-    protected CurrentValueSubject/*<Int>*/ maxXBinding = new CurrentValueSubject(new Int(Integer.MAX_VALUE));
-    protected CurrentValueSubject/*<Int>*/ maxYBinding = new CurrentValueSubject(new Int(Integer.MAX_VALUE));
+    protected CurrentValueSubject/*<Int>*/ maxXBinding = new CurrentValueSubject(new Int(CG.NULL));
+    protected CurrentValueSubject/*<Int>*/ maxYBinding = new CurrentValueSubject(new Int(CG.NULL));
 
-    protected CurrentValueSubject/*<Int>*/ minWidthBinding = new CurrentValueSubject(new Int(0));
-    protected CurrentValueSubject/*<Int>*/ minHeightBinding = new CurrentValueSubject(new Int(0));
+    protected CurrentValueSubject/*<Int>*/ minWidthBinding = new CurrentValueSubject(new Int(CG.NULL));
+    protected CurrentValueSubject/*<Int>*/ minHeightBinding = new CurrentValueSubject(new Int(CG.NULL));
 
-    protected CurrentValueSubject/*<Int>*/ maxWidthBinding = new CurrentValueSubject(new Int(Integer.MAX_VALUE));
-    protected CurrentValueSubject/*<Int>*/ maxHeightBinding = new CurrentValueSubject(new Int(Integer.MAX_VALUE));
+    protected CurrentValueSubject/*<Int>*/ maxWidthBinding = new CurrentValueSubject(new Int(CG.NULL));
+    protected CurrentValueSubject/*<Int>*/ maxHeightBinding = new CurrentValueSubject(new Int(CG.NULL));
 
     protected CurrentValueSubject/*<Int>*/ color = new CurrentValueSubject(new Int(CG.NULL));
     protected CurrentValueSubject/*<Int>*/ backgroundColor = new CurrentValueSubject(new Int(CG.NULL));
@@ -59,16 +58,6 @@ public abstract class CGSomeDrawable implements CGDrawable {
     protected CurrentValueSubject/*<Bool>*/ isVisible = new CurrentValueSubject(new Bool(true));
     private CGCanvas canvas;
 
-    //TODO ОТРЕФАЧИТЬ ИМПЕРАТИВНОЕ ГОВНО
-    private boolean mayInferMinX = true;
-    private boolean mayInferMaxX = true;
-    private boolean mayInferMinY = true;
-    private boolean mayInferMaxY = true;
-    private boolean mayInferMinWidth = true;
-    private boolean mayInferMaxWidth = true;
-    private boolean mayInferMinHeight = true;
-    private boolean mayInferMaxHeight = true;
-
     private KeyboardHandler keyboardHandler;
     private GeometryReader geometryReader;
     
@@ -81,6 +70,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
         this.canvas = canvas;
 
         this.startHandlingKeyboard();
+        this.updateIntrinsicContentSize();
         canvas.setNeedsRepaint();
         return this;
     }
@@ -107,69 +97,13 @@ public abstract class CGSomeDrawable implements CGDrawable {
             }
         });
 
-        //БЛЯТЬ ВТОРОЙ СУБСКРИПШЕН НЕ ПОДКЛЮЧАЕТСЯ!
         xyWidthHeight.drop(1).sink(new Sink() {
             protected void onValue(Object value) {
                 Object[] values = ((Object[])value);
-                S.println("XYWH 4 P2D1: " + S.arrayToString(values));
-
-                CGFrame frame = frame();
-                frame.x = values[0] == null ? frame.x : ((Integer)values[0]).intValue();
-                frame.y = values[1] == null ? frame.y : ((Integer)values[1]).intValue();
-                frame.width = values[2] == null ? frame.width : ((Integer)values[2]).intValue();
-                frame.height = values[3] == null ? frame.height : ((Integer)values[3]).intValue();
-
-                if (values[0] != null) {
-                    S.println("0 " + mayInferMinX + mayInferMaxX);
-                    if (mayInferMinX) {
-                        mayInferMinX = false;
-                        minX(frame.x);
-                    }
-                    if (mayInferMaxX) {
-                        mayInferMaxX = false;
-                        maxX(frame.x);
-                    }
-                }
-
-                if (values[1] != null) {
-                    S.println("1 " + mayInferMinY + mayInferMaxY);
-                    if (mayInferMinY) {
-                        mayInferMinY = false;
-                        minY(frame.y);
-                    }
-                    if (mayInferMaxY) {
-                        mayInferMaxY = false;
-                        maxY(frame.y);
-                    }
-                }
-
-                if (values[2] != null) {
-                    S.println("2 " + mayInferMinWidth + mayInferMaxWidth);
-                    if (mayInferMinWidth) {
-                        mayInferMinWidth = false;
-                        minWidth(frame.width);
-                    }
-                    if (mayInferMaxWidth) {
-                        mayInferMaxWidth = false;
-                        maxWidth(frame.width);
-                    }
-                }
-
-                if (values[3] != null) {
-                    S.println("3 " + mayInferMinHeight + mayInferMaxHeight);
-                    if (mayInferMinHeight) {
-                        mayInferMinHeight = false;
-                        minHeight(frame.height);
-                    }
-                    if (mayInferMaxHeight) {
-                        mayInferMaxHeight = false;
-                        maxHeight(frame.height);
-                    }
-                }
+                inferMinMaxValues(values);
             }
         });
-
-        //
+        
         Publisher.combineLatest(new IPublisher[] {
                     this.color.switchToLatest(),
                     this.backgroundColor.switchToLatest(),
@@ -206,45 +140,50 @@ public abstract class CGSomeDrawable implements CGDrawable {
                 needsRelayout();
             }
         });
+    }
 
-        minsMaxes.drop(1).sink(new Sink() {
-            protected void onValue(Object value) {
-                Object[] values = ((Object[]) value);
-                S.println("8 MINMAX P2 D1: " + S.arrayToString(values));
-                if (values[0] != null) {
-                    mayInferMinX = false;
-                    S.println("mayInferMinX = false;");
-                }
-                if (values[1] != null) {
-                    mayInferMaxX = false;
-                    S.println("mayInferMaxX = false;");
-                }
-                if (values[2] != null) {
-                    mayInferMinY = false;
-                    S.println("mayInferMinY = false;");
-                }
-                if (values[3] != null) {
-                    mayInferMaxY = false;
-                    S.println("mayInferMaxY = false;");
-                }
-                if (values[4] != null) {
-                    mayInferMinWidth = false;
-                    S.println("mayInferMinWidth= false;");
-                }
-                if (values[5] != null) {
-                    mayInferMaxWidth = false;
-                    S.println("mayInferMaxWidth = false;");
-                }
-                if (values[6] != null) {
-                    mayInferMinHeight = false;
-                    S.println("mayInferMinHeight = false;");
-                }
-                if (values[7] != null) {
-                    mayInferMaxHeight = false;
-                    S.println("mayInferMaxHeight = false;");
-                }
+    private void inferMinMaxValues(Object[] xywhIntegers) {
+        Object xI = xywhIntegers[0];
+        Object yI = xywhIntegers[1];
+        Object widthI = xywhIntegers[2];
+        Object heightI = xywhIntegers[3];
+
+        if (xI != null) {
+            int value = ((Integer)xI).intValue();
+            if (intValueFrom(minXBinding) == CG.NULL && value != CG.NULL) {
+                minX(value);
             }
-        });
+            if (intValueFrom(maxXBinding) == CG.NULL && value != CG.NULL) {
+                maxX(value);
+            }
+        }
+        if (yI != null) {
+            int value = ((Integer)yI).intValue();
+            if (intValueFrom(minYBinding) == CG.NULL && value != CG.NULL) {
+                minY(value);
+            }
+            if (intValueFrom(maxYBinding) == CG.NULL && value != CG.NULL) {
+                maxY(value);
+            }
+        }
+        if (widthI != null) {
+            int value = ((Integer)widthI).intValue();
+            if (intValueFrom(minWidthBinding) == CG.NULL && value != CG.NULL) {
+                minWidth(value);
+            }
+            if (intValueFrom(maxWidthBinding) == CG.NULL && value != CG.NULL) {
+                maxWidth(value);
+            }
+        }
+        if (heightI != null) {
+            int value = ((Integer)heightI).intValue();
+            if (intValueFrom(minHeightBinding) == CG.NULL && value != CG.NULL) {
+                minHeight(value);
+            }
+            if (intValueFrom(maxHeightBinding) == CG.NULL && value != CG.NULL) {
+                maxHeight(value);
+            }
+        }
     }
 
     public CGDrawable width(Int width) {
@@ -269,19 +208,23 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     public int width() {
-        return this.intValueFrom(widthBinding);
+        int value = this.intValueFrom(widthBinding);
+        return value == CG.NULL ? 0 : value;
     }
 
     public int height() {
-        return this.intValueFrom(heightBinding);
+        int value = this.intValueFrom(heightBinding);
+        return value == CG.NULL ? 0 : value;
     }
 
     public int x() {
-        return this.intValueFrom(xBinding);
+        int value = this.intValueFrom(xBinding);
+        return value == CG.NULL ? 0 : value;
     }
 
     public int y() {
-        return this.intValueFrom(yBinding);
+        int value = this.intValueFrom(yBinding);
+        return value == CG.NULL ? 0 : value;
     }
 
     public CGDrawable x(Int x) {
@@ -335,24 +278,14 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     public CGFrame frame() {
-        return new CGFrame(
-                intValueFrom(xBinding),
-                intValueFrom(yBinding),
-                intValueFrom(widthBinding),
-                intValueFrom(heightBinding));
+        return new CGFrame(x(), y(), width(), height());
     }
 
     public CGDrawable frame(int x, int y, int width, int height) {
         CGFrame frame = new CGFrame(x, y, width, height);
         S.println(this + " will be given a frame comps " + frame);
         
-        return this.frame(new Frame(frame));
-    }
-
-    public CGDrawable frame(Frame frame) {
-        S.println(this + " will be given a Frame " + frame.getCGFrame());
-//        this.frameBinding.sendValue(frame);
-        return this;
+        return this.frame(frame);
     }
 
     public CGDrawable frame(CGFrame frame) {
@@ -432,11 +365,6 @@ public abstract class CGSomeDrawable implements CGDrawable {
         return this.intValueFrom(borderColor);
     }
 
-    public CGDrawable origin(Point origin) {
-//        this.originBinding.sendValue(origin);
-        return this;
-    }
-
     public CGDrawable minX(Int minX) {
         this.minXBinding.sendValue(minX);
         return this;
@@ -510,35 +438,43 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     public int minX() {
-        return this.intValueFrom(minXBinding);
+        int value = this.intValueFrom(minXBinding);
+        return value == CG.NULL ? 0 : value;
     }
 
     public int minY() {
-        return this.intValueFrom(minYBinding);
+        int value = this.intValueFrom(minYBinding);
+        return value == CG.NULL ? 0 : value;
     }
 
     public int maxX() {
-        return this.intValueFrom(maxXBinding);
+        int value = this.intValueFrom(maxXBinding);
+        return value == CG.NULL ? Integer.MAX_VALUE : value;
     }
 
     public int maxY() {
-        return this.intValueFrom(maxYBinding);
+        int value = this.intValueFrom(maxYBinding);
+        return value == CG.NULL ? Integer.MAX_VALUE : value;
     }
 
     public int minWidth() {
-        return this.intValueFrom(minWidthBinding);
+        int value = this.intValueFrom(minWidthBinding);
+        return value == CG.NULL ? 0 : value;
     }
 
     public int minHeight() {
-        return this.intValueFrom(minHeightBinding);
+        int value = this.intValueFrom(minHeightBinding);
+        return value == CG.NULL ? 0 : value;
     }
 
     public int maxWidth() {
-        return this.intValueFrom(maxWidthBinding);
+        int value = this.intValueFrom(maxWidthBinding);
+        return value == CG.NULL ? Integer.MAX_VALUE : value;
     }
 
     public int maxHeight() {
-        return this.intValueFrom(maxHeightBinding);
+        int value = this.intValueFrom(maxHeightBinding);
+        return value == CG.NULL ? Integer.MAX_VALUE : value;
     }
 
     public boolean hasGrowableWidth() {
@@ -633,14 +569,12 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     public CGDrawable origin(int x, int y) {
-        return this.origin(new Point(new CGPoint(x, y)));
+        x(x); y(y);
+        return this;
     }
 
     public CGPoint origin() {
-        return new CGPoint(
-                intValueFrom(xBinding),
-                intValueFrom(yBinding)
-                );
+        return new CGPoint(x(), y());
     }
 
     public CGDrawable contentOffset(Point offset) {
@@ -737,7 +671,8 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     private int intValueFrom(CurrentValueSubject binding) {
-        return ((Int)binding.getValue()).getInt();
+        int value = ((Int)binding.getValue()).getInt();
+        return value;
     }
 
     private void intValueTo(CurrentValueSubject binding, int value) {
