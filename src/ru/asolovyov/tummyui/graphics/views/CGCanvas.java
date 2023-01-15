@@ -81,7 +81,7 @@ public class CGCanvas extends Canvas {
         g.setColor(this.backgroundColor.getInt());
         g.fillRect(0, 0, this.getWidth(), this.getHeight());
         for (int i = 0; i < this.content.length; i++) {
-            CGDrawable drawable = content[i];
+            CGDrawable drawable = this.content[i];
             drawable.draw(g);
         }
     }

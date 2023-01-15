@@ -34,7 +34,8 @@ public class CGImage extends CGSomeDrawable {
     public CGImage image(Obj image) {
         this.image = image;
         Image iImage = (Image)image.getObject();
-        this.frame(new CGFrame(0, 0, iImage.getWidth(), iImage.getHeight()));
+        this.widthBinding.sendValue(new Int(iImage.getWidth()));
+        this.heightBinding.sendValue(new Int(iImage.getHeight()));
         
         this.image.sink(new Sink() {
             protected void onValue(Object value) {

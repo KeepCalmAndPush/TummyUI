@@ -10,6 +10,7 @@ import javax.microedition.lcdui.Graphics;
 import ru.asolovyov.combime.bindings.Int;
 import ru.asolovyov.combime.bindings.Obj;
 import ru.asolovyov.combime.bindings.Str;
+import ru.asolovyov.combime.common.S;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.tummyui.bindings.Size;
 import ru.asolovyov.tummyui.graphics.CG;
@@ -35,8 +36,9 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
     
     public CGText text(Str text) {
         this.text = text;
-        this.text.sink(new Sink() {
+        this.text.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
+                S.println("CGTEXT TEXT: " + value);
                 updateIntrinsicContentSize();
             }
         });
@@ -46,6 +48,7 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
     }
 
     public CGText text(String text) {
+        S.println("CGTEXT SET TEXT: " + text);
         this.text.setString(text);
         return this;
     }

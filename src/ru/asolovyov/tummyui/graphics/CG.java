@@ -219,7 +219,7 @@ public class CG {
 
         int lineHeight = font.getHeight();
 
-        S.println(text);
+        S.println("makeMultilineText FROM TEXT: " + text);
 
         for (int characterIndex = 0; characterIndex < text.length(); characterIndex++) {
             char currentCharacter = text.charAt(characterIndex);

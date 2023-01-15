@@ -28,6 +28,7 @@ import ru.asolovyov.tummyui.graphics.CGSize;
 public abstract class CGSomeDrawable implements CGDrawable {
     protected CurrentValueSubject/*!!!<CGSize>!!!*/ intrinsicContentSizeBinding = new Size(CGSize.zero());
 
+    //TODO сделать получение корректного последнего значения, а не значения из последнего переданного Биндинга.
     protected CurrentValueSubject/*<Int>*/ xBinding = new CurrentValueSubject(new Int(CG.NULL));
     protected CurrentValueSubject/*<Int>*/ yBinding = new CurrentValueSubject(new Int(CG.NULL));
     
@@ -90,10 +91,9 @@ public abstract class CGSomeDrawable implements CGDrawable {
             this.heightBinding.switchToLatest(),
         });
 
-        xyWidthHeight.sink(new Sink() {
+        xyWidthHeight.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
-                Object[] values = ((Object[])value);
-                S.println("XYWH 4: " + S.arrayToString(values));
+                S.println("XYWH 4: " + S.arrayToString((Object[])value));
                 needsRelayout();
             }
         });
@@ -107,7 +107,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
                     this.contentInsetBinding.switchToLatest(),
                     this.cornerRadiusBinding.switchToLatest(),
                     this.isVisible.switchToLatest()
-                }).sink(new Sink() {
+                }).removeDuplicates().sink(new Sink() {
                     protected void onValue(Object value) {
                         Object[] values = ((Object[])value);
                         S.println("8 COLORS: " + S.arrayToString(values));
@@ -127,10 +127,9 @@ public abstract class CGSomeDrawable implements CGDrawable {
                     this.maxHeightBinding.switchToLatest()
         });
 
-        minsMaxes.sink(new Sink() {
+        minsMaxes.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
-                Object[] values = ((Object[])value);
-                S.println("8 MINMAX: " + S.arrayToString(values));
+                S.println("8 MINMAX: " + S.arrayToString((Object[])value));
                 needsRelayout();
             }
         });
@@ -494,8 +493,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     protected void updateIntrinsicContentSize() {
-        S.println(this + " WILL updateIntrinsicContentSize()");
-        this.intrinsicContentSizeBinding.sendValue(this.frame().getCGSize()); //SIC!
+        //INTENTIONALLY DO NOTHING
     }
 
     public CGDrawable readGeometry(GeometryReader reader) {

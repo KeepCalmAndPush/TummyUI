@@ -41,7 +41,8 @@ public class CGStack extends CGSomeDrawable {
 
     private int nextLeft = 0;
     private int nextTop = 0;
-    
+
+    //TODO сделать биндинги как в CGSomeDrawable
     protected Arr drawables;
     protected Int alignment = new Int(CG.LEFT);
     protected Int axis = new Int(AXIS_HORIZONTAL);
@@ -684,10 +685,10 @@ public class CGStack extends CGSomeDrawable {
                 value += (isExpanding ? +viewDelta : -viewDelta);
                 S.println("ADJUST VALUE BINDING WILL SET " + value);
 
-                if (isHeight) {
-                    if (value != view.height()) view.heightBinding.sendValue(new Int(value));
-                } else {
-                    if (value != view.width()) view.widthBinding.sendValue(new Int(value));
+                if (isHeight && value != view.height()) {
+                    view.heightBinding.sendValue(new Int(value));
+                } else if (value != view.width()) {
+                    view.widthBinding.sendValue(new Int(value));
                 }
 
                 maxDelta = Math.max(maxDelta, Math.abs(viewDelta));
@@ -720,10 +721,12 @@ public class CGStack extends CGSomeDrawable {
 
                 S.println("VALUE BINDING WILL SET " + value);
 
-                if (isHeight) {
-                    if (value != view.height()) view.heightBinding.sendValue(new Int(value));
+                if (isHeight && value != view.height()) {
+                        view.heightBinding.sendValue(new Int(value));
+                } else if (value != view.width()) {
+                        view.widthBinding.sendValue(new Int(value));
                 } else {
-                    if (value != view.width()) view.widthBinding.sendValue(new Int(value));
+                    adjustablesCount--;
                 }
 
                 S.println("REMAINIG DELTA " + remainingDelta + "; spaceToAdjust " + spaceToAdjust);
@@ -747,8 +750,6 @@ public class CGStack extends CGSomeDrawable {
         CGSize size = this.contentSize().getCGSize();
         S.println(this + " DID UPDATE SIZES, NOW HAS: " + size);
 
-        if (!size.equals(this.intrinsicContentSize())) {
-            this.intrinsicContentSizeBinding.sendValue(size);
-        }
+        this.intrinsicContentSizeBinding.sendValue(size);
     }
 }

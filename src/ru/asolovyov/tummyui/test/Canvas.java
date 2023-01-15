@@ -46,11 +46,14 @@ public class Canvas extends UIMIDlet {
 //                testHStackWithTwoViewsViewFillsCanvas() //OK
 //                testVStackWithOneViewFillsCanvas() //OK
 //                testZStackWithOneViewFillsCanvas() //OK
-//                testZStackWithTwoViewsFillsCanvasAndRespectsOrder() //OK но если у вьюх будут фреймы, то либо едет верстка: либо аут оф мемор
-//                testHStackWithOneViewFillsCanvas() //ок но чота бесконечные рассчеты
+//                testZStackWithTwoViewsFillsCanvasAndRespectsOrder() //OK
+//                testHStackWithOneViewFillsCanvas() //ок
 
-
-                textStylesIteratingHorizontalStackOfLabels() //FAIL тут бесконечное обновление интринсика
+                //OK НО ТУТ ЕСТЬ ТРАБЛЫ 1) Если не задать высоты текстам, то все растягивается даже в ширину
+                // 2) Между ВСтеками в ХСтеке двойное расстояние.
+                // 3) НЕ РАБОТАЕТ СКРОЛЛИНГ СТЕКА :(
+                // 4) Оч тормозит
+                textStylesIteratingHorizontalStackOfLabels() 
 //                testFrameSetsByMaxWidthMaxHeight() //OK
 //                testRectFillsCanvasWhenNoDimensionsSet() //OK
 //                testRectFillsCanvasWhenSmallMinsSet() //OK
@@ -240,11 +243,13 @@ public class Canvas extends UIMIDlet {
         return CG.HStack(
                 new CGStack(
                 CGStack.AXIS_VERTICAL,
-                new Object[]{ new Integer(Font.SIZE_SMALL), new Integer(Font.SIZE_MEDIUM) },
+                new Object[]{new Integer(Font.SIZE_SMALL), new Integer(Font.SIZE_MEDIUM)},
                 new CGStack.DrawableFactory() {
                     public CGDrawable itemFor(Object viewModel) {
                         int size = ((Integer) viewModel).intValue();
                         return CG.Text("12345")
+                                //TODO CG.RIGHT выносит текст на ПОЛБУКВЫ БЛЕАТЬ ЗА ГРАНИЦУ ФРЕЙМА!
+                                .alignment(CG.VCENTER | CG.RIGHT)
                                 .font(Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_PLAIN, size))
                                 .color(0xFF0000)
                                 .backgroundColor(0x00FF00)
@@ -252,64 +257,40 @@ public class Canvas extends UIMIDlet {
                                 .cornerRaduis(new CGSize(20, 20))
                                 .width(50);
                     }
-                })
-//                .origin(10, 20),
-//
-//
-                //TODO Шстек Встеков рисуется где-то в миллионах световых лет
-                //TODO Видимо ориджин и/или сайз не просетывается для стека, он рисуется всегда по центру экрана
-                , new CGStack(
-                    CGStack.AXIS_VERTICAL,
-
-                    new Object[]{
-                        new Integer(Font.STYLE_PLAIN),
-                        new Integer(Font.STYLE_UNDERLINED),
-                        new Integer(Font.STYLE_BOLD)
+                }).spacing(15),
+                        new CGStack(
+                CGStack.AXIS_VERTICAL,
+                new Object[]{
+                    new Integer(Font.STYLE_PLAIN),
+                    new Integer(Font.STYLE_UNDERLINED),
+                    new Integer(Font.STYLE_BOLD)
                 },
+                new CGStack.DrawableFactory() {
 
-                    new CGStack.DrawableFactory() {
                     boolean isEven = true;
 
                     public CGDrawable itemFor(Object viewModel) {
-                        int style = ((Integer)viewModel).intValue();
+                        int style = ((Integer) viewModel).intValue();
                         isEven = !isEven;
 
                         return CG.Text("ABC")
                                 .alignment(CG.CENTER)
                                 .font(Font.getFont(Font.FACE_PROPORTIONAL, style, Font.SIZE_LARGE))
                                 .color(isEven ? CGColor.RED : CGColor.BLACK)
-                                .backgroundColor(isEven ? CGColor.GREEN: CGColor.WHITE)
+                                .backgroundColor(isEven ? CGColor.GREEN : CGColor.WHITE)
                                 .borderColor(isEven ? CGColor.BLUE : CGColor.RED)
                                 .cornerRaduis(new CGSize(20, 20))
                                 .width(50);
                     }
                 })
-//
-//                //.origin(70, 20) // НЕ ПАШЕТ
-//
-//                        , new CGStack(
-//                    CGStack.AXIS_VERTICAL,
-//                    new Object[]{ new Integer(Font.FACE_MONOSPACE), new Integer(Font.FACE_SYSTEM), new Integer(Font.FACE_PROPORTIONAL)},
-//                    new CGStack.DrawableFactory() {
-//
-//                    public CGDrawable itemFor(Object viewModel) {
-//                        int face = ((Integer)viewModel).intValue();
-//
-//                        return CG.Text("Текст")
-//                                .font(Font.getFont(face, Font.STYLE_PLAIN, Font.SIZE_LARGE))
-//                                .color(0xFF0000)
-//                                .backgroundColor(0x00FF00)
-//                                .borderColor(0x0000FF)
-//                                .cornerRaduis(new CGSize(20, 20))
-//                                .width(50);
-//                    }
-//                })
-
-                )
-                .backgroundColor(CGColor.PINK)
-                .borderColor(CGColor.RED)
-                .cornerRaduis(new CGSize(10, 5))
-                .origin(20, 20); // TODO НЕ РАБОТАЕТ!
+                        .spacing(5)
+                        )
+                        .backgroundColor(CGColor.LIGHT_SKY_BLUE)
+                        .borderColor(CGColor.BLUE)
+                        .cornerRaduis(new CGSize(20, 20))
+                        .maxHeight(160)
+                        .maxWidth(160)
+                        .x(10).y(10);
     }
 }
 
