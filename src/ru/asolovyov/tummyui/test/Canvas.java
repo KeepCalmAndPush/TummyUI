@@ -38,39 +38,61 @@ public class Canvas extends UIMIDlet {
         // TODO управление памятью,
         // TODO отписка от подписок,
         return CG.Canvas(
-                testHStackWithTwoViewsWithOneFixedWidthFillsCanvas() //FAIL
-//                testVStackWithTwoViewsViewFillsCanvas()
-//                testHStackWithTwoViewsViewFillsCanvas()
-//                testVStackWithOneViewFillsCanvas()
-//                testZStackWithOneViewFillsCanvas()
-//                testZStackWithTwoViewsFillsCanvasAndRespectsOrder()
+//                testVStackWithTwoViewsNonfixAndSecond20HFix() //OK
+//                testVStackWithTwoViews20HFixAndSecondNonfix() //OK
+//                testHStackWithTwoViewsNonfixAndSecond20WFix() //OK
+//                testHStackWithTwoViews20WFixAndSecondNonfix() //OK
+//                testVStackWithTwoViewsViewFillsCanvas() //OK
+//                testHStackWithTwoViewsViewFillsCanvas() //OK
+//                testVStackWithOneViewFillsCanvas() //OK
+//                testZStackWithOneViewFillsCanvas() //OK
+//                testZStackWithTwoViewsFillsCanvasAndRespectsOrder() //OK но если у вьюх будут фреймы, то либо едет верстка: либо аут оф мемор
 //                testHStackWithOneViewFillsCanvas() //ок но чота бесконечные рассчеты
-//                БЕСКОНЕЧНЫЙ ЦИКЛ, ВИДАТЬ ПРОБЛЕМЫ СО ВКЛАДЫВАНИЕМ СТЭКОВ
-//                textStylesIteratingHorizontalStackOfLabels()
-//                testFrameSetsByMaxWidthMaxHeight()
-//                testRectFillsCanvasWhenNoDimensionsSet()
-//                testRectFillsCanvasWhenSmallMinsSet()
-//                testRectFrameOk()
+
+
+                textStylesIteratingHorizontalStackOfLabels() //FAIL тут бесконечное обновление интринсика
+//                testFrameSetsByMaxWidthMaxHeight() //OK
+//                testRectFillsCanvasWhenNoDimensionsSet() //OK
+//                testRectFillsCanvasWhenSmallMinsSet() //OK
+//                testRectFrameOk()//OK
           ).backgroundColor(CGColor.RED);
     }
 
-    //ЕСЛИ ВЬЮХА С ЗАДАННЫМ МАКС ВИДС НЕ НА ПЕРВОМ МЕСТЕ, ТО БЕСКОНЕЧНЫЙ ЦИКЛ
-    private CGDrawable testHStackWithTwoViewsWithOneFixedWidthFillsCanvas() {
+    private CGDrawable testHStackWithTwoViews20WFixAndSecondNonfix() {
         return CG.HStack(
                 CG.Rect().backgroundColor(CGColor.BLUE).width(20),
-                CG.Rect().backgroundColor(CGColor.YELLOW)//.maxWidth(20)//,
-//                CG.Rect().backgroundColor(CGColor.GREEN).maxWidth(30)
-                )
-                .borderColor(CGColor.BLACK)
+                CG.Rect().backgroundColor(CGColor.YELLOW))
                 .backgroundColor(CGColor.ORANGE)
                 ;
-
-//        return CG.HStack(
-//                CG.Rect().backgroundColor(CGColor.BLUE).width(50),
-//                CG.Rect().backgroundColor(CGColor.YELLOW)
-//                );
     }
 
+    private CGDrawable testHStackWithTwoViewsNonfixAndSecond20WFix() {
+        return CG.HStack(
+                CG.Rect().backgroundColor(CGColor.BLUE),
+                CG.Rect().backgroundColor(CGColor.YELLOW).width(20)
+                )
+                .backgroundColor(CGColor.ORANGE)
+                ;
+    }
+
+    private CGDrawable testVStackWithTwoViews20HFixAndSecondNonfix() {
+        return CG.VStack(
+                CG.Rect().backgroundColor(CGColor.BLUE).height(20),
+                CG.Rect().backgroundColor(CGColor.YELLOW))
+                .backgroundColor(CGColor.ORANGE)
+                ;
+    }
+
+    private CGDrawable testVStackWithTwoViewsNonfixAndSecond20HFix() {
+        return CG.VStack(
+                CG.Rect().backgroundColor(CGColor.BLUE),
+                CG.Rect().backgroundColor(CGColor.YELLOW).height(20)
+                )
+                .backgroundColor(CGColor.ORANGE)
+                ;
+    }
+
+    //OK
     private CGDrawable testVStackWithTwoViewsViewFillsCanvas() {
         return CG.VStack(
                 CG.Rect().backgroundColor(CGColor.BLUE),
@@ -78,6 +100,7 @@ public class Canvas extends UIMIDlet {
                 );
     }
 
+    //OK
     private CGDrawable testHStackWithTwoViewsViewFillsCanvas() {
         return CG.HStack(
                 CG.Rect().backgroundColor(CGColor.BLUE),
@@ -85,6 +108,7 @@ public class Canvas extends UIMIDlet {
                 );
     }
 
+    //OK
     private CGDrawable testHStackWithOneViewFillsCanvas() {
         return CG.HStack(
                 CG.Rect().backgroundColor(CGColor.GREEN)
@@ -100,14 +124,11 @@ public class Canvas extends UIMIDlet {
         return CG.ZStack(CG.Rect().backgroundColor(CGColor.GREEN));
     }
 
-    //TODO FAIL! НЕТ ЖЕЛТОЙ ВЬЮХИ! (возможно сломался zDraw) СИНЯЯ РАСТЯНУТА!
     private CGDrawable testZStackWithTwoViewsFillsCanvasAndRespectsOrder() {
         return CG.ZStack(
                 CG.Rect().backgroundColor(CGColor.YELLOW)
-//                .frame(0, 0, 60, 60)
                 ,
                 CG.Rect().backgroundColor(CGColor.BLUE)
-                .frame(20, 20, 60, 60)
                 );
     }
 

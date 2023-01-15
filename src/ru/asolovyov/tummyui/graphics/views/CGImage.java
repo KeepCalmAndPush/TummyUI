@@ -7,6 +7,7 @@ package ru.asolovyov.tummyui.graphics.views;
 
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
+import ru.asolovyov.combime.bindings.Int;
 import ru.asolovyov.combime.bindings.Obj;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.tummyui.bindings.Size;
@@ -65,8 +66,8 @@ public class CGImage extends CGSomeDrawable {
     public CGDrawable sizeToFit() {
         Image image = (Image)this.image.getValue();
         if (image != null) {
-            this.width(image.getWidth());
-            this.height(image.getHeight());
+            this.widthBinding.sendValue(new Int(image.getWidth()));
+            this.heightBinding.sendValue(new Int(image.getHeight()));
         }
         return this;
     }

@@ -136,8 +136,11 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
 
         CGInsets insets = this.contentInset();
 
-        this.width(size.width + insets.horizontal());
-        this.height(size.height + insets.vertical());
+        int widthValue = size.width + insets.horizontal();
+        this.widthBinding.sendValue(new Int(widthValue));
+        
+        int heightValue = size.height + insets.vertical();
+        this.heightBinding.sendValue(new Int(heightValue));
         
         return this;
     }
@@ -159,6 +162,8 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
             size.height = CG.stringSize(text, font, new CGSize(size.width, Integer.MAX_VALUE)).height;
         }
 
-        intrinsicContentSizeBinding.sendValue(size);
+        if (!size.equals(this.intrinsicContentSize())) {
+            intrinsicContentSizeBinding.sendValue(size);
+        }
     }
 }

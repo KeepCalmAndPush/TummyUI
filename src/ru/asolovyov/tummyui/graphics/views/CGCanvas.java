@@ -30,7 +30,7 @@ public class CGCanvas extends Canvas {
         this.needsRepaint.setBool(true);
     }
 
-    private Int keyPressed = (Int) new Int(null).to(new Drop(1)); //TODO оформить в оператор-метод .drop(1)
+    private Int keyPressed = (Int) new Int(null).to(new Drop(1));
     private Int keyReleased = (Int) new Int(null).to(new Drop(1));
     private Int keyRepeated = (Int) new Int(null).to(new Drop(1));
 
@@ -44,8 +44,13 @@ public class CGCanvas extends Canvas {
         this.content = content;
         S.println("CANVAS HAS " + content.length + " CHILDren");
 
+        for (int i = 0; i < this.content.length; i++) {
+            CGDrawable drawable = content[i];
+            drawable.canvas(this);
+        }
+
         if (content.length == 1) {
-            CGDrawable child = content[0];
+            CGSomeDrawable child = (CGSomeDrawable) content[0];
             
             int widthToSet = Math.min(this.getWidth(), child.maxWidth());
             int heightToSet = Math.min(this.getHeight(), child.maxHeight());
@@ -53,15 +58,10 @@ public class CGCanvas extends Canvas {
             S.println("CANVAS WILL SET CHILD Width: " + widthToSet + ", Height: " + heightToSet);
             S.println(child + " w: {" + child.minWidth() + "-" + child.maxWidth() + "}; {" + child.minHeight() + "-" + child.maxHeight() + "}");
 
-            child.width(widthToSet);
-            child.height(heightToSet);
+            child.widthBinding.sendValue(new Int(widthToSet));
+            child.heightBinding.sendValue(new Int(heightToSet));
         }
         
-        for (int i = 0; i < this.content.length; i++) {
-            CGDrawable drawable = content[i];
-            drawable.canvas(this);
-        }
-
         this.needsRepaint.to(new Debounce(33)).sink(new Sink() {
             protected void onValue(Object value) {
                 repaint();

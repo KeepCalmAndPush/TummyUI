@@ -78,6 +78,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
     private void setupSubscriptions() {
         this.intrinsicContentSizeBinding.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
+                S.println(CGSomeDrawable.this + " DID UPDATE INTRINSIC " + value);
                 needsRelayout();
             }
         });
@@ -94,13 +95,6 @@ public abstract class CGSomeDrawable implements CGDrawable {
                 Object[] values = ((Object[])value);
                 S.println("XYWH 4: " + S.arrayToString(values));
                 needsRelayout();
-            }
-        });
-
-        xyWidthHeight.drop(1).sink(new Sink() {
-            protected void onValue(Object value) {
-                Object[] values = ((Object[])value);
-                inferMinMaxValues(values);
             }
         });
         
@@ -142,53 +136,16 @@ public abstract class CGSomeDrawable implements CGDrawable {
         });
     }
 
-    private void inferMinMaxValues(Object[] xywhIntegers) {
-        Object xI = xywhIntegers[0];
-        Object yI = xywhIntegers[1];
-        Object widthI = xywhIntegers[2];
-        Object heightI = xywhIntegers[3];
-
-        if (xI != null) {
-            int value = ((Integer)xI).intValue();
-            if (intValueFrom(minXBinding) == CG.NULL && value != CG.NULL) {
-                minX(value);
-            }
-            if (intValueFrom(maxXBinding) == CG.NULL && value != CG.NULL) {
-                maxX(value);
-            }
-        }
-        if (yI != null) {
-            int value = ((Integer)yI).intValue();
-            if (intValueFrom(minYBinding) == CG.NULL && value != CG.NULL) {
-                minY(value);
-            }
-            if (intValueFrom(maxYBinding) == CG.NULL && value != CG.NULL) {
-                maxY(value);
-            }
-        }
-        if (widthI != null) {
-            int value = ((Integer)widthI).intValue();
-            if (intValueFrom(minWidthBinding) == CG.NULL && value != CG.NULL) {
-                minWidth(value);
-            }
-            if (intValueFrom(maxWidthBinding) == CG.NULL && value != CG.NULL) {
-                maxWidth(value);
-            }
-        }
-        if (heightI != null) {
-            int value = ((Integer)heightI).intValue();
-            if (intValueFrom(minHeightBinding) == CG.NULL && value != CG.NULL) {
-                minHeight(value);
-            }
-            if (intValueFrom(maxHeightBinding) == CG.NULL && value != CG.NULL) {
-                maxHeight(value);
-            }
-        }
-    }
-
     public CGDrawable width(Int width) {
         S.println(this + " KEK WILL SET WIDTH BINDING " + width);
         this.widthBinding.sendValue(width);
+        int value = width.getInt();
+        if (intValueFrom(minWidthBinding) == CG.NULL && value != CG.NULL) {
+            minWidth(value);
+        }
+        if (intValueFrom(maxWidthBinding) == CG.NULL && value != CG.NULL) {
+            maxWidth(value);
+        }
         return this;
     }
 
@@ -199,6 +156,13 @@ public abstract class CGSomeDrawable implements CGDrawable {
 
     public CGDrawable height(Int height) {
         this.heightBinding.sendValue(height);
+        int value = height.getInt();
+        if (intValueFrom(minHeightBinding) == CG.NULL && value != CG.NULL) {
+            minHeight(value);
+        }
+        if (intValueFrom(maxHeightBinding) == CG.NULL && value != CG.NULL) {
+            maxHeight(value);
+        }
         return this;
     }
 
@@ -229,6 +193,14 @@ public abstract class CGSomeDrawable implements CGDrawable {
 
     public CGDrawable x(Int x) {
         this.xBinding.sendValue(x);
+        int value = x.getInt();
+
+        if (intValueFrom(minXBinding) == CG.NULL && value != CG.NULL) {
+            minX(value);
+        }
+        if (intValueFrom(maxXBinding) == CG.NULL && value != CG.NULL) {
+            maxX(value);
+        }
         return this;
     }
 
@@ -238,6 +210,13 @@ public abstract class CGSomeDrawable implements CGDrawable {
 
     public CGDrawable y(Int y) {
         this.yBinding.sendValue(y);
+        int value = y.getInt();
+        if (intValueFrom(minYBinding) == CG.NULL && value != CG.NULL) {
+            minY(value);
+        }
+        if (intValueFrom(maxYBinding) == CG.NULL && value != CG.NULL) {
+            maxY(value);
+        }
         return this;
     }
 

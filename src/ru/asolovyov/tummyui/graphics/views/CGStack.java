@@ -591,10 +591,14 @@ public class CGStack extends CGSomeDrawable {
         CGFrame frame = this.frame();
         frame.width = size.width;
         frame.height = size.height;
-        S.println("AFTER MASSIVE CALCULATIONS FRAME IS: " + frame);
+        S.println("AFTER MASSIVE CALCULATIONS STACK SIZE IS: " + size);
 
-        if (!frame.equals(frame())) {
-            this.frame(frame);
+        if (size.width != this.width()) {
+            this.widthBinding.sendValue(new Int(size.width));
+        }
+
+        if (size.height != this.height()) {
+            this.heightBinding.sendValue(new Int(size.height));
         }
         
         return contentSize;
@@ -681,11 +685,9 @@ public class CGStack extends CGSomeDrawable {
                 S.println("ADJUST VALUE BINDING WILL SET " + value);
 
                 if (isHeight) {
-                    if (value != view.height())
-                    view.height(value);
+                    if (value != view.height()) view.heightBinding.sendValue(new Int(value));
                 } else {
-                    if (value != view.width())
-                    view.width(value);
+                    if (value != view.width()) view.widthBinding.sendValue(new Int(value));
                 }
 
                 maxDelta = Math.max(maxDelta, Math.abs(viewDelta));
@@ -719,9 +721,9 @@ public class CGStack extends CGSomeDrawable {
                 S.println("VALUE BINDING WILL SET " + value);
 
                 if (isHeight) {
-                    view.height(value);
+                    if (value != view.height()) view.heightBinding.sendValue(new Int(value));
                 } else {
-                    view.width(value);
+                    if (value != view.width()) view.widthBinding.sendValue(new Int(value));
                 }
 
                 S.println("REMAINIG DELTA " + remainingDelta + "; spaceToAdjust " + spaceToAdjust);
@@ -745,6 +747,8 @@ public class CGStack extends CGSomeDrawable {
         CGSize size = this.contentSize().getCGSize();
         S.println(this + " DID UPDATE SIZES, NOW HAS: " + size);
 
-        this.intrinsicContentSizeBinding.sendValue(size);
+        if (!size.equals(this.intrinsicContentSize())) {
+            this.intrinsicContentSizeBinding.sendValue(size);
+        }
     }
 }
