@@ -52,25 +52,16 @@ public abstract class CGAnimation {
     }
 
     protected void setupAndBegin() {
-        this.x = drawable.x();
-        this.y = drawable.y();
-        this.width = drawable.width();
-        this.height = drawable.height();
+        this.xTarget = this.x = drawable.x();
+        this.yTarget = this.y = drawable.y();
+        this.widthTarget = this.width = drawable.width();
+        this.heightTarget = this.height = drawable.height();
 
-        this.color = drawable.color();
-        this.backgroundColor = drawable.backgroundColor();
-        this.borderColor = drawable.borderColor();
+        this.colorTarget = this.color = drawable.color();
+        this.backgroundColorTarget = this.backgroundColor = drawable.backgroundColor();
+        this.borderColorTarget = this.borderColor = drawable.borderColor();
 
         this.animations(drawable);
-
-        this.xTarget = getDrawable().x();
-        this.yTarget = getDrawable().y();
-        this.widthTarget = getDrawable().width();
-        this.heightTarget = getDrawable().height();
-
-        this.colorTarget = getDrawable().color();
-        this.backgroundColorTarget = getDrawable().backgroundColor();
-        this.borderColorTarget = getDrawable().borderColor();
 
         this.xDelta = (this.xTarget - this.x) / cyclesCount;
         this.yDelta = (this.yTarget - this.y) / cyclesCount;
