@@ -66,7 +66,7 @@ public class UICommandsProxy implements CommandListener {
                 }
             });
         } catch(ClassCastException e) {
-            S.println("UICommandsProxy found non-UI command. Falling back to displayable to handle it.");
+            S.debugln("UICommandsProxy found non-UI command. Falling back to displayable to handle it.");
         }
     }
 

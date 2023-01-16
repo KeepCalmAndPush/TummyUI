@@ -13,6 +13,7 @@ import ru.asolovyov.combime.common.S;
 import ru.asolovyov.threading.Clock;
 import ru.asolovyov.tummyui.forms.UIMIDlet;
 import ru.asolovyov.tummyui.graphics.CG;
+import ru.asolovyov.tummyui.graphics.CGAnimation;
 import ru.asolovyov.tummyui.graphics.CGColor;
 import ru.asolovyov.tummyui.graphics.views.CGDrawable;
 import ru.asolovyov.tummyui.graphics.CGSize;
@@ -43,6 +44,7 @@ public class Canvas extends UIMIDlet {
                 // 2) Между ВСтеками в ХСтеке двойное расстояние.
                 // 3) НЕ РАБОТАЕТ СКРОЛЛИНГ СТЕКА :(
                 // 4) Оч тормозит
+                testAnimationOk(),
                 textStylesIteratingHorizontalStackOfLabels(),
                 testVStackWithTwoViewsNonfixAndSecond20HFix(), //OK
                 testVStackWithTwoViews20HFixAndSecondNonfix(), //OK
@@ -71,19 +73,36 @@ public class Canvas extends UIMIDlet {
         return canvas.handleKeyboard(new CGDrawable.KeyboardHandler() {
             public void keyReleased(CGDrawable alwaysNull, int keyCode) {
                 int index = testScreenIndex;
-                S.println("INDEX WAS: " + index);
+                S.debugln("INDEX WAS: " + index);
                 if (keyCode == CG.KEY_LEFT) {
-                    index = Math.max(0, index - 1);
+                    index -= 1;
+                    if (index < 0) {
+                        index = testScreens.length - 1;
+                    }
                 } else if (keyCode == CG.KEY_RIGHT) {
-                    index = Math.min(testScreens.length - 1, index + 1);
+                    index += 1;
+                    if (index == testScreens.length) {
+                        index = 0;
+                    }
                 }
-                S.println("INDEX NOW: " + index);
+                S.debugln("INDEX NOW: " + index);
                 if (index == testScreenIndex) {
-                    S.println("INDEX SAME, BREAK");
+                    S.debugln("INDEX SAME, BREAK");
                     return;
                 }
-                S.println("INDEX RENEWED PROCEED");
+                S.debugln("INDEX RENEWED PROCEED");
                 testScreenIndex = index;
+                // TODO ВЫСОТА ТЕКСТА СЧИТАЕТСЯ НЕПОЙМИ КАК
+                // ТЕКСТ ПОКАЗЫВАЕТСЯ НЕ ВСЕГДА
+                // ИНОГДА ТЕКСТ НЕ НА ВСЮ ШИРИНУ
+//                CGDrawable testScreen = CG.VStack(
+//                        CG.Text("Заголовок теста " + index)
+//                        .color(CGColor.BLACK)
+//                        .backgroundColor(CGColor.WHITE)
+//                        ,
+//
+//                        ((CGDrawable) testScreens[testScreenIndex]).height(188)
+//                        );
                 CGDrawable testScreen = (CGDrawable) testScreens[testScreenIndex];
                 canvas.setDrawable(testScreen);
             }
@@ -164,41 +183,7 @@ public class Canvas extends UIMIDlet {
                 );
     }
 
-//    private CGDrawable kek = CG.Rect()
-//                .backgroundColor(CGColor.GREEN_YELLOW)
-////                .frame(10, 10, 100, 100)
-////                .width(100)
-////                .height(100)
-//                .maxWidth(132)
-//                .maxHeight(176)
-//                ;
-
-//    int color = CGColor.WHITE_SMOKE;
     private CGDrawable testFrameSetsByMaxWidthMaxHeight() {
-        /*
-         * CGRectangle@f4819689 CGFrame@168c00 (0,0; 0,0) WILL SET WIDTH 100
-            83 CVS sendValue 100
-            84 CVS sendValue 100
-            19 CVS sendValue ru.asolovyov.combime.bindings.Int@f188ac1a subscriptions: 0
-            CGRectangle@f4819689 CGFrame@168c00 (0,0; 0,0) WILL SET HEIGHT 100
-            85 CVS sendValue 100
-            86 CVS sendValue 100
-            22 CVS sendValue ru.asolovyov.combime.bindings.Int@e8b7ef9f subscriptions: 0
-         */
-//        clock = new Clock(100500);
-//        clock.add(new Runnable() {
-//            public void run() {
-////                color -= 10;
-//                kek
-//                        .width(kek.width() + 1)
-//                        .height(kek.height() + 1)
-////                        .backgroundColor(kek.backgroundColor() - 10)
-//                        ;
-//            }
-//        });
-
-//        return kek;
-
         return CG.Rect()
                 .backgroundColor(CGColor.GREEN)
                 .maxWidth(132)
@@ -224,6 +209,19 @@ public class Canvas extends UIMIDlet {
                 .backgroundColor(CGColor.GREEN)
                 .frame(10, 10, 100, 100)
                 ;
+    }
+
+    private CGDrawable testAnimationOk() {
+        CGDrawable rect =  CG.Rect()
+                .backgroundColor(CGColor.GREEN)
+                .frame(10, 10, 100, 100)
+                .animate(new CGAnimation(3000) {
+                    protected void animations(CGDrawable drawable) {
+                        drawable.x(100).y(3100).width(50).height(50).backgroundColor(CGColor.SKY_BLUE);
+                }})
+                ;
+
+        return rect;
     }
     
     Clock clock;
@@ -424,7 +422,7 @@ public class Canvas extends UIMIDlet {
 //                            .flexibility(CGFrame.FLEXIBLE_ORIGIN)
 //                            .readGeometry(new CGDrawable.GeometryReader() {
 //                                public void read(CGDrawable self, CGFrame frame) {
-//                                    S.println("333333333");
+//                                   S.debugln("333333333");
 //                                    self.frame().width = frame.width / 3;
 //                                }
 //                             }),
@@ -435,7 +433,7 @@ public class Canvas extends UIMIDlet {
 //                            .flexibility(CGFrame.FLEXIBLE_ORIGIN)
 //                            .readGeometry(new CGDrawable.GeometryReader() {
 //                                public void read(CGDrawable self, CGFrame frame) {
-//                                    S.println("222222222");
+//                                    S.debugln("222222222");
 //                                    self.frame().width = frame.width / 2;
 //                                }
 //                             }),
@@ -445,7 +443,7 @@ public class Canvas extends UIMIDlet {
 //                            .flexibility(CGFrame.FLEXIBLE_ORIGIN)
 //                            .readGeometry(new CGDrawable.GeometryReader() {
 //                                public void read(CGDrawable self, CGFrame frame) {
-//                                    S.println("666666666");
+//                                   S.debugln("666666666");
 //                                    self.frame().width = frame.width / 6;
 //                                }
 //                             })

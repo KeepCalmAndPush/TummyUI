@@ -16,6 +16,8 @@ import ru.asolovyov.tummyui.bindings.Insets;
 import ru.asolovyov.tummyui.bindings.Point;
 import ru.asolovyov.tummyui.bindings.Size;
 import ru.asolovyov.tummyui.graphics.CG;
+import ru.asolovyov.tummyui.graphics.CGAnimation;
+import ru.asolovyov.tummyui.graphics.CGDisplayLink;
 import ru.asolovyov.tummyui.graphics.CGFrame;
 import ru.asolovyov.tummyui.graphics.CGInsets;
 import ru.asolovyov.tummyui.graphics.CGPoint;
@@ -83,7 +85,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
     private void setupSubscriptions() {
         this.intrinsicContentSizeBinding.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
-                S.println(CGSomeDrawable.this + " DID UPDATE INTRINSIC " + value);
+                S.debugln(CGSomeDrawable.this + " DID UPDATE INTRINSIC " + value);
                 needsRelayout();
             }
         });
@@ -97,7 +99,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
 
         xyWidthHeight.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
-                S.println("XYWH 4: " + S.arrayToString((Object[])value));
+                S.debugln("XYWH 4: " + S.arrayToString((Object[])value));
                 needsRelayout();
             }
         });
@@ -114,7 +116,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
                 }).removeDuplicates().sink(new Sink() {
                     protected void onValue(Object value) {
                         Object[] values = ((Object[])value);
-                        S.println("8 COLORS: " + S.arrayToString(values));
+                        S.debugln("8 COLORS: " + S.arrayToString(values));
 
                         needsRelayout();
                     }
@@ -133,14 +135,14 @@ public abstract class CGSomeDrawable implements CGDrawable {
 
         minsMaxes.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
-                S.println("8 MINMAX: " + S.arrayToString((Object[])value));
+                S.debugln("8 MINMAX: " + S.arrayToString((Object[])value));
                 needsRelayout();
             }
         });
     }
 
     public CGDrawable width(Int width) {
-        S.println(this + " KEK WILL SET WIDTH BINDING " + width);
+        S.debugln(this + " KEK WILL SET WIDTH BINDING " + width);
         this.widthBinding.sendValue(width);
         int value = width.getInt();
         if (intValueFrom(minWidthBinding) == CG.NULL && value != CG.NULL) {
@@ -153,7 +155,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     public CGDrawable width(int width) {
-        S.println(this + " KEK WILL SET WIDTH " + width);
+        S.debugln(this + " KEK WILL SET WIDTH " + width);
         return width(new Int(width));
     }
 
@@ -170,7 +172,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     public CGDrawable height(int height) {
-        S.println(this + " KEK WILL SET HEIGHT " + height);
+        S.debugln(this + " KEK WILL SET HEIGHT " + height);
         return height(new Int(height));
     }
 
@@ -265,13 +267,13 @@ public abstract class CGSomeDrawable implements CGDrawable {
 
     public CGDrawable frame(int x, int y, int width, int height) {
         CGFrame frame = new CGFrame(x, y, width, height);
-        S.println(this + " will be given a frame comps " + frame);
+        S.debugln(this + " will be given a frame comps " + frame);
         
         return this.frame(frame);
     }
 
     public CGDrawable frame(CGFrame frame) {
-        S.println(this + " will be given a CGFrame " + frame);
+        S.debugln(this + " will be given a CGFrame " + frame);
 //        ((Frame)this.frameBinding.getValue()).setCGFrame(frame);
         this.x(frame.x);
         this.y(frame.y);
@@ -320,7 +322,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
     
     public CGFrame intrinsicAwareFrame() {
         CGFrame frame = this.frame();
-        S.println(this + " WILL SAY ITS INTRAWARE FRAME!");
+        S.debugln(this + " WILL SAY ITS INTRAWARE FRAME!");
 
         CGSize size = this.intrinsicContentSize();
         CGInsets insets = this.contentInset();
@@ -334,7 +336,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
         frame.width = width;
         frame.height = height;
 
-        S.println(this + " INTRAWARE FRAME IS " + frame);
+        S.debugln(this + " INTRAWARE FRAME IS " + frame);
 
         return frame;
     }
@@ -622,20 +624,10 @@ public abstract class CGSomeDrawable implements CGDrawable {
         return this;
     }
 
-    public void animate(int durationMillis, Runnable animations) {
-        final int backgroundColor = this.backgroundColor();
-        final int strokeColor = this.borderColor();
-
-        final CGFrame frame = this.frame();
-        final CGPoint origin = this.origin();
-
-        final CGPoint contentOffset = this.contentOffset();
-        final CGInsets contentInset = this.contentInset();
-        final CGSize cornerRadius = this.cornerRadius();
-
-        animations.run();
-
-        // TODO посчитать дельты!
+    public CGDrawable animate(CGAnimation animation) {
+        animation.setDrawable(this);
+        CGDisplayLink.shared.addAnimation(animation);
+        return this;
     }
 
     public String toString() {

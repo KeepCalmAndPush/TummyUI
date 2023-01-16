@@ -45,7 +45,7 @@ public class CGCanvas extends Canvas {
         
         this.setDrawables(content);
         
-        S.println("CANVAS HAS " + content.length + " CHILDren");
+        S.debugln("CANVAS HAS " + content.length + " CHILDren");
         
         this.needsRepaint.to(new Debounce(33)).sink(new Sink() {
             protected void onValue(Object value) {
@@ -108,8 +108,8 @@ public class CGCanvas extends Canvas {
             int widthToSet = Math.min(this.getWidth(), child.maxWidth());
             int heightToSet = Math.min(this.getHeight(), child.maxHeight());
 
-            S.println("CANVAS WILL SET CHILD Width: " + widthToSet + ", Height: " + heightToSet);
-            S.println(child + " w: {" + child.minWidth() + "-" + child.maxWidth() + "}; {" + child.minHeight() + "-" + child.maxHeight() + "}");
+            S.debugln("CANVAS WILL SET CHILD Width: " + widthToSet + ", Height: " + heightToSet);
+            S.debugln(child + " w: {" + child.minWidth() + "-" + child.maxWidth() + "}; {" + child.minHeight() + "-" + child.maxHeight() + "}");
 
             child.widthBinding.sendValue(new Int(widthToSet));
             child.heightBinding.sendValue(new Int(heightToSet));

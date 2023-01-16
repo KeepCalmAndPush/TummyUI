@@ -121,7 +121,7 @@ public class CGStack extends CGSomeDrawable {
         this.factory = factory;
         this.models = models;
 
-        S.println(" CGStack(Int axis, Int alignment, Arr models, DrawableFactory factory) " + drawables);
+        S.debugln(" CGStack(Int axis, Int alignment, Arr models, DrawableFactory factory) " + drawables);
 
         this.models.to(
                 new Map() {
@@ -129,7 +129,7 @@ public class CGStack extends CGSomeDrawable {
                     public Object mapValue(Object value) {
                         Object[] models = (Object[]) value;
                         CGDrawable[] drawables = new CGDrawable[models.length];
-                        S.println("KEK CGDrawable[] drawables = new CGDrawable[models.length]; " + drawables);
+                        S.debugln("KEK CGDrawable[] drawables = new CGDrawable[models.length]; " + drawables);
                         for (int i = 0; i < models.length; i++) {
                             Object model = models[i];
 
@@ -155,7 +155,7 @@ public class CGStack extends CGSomeDrawable {
 
     public CGStack(Int axis, Int alignment, Arr drawables) {
         super();
-        S.println("KEK CGSTACK WILL SET DRAWABLES: " + drawables);
+        S.debugln("KEK CGSTACK WILL SET DRAWABLES: " + drawables);
         this.axis = axis;
         this.alignment = alignment;
         this.drawables = drawables;
@@ -196,7 +196,7 @@ public class CGStack extends CGSomeDrawable {
     public void draw(Graphics g) {
         super.draw(g);
 
-        S.println(this + "CGSTACK DRAW!");
+        S.debugln(this + "CGSTACK DRAW!");
 
         if (this.axis.getInt() == AXIS_HORIZONTAL) {
             this.hDraw(g);
@@ -208,7 +208,7 @@ public class CGStack extends CGSomeDrawable {
     }
 
     private void pushFrameToChildren() {
-        S.println("KEK DRAWABLES " + this.drawables.getArray());
+        S.debugln("KEK DRAWABLES " + this.drawables.getArray());
         CGDrawable[] drawables = (CGDrawable[]) this.drawables.getArray();
         for (int i = 0; i < drawables.length; i++) {
             CGDrawable drawable = drawables[i];
@@ -256,7 +256,7 @@ public class CGStack extends CGSomeDrawable {
                 CGDrawable child = (CGDrawable) element;
                 CGFrame childFrame = child.intrinsicAwareFrame();
 
-                S.println("WILL DRAW " + child + " " + childFrame);
+                S.debugln("WILL DRAW " + child + " " + childFrame);
                 CGInsets contentInsets = contentInset();
 
                 childFrame.x = nextLeft;
@@ -276,7 +276,7 @@ public class CGStack extends CGSomeDrawable {
 
                 child.origin(childFrame.x, childFrame.y);
 
-                S.println("HSTACK Will draw " + child + " " + childFrame.x + ", " + childFrame.y + "; " + childFrame.width + ", " + childFrame.height);
+                S.debugln("HSTACK Will draw " + child + " " + childFrame.x + ", " + childFrame.y + "; " + childFrame.width + ", " + childFrame.height);
 
                 child.draw(graphics);
                 nextLeft += childFrame.width + spacing();
@@ -330,7 +330,7 @@ public class CGStack extends CGSomeDrawable {
                 childFrame.x -= contentOffset().x;
                 childFrame.y -= contentOffset().y;
 
-                S.println("VSTACK Will draw " + child + " " + childFrame.x + ", " + childFrame.y + "; " + childFrame.width + ", " + childFrame.height);
+                S.debugln("VSTACK Will draw " + child + " " + childFrame.x + ", " + childFrame.y + "; " + childFrame.width + ", " + childFrame.height);
 
                 child.origin(childFrame.x, childFrame.y);
 
@@ -426,7 +426,7 @@ public class CGStack extends CGSomeDrawable {
         keyPublisher.sink(new Sink() {
 
             protected void onValue(Object value) {
-                S.println("PRESS DETECTED: " + value);
+                S.debugln("PRESS DETECTED: " + value);
                 super.onValue(value);
 
                 int keyCode = keyPublisher.getInt();
@@ -454,16 +454,16 @@ public class CGStack extends CGSomeDrawable {
         CGFrame thisFrame = frame();
 
         if (contentSize.height > thisFrame.height) {
-            S.println("contentSize.height > thisFrame.height");
+            S.debugln("contentSize.height > thisFrame.height");
             int extent = contentSize.height - thisFrame.height;
 
             if (keyCode == CG.KEY_UP) {//t
-                S.println("keyCode == Canvas.UP");
+                S.debugln("keyCode == Canvas.UP");
                 contentOffset.y = Math.max(
                         contentOffset.y - 5,
                         -(extent - contentInset.top));
             } else if (keyCode == CG.KEY_DOWN) {//b
-                S.println("keyCode == Canvas.DOWN");
+                S.debugln("keyCode == Canvas.DOWN");
                 contentOffset.y = Math.min(
                         contentOffset.y + 5,
                         extent + contentInset.bottom);
@@ -471,22 +471,22 @@ public class CGStack extends CGSomeDrawable {
         }
 
         if (contentSize.width > thisFrame.width) {
-            S.println("contentSize.width > thisFrame.width");
+            S.debugln("contentSize.width > thisFrame.width");
             int extent = contentSize.width - thisFrame.width;
             if (keyCode == CG.KEY_LEFT) {//l
-                S.println("Canvas.LEFT");
+                S.debugln("Canvas.LEFT");
                 contentOffset.x = Math.max(
                         contentOffset.x - 5,
                         -(extent + contentInset.left));
             } else if (keyCode == CG.KEY_RIGHT) { //r
-                S.println("keyCode == Canvas.RIGHT");
+                S.debugln("keyCode == Canvas.RIGHT");
                 contentOffset.x = Math.min(
                         contentOffset.x + 5,
                         extent + contentInset.right);
             }
         }
 
-        S.println("\nCONTENT OFFSET NOW: " + contentOffset.x + "; " + contentOffset.y + "\n");
+        S.debugln("\nCONTENT OFFSET NOW: " + contentOffset.x + "; " + contentOffset.y + "\n");
 
         contentOffsetBinding.sendValue(new Point(contentOffset));
     }
@@ -512,7 +512,7 @@ public class CGStack extends CGSomeDrawable {
         keyPublisher.sink(new Sink() {
 
             protected void onValue(Object value) {
-                S.println("PRESS RELEASED: " + value);
+                S.debugln("PRESS RELEASED: " + value);
                 super.onValue(value);
 
                 Integer keyCode = new Integer(keyPublisher.getInt());
@@ -532,14 +532,14 @@ public class CGStack extends CGSomeDrawable {
 
         Object[] objDrawables = this.drawables.getArray();
         CGDrawable[] drawables = new CGDrawable[objDrawables.length];
-        S.println("KEK CGSize updateContentSizeAndChildrenDimensions() " + drawables);
+        S.debugln("KEK CGSize updateContentSizeAndChildrenDimensions() " + drawables);
 
-        S.println("LETS COUNT CONTENT SIZE OF " + drawables.length + " SUBVIEWS!");
+        S.debugln("LETS COUNT CONTENT SIZE OF " + drawables.length + " SUBVIEWS!");
         for (int i = 0; i < drawables.length; i++) {
             CGDrawable drawable = (CGDrawable) objDrawables[i];
             drawables[i] = drawable;
 
-            S.println(i + "-th subview is " + drawable);
+            S.debugln(i + "-th subview is " + drawable);
 
             int width = drawable.intrinsicAwareFrame().width;
             int height = drawable.intrinsicAwareFrame().height;
@@ -569,36 +569,36 @@ public class CGStack extends CGSomeDrawable {
             contentHeight += spaces;
         }
 
-        S.println("1 BEFORE MASSIVE CALCULATIONS CONTENT SIZE IS: " + contentWidth + "x" + contentHeight);
+        S.debugln("1 BEFORE MASSIVE CALCULATIONS CONTENT SIZE IS: " + contentWidth + "x" + contentHeight);
 
         contentWidth = Math.min(contentWidth, this.maxContentWidthBinding.getInt());
         contentHeight = Math.min(contentHeight, this.maxContentHeightBinding.getInt());
 
-        S.println("2 BEFORE MASSIVE CALCULATIONS CONTENT SIZE IS: " + contentWidth + "x" + contentHeight);
+        S.debugln("2 BEFORE MASSIVE CALCULATIONS CONTENT SIZE IS: " + contentWidth + "x" + contentHeight);
 
         CGSize size = this.adjustFrameToContentSize(contentWidth, contentHeight);
-        S.println("CGSize size = this.adjustFrameToContentSize(contentWidth, contentHeight);");
-        S.println(size);
+        S.debugln("CGSize size = this.adjustFrameToContentSize(contentWidth, contentHeight);");
+        S.debugln(size);
 
         int delta = size.width - contentWidth;
-        S.println("DELTA WIDTH " + delta);
+        S.debugln("DELTA WIDTH " + delta);
 
         int remainingDelta = this.adjustChildrenDimensions(drawables, false, delta);
 
         delta += (delta > 0) ? -remainingDelta : +remainingDelta;
         contentWidth += delta;
-        S.println("DELTA WIDTH " + delta);
+        S.debugln("DELTA WIDTH " + delta);
 
         delta = size.height - contentHeight;
-        S.println("DELTA HEIGHT " + delta);
+        S.debugln("DELTA HEIGHT " + delta);
 
         remainingDelta = this.adjustChildrenDimensions(drawables, true, delta);
 
         delta += (delta > 0) ? -remainingDelta : +remainingDelta;
-        S.println("DELTA HEIGHT " + delta);
+        S.debugln("DELTA HEIGHT " + delta);
         contentHeight += delta;
 
-        S.println("AFTER MASSIVE CALCULATIONS CONTENT SIZE IS: " + contentWidth + "x" + contentHeight);
+        S.debugln("AFTER MASSIVE CALCULATIONS CONTENT SIZE IS: " + contentWidth + "x" + contentHeight);
 
         CGSize contentSize = new CGSize(contentWidth, contentHeight);
         this.contentSize.setCGSize(contentSize);
@@ -606,7 +606,7 @@ public class CGStack extends CGSomeDrawable {
         CGFrame frame = this.frame();
         frame.width = size.width;
         frame.height = size.height;
-        S.println("AFTER MASSIVE CALCULATIONS STACK SIZE IS: " + size);
+        S.debugln("AFTER MASSIVE CALCULATIONS STACK SIZE IS: " + size);
 
         if (size.width != this.width()) {
             this.widthBinding.sendValue(new Int(size.width));
@@ -621,24 +621,24 @@ public class CGStack extends CGSomeDrawable {
 
     private CGSize adjustFrameToContentSize(int contentWidth, int contentHeight) {
         CGSize size = this.frame().getCGSize();
-        S.println("adjustFrameToContentSize " + size);
+        S.debugln("adjustFrameToContentSize " + size);
 
         if (this.height() < contentHeight && this.hasGrowableHeight()) {
-            S.println("1 adjustFrameToContentSize");
+            S.debugln("1 adjustFrameToContentSize");
             int height = Math.min(contentHeight, this.maxHeight());
             size.height = height;
         } else if (contentHeight > this.height() && this.hasShrinkableHeight()) {
-            S.println("2 adjustFrameToContentSize");
+            S.debugln("2 adjustFrameToContentSize");
             int height = Math.max(contentHeight, this.minHeight());
             size.height = height;
         }
 
         if (contentWidth > this.width() && this.hasGrowableWidth()) {
-            S.println("3 adjustFrameToContentSize");
+            S.debugln("3 adjustFrameToContentSize");
             int width = Math.min(contentWidth, this.maxWidth());
             size.width = width;
         } else if (contentWidth > this.width() && this.hasShrinkableWidth()) {
-            S.println("4 adjustFrameToContentSize");
+            S.debugln("4 adjustFrameToContentSize");
             int width = Math.max(contentWidth, this.minWidth());
             size.width = width;
         }
@@ -653,8 +653,8 @@ public class CGStack extends CGSomeDrawable {
         }
 
         final boolean isExpanding = delta > 0;
-        S.println("IS EXPANDING " + isExpanding);
-        S.println("IS HEIGT " + isHeight);
+        S.debugln("IS EXPANDING " + isExpanding);
+        S.debugln("IS HEIGT " + isHeight);
 
         int remainingDelta = Math.abs(delta);
 
@@ -673,19 +673,19 @@ public class CGStack extends CGSomeDrawable {
             }
         });
 
-        S.println(adjustables.length + " ADJUSTABLES: " + adjustables);
+        S.debugln(adjustables.length + " ADJUSTABLES: " + adjustables);
 
         boolean isAxisDimension = this.axis.getInt() == (isHeight ? AXIS_VERTICAL : AXIS_HORIZONTAL);
 
         if (false == isAxisDimension) {
-            S.println("if (false == isAxisDimension) {");
+            S.debugln("if (false == isAxisDimension) {");
             int maxDelta = 0;
             for (int i = 0; i < adjustables.length; i++) {
                 CGSomeDrawable view = (CGSomeDrawable) adjustables[i];
                 int viewDelta = 0;
                 int value = isHeight ? view.height() : view.width();
 
-                S.println("WILL ADJUST " + (isHeight ? "HEIGHT" : "WIDTH") + " OF " + view + " CUR VALUE " + value);
+                S.debugln("WILL ADJUST " + (isHeight ? "HEIGHT" : "WIDTH") + " OF " + view + " CUR VALUE " + value);
 
                 if (isExpanding) {
                     viewDelta = isHeight
@@ -700,7 +700,7 @@ public class CGStack extends CGSomeDrawable {
                 viewDelta = Math.min(viewDelta, remainingDelta);
 
                 value += (isExpanding ? +viewDelta : -viewDelta);
-                S.println("ADJUST VALUE BINDING WILL SET " + value);
+                S.debugln("ADJUST VALUE BINDING WILL SET " + value);
 
                 if (isHeight && value != view.height()) {
                     view.heightBinding.sendValue(new Int(value));
@@ -711,11 +711,11 @@ public class CGStack extends CGSomeDrawable {
                 maxDelta = Math.max(maxDelta, Math.abs(viewDelta));
             }
 
-            S.println("REMAINIG DELTA " + remainingDelta + "; MAX DELTA " + maxDelta);
+            S.debugln("REMAINIG DELTA " + remainingDelta + "; MAX DELTA " + maxDelta);
             return remainingDelta - maxDelta;
         }
 
-        S.println("IS isAxisDimension ");
+        S.debugln("IS isAxisDimension ");
 
         int adjustablesCount = adjustables.length;
         while (adjustablesCount > 0 && remainingDelta > 0) {
@@ -727,7 +727,7 @@ public class CGStack extends CGSomeDrawable {
                         : isHeight ? view.minHeight() : view.minWidth();
                 int value = isHeight ? view.height() : view.width();
 
-                S.println("WILL ADJUST " + (isHeight ? "HEIGHT" : "WIDTH") + " OF " + view + " CUR VALUE " + value);
+                S.debugln("WILL ADJUST " + (isHeight ? "HEIGHT" : "WIDTH") + " OF " + view + " CUR VALUE " + value);
 
                 int spaceToAdjust = isExpanding
                         ? extremeValue - value
@@ -736,7 +736,7 @@ public class CGStack extends CGSomeDrawable {
                 spaceToAdjust = Math.min(spaceToAdjust, sliceToShare);
                 value += isExpanding ? +spaceToAdjust : -spaceToAdjust;
 
-                S.println("VALUE BINDING WILL SET " + value);
+                S.debugln("VALUE BINDING WILL SET " + value);
 
                 if (isHeight && value != view.height()) {
                     view.heightBinding.sendValue(new Int(value));
@@ -746,7 +746,7 @@ public class CGStack extends CGSomeDrawable {
                     adjustablesCount--;
                 }
 
-                S.println("REMAINIG DELTA " + remainingDelta + "; spaceToAdjust " + spaceToAdjust);
+                S.debugln("REMAINIG DELTA " + remainingDelta + "; spaceToAdjust " + spaceToAdjust);
 
                 remainingDelta -= spaceToAdjust;
                 if (value == extremeValue) {
@@ -755,17 +755,17 @@ public class CGStack extends CGSomeDrawable {
             }
         }
 
-        S.println("REMAINIG DELTA " + remainingDelta);
+        S.debugln("REMAINIG DELTA " + remainingDelta);
         return remainingDelta;
     }
 
     protected void updateIntrinsicContentSize() {
         super.updateIntrinsicContentSize();
-        S.println(this + " will updateContentSizeAndChildrenDimensions()");
+        S.debugln(this + " will updateContentSizeAndChildrenDimensions()");
         this.updateContentSizeAndChildrenDimensions();
 
         CGSize size = this.contentSize().getCGSize();
-        S.println(this + " DID UPDATE SIZES, NOW HAS: " + size);
+        S.debugln(this + " DID UPDATE SIZES, NOW HAS: " + size);
 
         this.intrinsicContentSizeBinding.sendValue(size);
     }

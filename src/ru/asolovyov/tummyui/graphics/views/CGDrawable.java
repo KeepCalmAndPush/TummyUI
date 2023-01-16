@@ -11,6 +11,7 @@ import ru.asolovyov.combime.bindings.Int;
 import ru.asolovyov.tummyui.bindings.Insets;
 import ru.asolovyov.tummyui.bindings.Point;
 import ru.asolovyov.tummyui.bindings.Size;
+import ru.asolovyov.tummyui.graphics.CGAnimation;
 import ru.asolovyov.tummyui.graphics.CGFrame;
 import ru.asolovyov.tummyui.graphics.CGInsets;
 import ru.asolovyov.tummyui.graphics.CGPoint;
@@ -32,6 +33,8 @@ public interface CGDrawable {
     }
 
     public void draw(Graphics g);
+
+    public CGDrawable animate(CGAnimation animation);
 
     public CGDrawable stroke(int strokeStyle);
     public CGDrawable stroke(Int strokeStyle);
