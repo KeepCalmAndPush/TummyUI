@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package ru.asolovyov.tummyui.graphics.views;
 
 import javax.microedition.lcdui.Graphics;
@@ -27,26 +26,24 @@ import ru.asolovyov.tummyui.graphics.CGSize;
  * @author Администратор
  */
 public class CGStack extends CGSomeDrawable {
+
     public static abstract class DrawableFactory {
+
         public abstract CGDrawable itemFor(Object viewModel);
     }
 
     {
         this.drawables = new Arr(new CGDrawable[]{});
     }
-
     public final static int AXIS_HORIZONTAL = 0;
     public final static int AXIS_VERTICAL = 1;
     public final static int AXIS_Z = 2;
-
     private int nextLeft = 0;
     private int nextTop = 0;
-
     //TODO сделать биндинги как в CGSomeDrawable
     protected Arr drawables;
     protected Int alignment = new Int(CG.LEFT);
     protected Int axis = new Int(AXIS_HORIZONTAL);
-
     protected Int maxContentWidthBinding = new Int(Integer.MAX_VALUE);
     protected Int maxContentHeightBinding = new Int(Integer.MAX_VALUE);
 
@@ -67,6 +64,7 @@ public class CGStack extends CGSomeDrawable {
     public CGStack maxContentWidth(Int width) {
         this.maxContentWidthBinding = width;
         this.maxContentWidthBinding.sink(new Sink() {
+
             protected void onValue(Object value) {
                 updateIntrinsicContentSize();
                 needsRelayout();
@@ -78,6 +76,7 @@ public class CGStack extends CGSomeDrawable {
     public CGStack maxContentHeight(Int height) {
         this.maxContentHeightBinding = height;
         this.maxContentHeightBinding.sink(new Sink() {
+
             protected void onValue(Object value) {
                 updateIntrinsicContentSize();
                 needsRelayout();
@@ -89,10 +88,11 @@ public class CGStack extends CGSomeDrawable {
     public int spacing() {
         return this.spacing.getInt();
     }
-    
+
     public CGStack spacing(Int spacing) {
         this.spacing = spacing;
         this.spacing.sink(new Sink() {
+
             protected void onValue(Object value) {
                 updateIntrinsicContentSize();
                 needsRelayout();
@@ -105,14 +105,10 @@ public class CGStack extends CGSomeDrawable {
         this.spacing.setInt(spacing);
         return this;
     }
-
     protected Int spacing = new Int(0);
-
     protected Arr models = new Arr(new Object[]{});
     protected DrawableFactory factory;
-
     protected Size contentSize = new Size(0, 0);
-
     private List repeatedKeys = new List();
     private DispatchQueue keyRepeatQueue = new DispatchQueue(120);
 
@@ -129,6 +125,7 @@ public class CGStack extends CGSomeDrawable {
 
         this.models.to(
                 new Map() {
+
                     public Object mapValue(Object value) {
                         Object[] models = (Object[]) value;
                         CGDrawable[] drawables = new CGDrawable[models.length];
@@ -164,6 +161,7 @@ public class CGStack extends CGSomeDrawable {
         this.drawables = drawables;
 
         this.axis.sink(new Sink() {
+
             protected void onValue(Object value) {
                 updateIntrinsicContentSize();
                 needsRelayout(frame());
@@ -171,12 +169,14 @@ public class CGStack extends CGSomeDrawable {
         });
 
         this.alignment.sink(new Sink() {
+
             protected void onValue(Object value) {
                 needsRelayout();
             }
         });
 
         this.drawables.sink(new Sink() {
+
             protected void onValue(Object value) {
                 updateIntrinsicContentSize();
                 needsRelayout(frame());
@@ -197,7 +197,7 @@ public class CGStack extends CGSomeDrawable {
         super.draw(g);
 
         S.println(this + "CGSTACK DRAW!");
-        
+
         if (this.axis.getInt() == AXIS_HORIZONTAL) {
             this.hDraw(g);
         } else if (this.axis.getInt() == AXIS_VERTICAL) {
@@ -225,7 +225,7 @@ public class CGStack extends CGSomeDrawable {
         }
     }
 
-    private void hDraw(Graphics g) {        
+    private void hDraw(Graphics g) {
         final Graphics graphics = g;
 
         final CGFrame thisFrame = frame();
@@ -236,13 +236,13 @@ public class CGStack extends CGSomeDrawable {
         int alignmentInt = this.alignment.getInt();
         int contentWidth = this.contentSize().getCGSize().width;
 
-        if (CG.isBitSet(alignmentInt,CG.HCENTER)) {
+        if (CG.isBitSet(alignmentInt, CG.HCENTER)) {
             this.nextLeft = thisFrame.x + (thisFrame.width - contentWidth) / 2 + contentInsets.deltaX();
-        } 
-        if (CG.isBitSet(alignmentInt,CG.LEFT)) {
+        }
+        if (CG.isBitSet(alignmentInt, CG.LEFT)) {
             this.nextLeft = thisFrame.x + contentInsets.deltaX();
         }
-        if (CG.isBitSet(alignmentInt,CG.RIGHT)) {
+        if (CG.isBitSet(alignmentInt, CG.RIGHT)) {
             this.nextLeft = thisFrame.x + thisFrame.width - contentWidth + contentInsets.deltaX();
         }
 
@@ -251,6 +251,7 @@ public class CGStack extends CGSomeDrawable {
         final boolean isBottom = CG.isBitSet(alignmentInt, CG.BOTTOM);
 
         this.drawables.forEach(new Arr.Enumerator() {
+
             public void onElement(Object element) {
                 CGDrawable child = (CGDrawable) element;
                 CGFrame childFrame = child.intrinsicAwareFrame();
@@ -282,7 +283,7 @@ public class CGStack extends CGSomeDrawable {
             }
         });
     }
-    
+
     private void vDraw(Graphics g) {
         final Graphics graphics = g;
 
@@ -290,7 +291,7 @@ public class CGStack extends CGSomeDrawable {
         final CGInsets contentInsets = contentInset();
 
         this.nextTop = thisFrame.y + contentInsets.top;
-           
+
         int alignmentInt = this.alignment.getInt();
         int contentHeight = this.contentSize.getCGSize().height;
 
@@ -309,10 +310,11 @@ public class CGStack extends CGSomeDrawable {
         final boolean isRight = CG.isBitSet(alignmentInt, CG.RIGHT);
 
         this.drawables.forEach(new Arr.Enumerator() {
+
             public void onElement(Object element) {
-                CGDrawable child = (CGDrawable)element;
+                CGDrawable child = (CGDrawable) element;
                 CGFrame childFrame = child.intrinsicAwareFrame();
-                
+
                 if (isHCenter) {
                     childFrame.x = thisFrame.x + (thisFrame.width - childFrame.width) / 2 + contentInsets.deltaX();
                 }
@@ -331,7 +333,7 @@ public class CGStack extends CGSomeDrawable {
                 S.println("VSTACK Will draw " + child + " " + childFrame.x + ", " + childFrame.y + "; " + childFrame.width + ", " + childFrame.height);
 
                 child.origin(childFrame.x, childFrame.y);
-                
+
                 child.draw(graphics);
 
                 nextTop += childFrame.height + spacing();
@@ -346,7 +348,7 @@ public class CGStack extends CGSomeDrawable {
         final CGInsets contentInsets = contentInset();
 
         for (int i = 0; i < this.drawables.getArray().length; i++) {
-            CGDrawable object = (CGDrawable)this.drawables.getArray()[i];
+            CGDrawable object = (CGDrawable) this.drawables.getArray()[i];
             CGFrame frame = object.intrinsicAwareFrame();
 
             frame.width = thisFrame.width;
@@ -354,7 +356,7 @@ public class CGStack extends CGSomeDrawable {
         }
 
         int alignmentInt = this.alignment.getInt();
-        
+
         final boolean isVCenter = CG.isBitSet(alignmentInt, CG.VCENTER);
         final boolean isTop = CG.isBitSet(alignmentInt, CG.TOP);
         final boolean isBottom = CG.isBitSet(alignmentInt, CG.BOTTOM);
@@ -364,8 +366,9 @@ public class CGStack extends CGSomeDrawable {
         final boolean isRight = CG.isBitSet(alignmentInt, CG.RIGHT);
 
         this.drawables.forEach(new Arr.Enumerator() {
+
             public void onElement(Object element) {
-                CGDrawable drawable = (CGDrawable)element;
+                CGDrawable drawable = (CGDrawable) element;
                 CGFrame frame = drawable.intrinsicAwareFrame();
 
                 if (isVCenter) {
@@ -400,13 +403,14 @@ public class CGStack extends CGSomeDrawable {
 
     public CGDrawable canvas(CGCanvas canvas) {
         super.canvas(canvas);
-        
+
         this.subscribeToKeyPressed();
         this.subscribeToKeyReleased();
 
         this.drawables.forEach(new Arr.Enumerator() {
+
             public void onElement(Object element) {
-                CGDrawable drawable = (CGDrawable)element;
+                CGDrawable drawable = (CGDrawable) element;
                 drawable.canvas(CGStack.this.canvas());
             }
         });
@@ -415,8 +419,12 @@ public class CGStack extends CGSomeDrawable {
 
     private void subscribeToKeyPressed() {
         CGCanvas canvas = this.canvas();
+        if (canvas == null) {
+            return;
+        }
         final Int keyPublisher = canvas.getKeyPressed();
         keyPublisher.sink(new Sink() {
+
             protected void onValue(Object value) {
                 S.println("PRESS DETECTED: " + value);
                 super.onValue(value);
@@ -427,7 +435,8 @@ public class CGStack extends CGSomeDrawable {
                 repeatedKeys.removeElement(keyCodeInteger);
                 repeatedKeys.addElement(keyCodeInteger);
 
-                keyRepeatQueue.async(2*CG.FRAME_MILLIS, new Runnable() {
+                keyRepeatQueue.async(2 * CG.FRAME_MILLIS, new Runnable() {
+
                     public void run() {
                         scheduleKeyRepeatedHandling(keyCodeInteger);
                     }
@@ -435,7 +444,7 @@ public class CGStack extends CGSomeDrawable {
             }
         });
     }
-    
+
     private void moveContentByKeyPress(int keyCode) {
         CGInsets contentInset = this.contentInset();
 
@@ -448,12 +457,12 @@ public class CGStack extends CGSomeDrawable {
             S.println("contentSize.height > thisFrame.height");
             int extent = contentSize.height - thisFrame.height;
 
-            if (keyCode == -1) {//t
+            if (keyCode == CG.KEY_UP) {//t
                 S.println("keyCode == Canvas.UP");
                 contentOffset.y = Math.max(
                         contentOffset.y - 5,
                         -(extent - contentInset.top));
-            } else if (keyCode == -2) {//b
+            } else if (keyCode == CG.KEY_DOWN) {//b
                 S.println("keyCode == Canvas.DOWN");
                 contentOffset.y = Math.min(
                         contentOffset.y + 5,
@@ -464,12 +473,12 @@ public class CGStack extends CGSomeDrawable {
         if (contentSize.width > thisFrame.width) {
             S.println("contentSize.width > thisFrame.width");
             int extent = contentSize.width - thisFrame.width;
-            if (keyCode == -3) {//l
+            if (keyCode == CG.KEY_LEFT) {//l
                 S.println("Canvas.LEFT");
                 contentOffset.x = Math.max(
                         contentOffset.x - 5,
                         -(extent + contentInset.left));
-            } else if (keyCode == -4) { //r
+            } else if (keyCode == CG.KEY_RIGHT) { //r
                 S.println("keyCode == Canvas.RIGHT");
                 contentOffset.x = Math.min(
                         contentOffset.x + 5,
@@ -481,9 +490,10 @@ public class CGStack extends CGSomeDrawable {
 
         contentOffsetBinding.sendValue(new Point(contentOffset));
     }
-    
+
     private void scheduleKeyRepeatedHandling(final Integer keyCode) {
         this.keyRepeatQueue.async(CG.FRAME_MILLIS, new Runnable() {
+
             public void run() {
                 if (repeatedKeys.contains(keyCode)) {
                     moveContentByKeyPress(keyCode.intValue());
@@ -495,8 +505,12 @@ public class CGStack extends CGSomeDrawable {
 
     private void subscribeToKeyReleased() {
         CGCanvas canvas = this.canvas();
+        if (canvas == null) {
+            return;
+        }
         final Int keyPublisher = canvas.getKeyReleased();
         keyPublisher.sink(new Sink() {
+
             protected void onValue(Object value) {
                 S.println("PRESS RELEASED: " + value);
                 super.onValue(value);
@@ -522,7 +536,7 @@ public class CGStack extends CGSomeDrawable {
 
         S.println("LETS COUNT CONTENT SIZE OF " + drawables.length + " SUBVIEWS!");
         for (int i = 0; i < drawables.length; i++) {
-            CGDrawable drawable = (CGDrawable)objDrawables[i];
+            CGDrawable drawable = (CGDrawable) objDrawables[i];
             drawables[i] = drawable;
 
             S.println(i + "-th subview is " + drawable);
@@ -561,7 +575,7 @@ public class CGStack extends CGSomeDrawable {
         contentHeight = Math.min(contentHeight, this.maxContentHeightBinding.getInt());
 
         S.println("2 BEFORE MASSIVE CALCULATIONS CONTENT SIZE IS: " + contentWidth + "x" + contentHeight);
-        
+
         CGSize size = this.adjustFrameToContentSize(contentWidth, contentHeight);
         S.println("CGSize size = this.adjustFrameToContentSize(contentWidth, contentHeight);");
         S.println(size);
@@ -601,14 +615,14 @@ public class CGStack extends CGSomeDrawable {
         if (size.height != this.height()) {
             this.heightBinding.sendValue(new Int(size.height));
         }
-        
+
         return contentSize;
     }
 
     private CGSize adjustFrameToContentSize(int contentWidth, int contentHeight) {
         CGSize size = this.frame().getCGSize();
         S.println("adjustFrameToContentSize " + size);
-        
+
         if (this.height() < contentHeight && this.hasGrowableHeight()) {
             S.println("1 adjustFrameToContentSize");
             int height = Math.min(contentHeight, this.maxHeight());
@@ -631,10 +645,12 @@ public class CGStack extends CGSomeDrawable {
 
         return size;
     }
-    
+
     // TODO ВОЗМОЖНО вот тут надо еще и ориджины/инсеты двигать
     private int adjustChildrenDimensions(CGDrawable[] views, final boolean isHeight, final int delta) {
-        if (delta == 0) { return delta; }
+        if (delta == 0) {
+            return delta;
+        }
 
         final boolean isExpanding = delta > 0;
         S.println("IS EXPANDING " + isExpanding);
@@ -643,16 +659,17 @@ public class CGStack extends CGSomeDrawable {
         int remainingDelta = Math.abs(delta);
 
         Object[] adjustables = S.filter(views, new S.Filter() {
+
             public boolean filter(Object object) {
                 CGDrawable view = (CGDrawable) object;
                 if (isExpanding) {
-                    return isHeight ?
-                        view.maxHeight() > view.height() :
-                        view.maxWidth() > view.width();
+                    return isHeight
+                            ? view.maxHeight() > view.height()
+                            : view.maxWidth() > view.width();
                 }
-                return isHeight ?
-                        view.height() > view.minHeight() :
-                        view.width() > view.minWidth();
+                return isHeight
+                        ? view.height() > view.minHeight()
+                        : view.width() > view.minWidth();
             }
         });
 
@@ -671,13 +688,13 @@ public class CGStack extends CGSomeDrawable {
                 S.println("WILL ADJUST " + (isHeight ? "HEIGHT" : "WIDTH") + " OF " + view + " CUR VALUE " + value);
 
                 if (isExpanding) {
-                    viewDelta = isHeight ?
-                                view.maxHeight() - view.height() :
-                                view.maxWidth() - view.width();
+                    viewDelta = isHeight
+                            ? view.maxHeight() - view.height()
+                            : view.maxWidth() - view.width();
                 } else {
-                    viewDelta = isHeight ?
-                                view.height() - view.minHeight() :
-                                view.width() - view.minWidth();
+                    viewDelta = isHeight
+                            ? view.height() - view.minHeight()
+                            : view.width() - view.minWidth();
                 }
 
                 viewDelta = Math.min(viewDelta, remainingDelta);
@@ -711,8 +728,8 @@ public class CGStack extends CGSomeDrawable {
                 int value = isHeight ? view.height() : view.width();
 
                 S.println("WILL ADJUST " + (isHeight ? "HEIGHT" : "WIDTH") + " OF " + view + " CUR VALUE " + value);
-                
-                int spaceToAdjust = isExpanding 
+
+                int spaceToAdjust = isExpanding
                         ? extremeValue - value
                         : value - extremeValue;
 
@@ -722,9 +739,9 @@ public class CGStack extends CGSomeDrawable {
                 S.println("VALUE BINDING WILL SET " + value);
 
                 if (isHeight && value != view.height()) {
-                        view.heightBinding.sendValue(new Int(value));
+                    view.heightBinding.sendValue(new Int(value));
                 } else if (value != view.width()) {
-                        view.widthBinding.sendValue(new Int(value));
+                    view.widthBinding.sendValue(new Int(value));
                 } else {
                     adjustablesCount--;
                 }
@@ -738,15 +755,15 @@ public class CGStack extends CGSomeDrawable {
             }
         }
 
-         S.println("REMAINIG DELTA " + remainingDelta);
+        S.println("REMAINIG DELTA " + remainingDelta);
         return remainingDelta;
     }
-    
+
     protected void updateIntrinsicContentSize() {
         super.updateIntrinsicContentSize();
         S.println(this + " will updateContentSizeAndChildrenDimensions()");
         this.updateContentSizeAndChildrenDimensions();
-        
+
         CGSize size = this.contentSize().getCGSize();
         S.println(this + " DID UPDATE SIZES, NOW HAS: " + size);
 

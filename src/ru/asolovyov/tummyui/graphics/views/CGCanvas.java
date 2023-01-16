@@ -13,8 +13,8 @@ import ru.asolovyov.combime.common.S;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.combime.operators.sequence.Drop;
 import ru.asolovyov.combime.operators.timing.Debounce;
-import ru.asolovyov.tummyui.graphics.CG;
 import ru.asolovyov.tummyui.graphics.CGFrame;
+import ru.asolovyov.tummyui.graphics.views.CGDrawable.KeyboardHandler;
 
 /**
  *
@@ -22,7 +22,7 @@ import ru.asolovyov.tummyui.graphics.CGFrame;
  */
 
 public class CGCanvas extends Canvas {
-    private CGDrawable[] content;
+    private CGDrawable[] content = new CGDrawable[]{};
     private Int backgroundColor;
     private Bool needsRepaint = new Bool(false);
 
@@ -34,6 +34,8 @@ public class CGCanvas extends Canvas {
     private Int keyReleased = (Int) new Int(null).to(new Drop(1));
     private Int keyRepeated = (Int) new Int(null).to(new Drop(1));
 
+    private KeyboardHandler keyboardHandler = null;
+
     public CGCanvas(CGDrawable content) {
         this(new CGDrawable[] { content });
     }
@@ -41,8 +43,59 @@ public class CGCanvas extends Canvas {
     public CGCanvas(CGDrawable[] content) {
         super();
         
-        this.content = content;
+        this.setDrawables(content);
+        
         S.println("CANVAS HAS " + content.length + " CHILDren");
+        
+        this.needsRepaint.to(new Debounce(33)).sink(new Sink() {
+            protected void onValue(Object value) {
+                repaint();
+            }
+        });
+
+        this.keyPressed.throttle(100).sink(new Sink() {
+            protected void onValue(Object value) {
+                KeyboardHandler handler = getKeyboardHandler();
+                if (handler == null) {
+                    return;
+                }
+                handler.keyPressed(null, ((Integer)value).intValue());
+            }
+        });
+
+        this.keyReleased.throttle(100).sink(new Sink() {
+            protected void onValue(Object value) {
+                KeyboardHandler handler = getKeyboardHandler();
+                if (handler == null) {
+                    return;
+                }
+                handler.keyReleased(null, ((Integer)value).intValue());
+            }
+        });
+
+        this.keyRepeated.throttle(100).sink(new Sink() {
+            protected void onValue(Object value) {
+                KeyboardHandler handler = getKeyboardHandler();
+                if (handler == null) {
+                    return;
+                }
+                handler.keyRepeated(null, ((Integer)value).intValue());
+            }
+        });
+    }
+
+    //TODO ОТРЕФАЧИТЬ ИМПЕРАТИВЩИНУ
+    public void setDrawable(CGDrawable content) {
+        this.setDrawables(new CGDrawable[]{ content });
+    }
+
+    public void setDrawables(CGDrawable[] content) {
+        for (int i = 0; i < this.content.length; i++) {
+            CGDrawable drawable = content[i];
+            drawable.canvas(null);
+        }
+
+        this.content = content;
 
         for (int i = 0; i < this.content.length; i++) {
             CGDrawable drawable = content[i];
@@ -51,7 +104,7 @@ public class CGCanvas extends Canvas {
 
         if (content.length == 1) {
             CGSomeDrawable child = (CGSomeDrawable) content[0];
-            
+
             int widthToSet = Math.min(this.getWidth(), child.maxWidth());
             int heightToSet = Math.min(this.getHeight(), child.maxHeight());
 
@@ -61,12 +114,8 @@ public class CGCanvas extends Canvas {
             child.widthBinding.sendValue(new Int(widthToSet));
             child.heightBinding.sendValue(new Int(heightToSet));
         }
-        
-        this.needsRepaint.to(new Debounce(33)).sink(new Sink() {
-            protected void onValue(Object value) {
-                repaint();
-            }
-        });
+
+        this.setNeedsRepaint();
     }
 
     public void repaint(CGFrame frame) {
@@ -125,5 +174,14 @@ public class CGCanvas extends Canvas {
 
     public Int getKeyRepeated() {
         return keyRepeated;
+    }
+    
+    private KeyboardHandler getKeyboardHandler() {
+        return keyboardHandler;
+    }
+
+    public CGCanvas handleKeyboard(KeyboardHandler handler) {
+        this.keyboardHandler = handler;
+        return this;
     }
 }

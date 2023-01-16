@@ -9,12 +9,14 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Font;
 import ru.asolovyov.combime.bindings.Bool;
 import ru.asolovyov.combime.bindings.Int;
+import ru.asolovyov.combime.common.S;
 import ru.asolovyov.threading.Clock;
 import ru.asolovyov.tummyui.forms.UIMIDlet;
 import ru.asolovyov.tummyui.graphics.CG;
 import ru.asolovyov.tummyui.graphics.CGColor;
 import ru.asolovyov.tummyui.graphics.views.CGDrawable;
 import ru.asolovyov.tummyui.graphics.CGSize;
+import ru.asolovyov.tummyui.graphics.views.CGCanvas;
 import ru.asolovyov.tummyui.graphics.views.CGStack;
 
 /**
@@ -34,31 +36,58 @@ import ru.asolovyov.tummyui.graphics.views.CGStack;
  * @author Администратор
  */
 public class Canvas extends UIMIDlet {
-    protected Displayable content() {
-        // TODO управление памятью,
-        // TODO отписка от подписок,
-        return CG.Canvas(
-//                testVStackWithTwoViewsNonfixAndSecond20HFix() //OK
-//                testVStackWithTwoViews20HFixAndSecondNonfix() //OK
-//                testHStackWithTwoViewsNonfixAndSecond20WFix() //OK
-//                testHStackWithTwoViews20WFixAndSecondNonfix() //OK
-//                testVStackWithTwoViewsViewFillsCanvas() //OK
-//                testHStackWithTwoViewsViewFillsCanvas() //OK
-//                testVStackWithOneViewFillsCanvas() //OK
-//                testZStackWithOneViewFillsCanvas() //OK
-//                testZStackWithTwoViewsFillsCanvasAndRespectsOrder() //OK
-//                testHStackWithOneViewFillsCanvas() //ок
-
+    private int testScreenIndex = 0;
+    
+    private Object[] testScreens = new Object[] {
                 //OK НО ТУТ ЕСТЬ ТРАБЛЫ 1) Если не задать высоты текстам, то все растягивается даже в ширину
                 // 2) Между ВСтеками в ХСтеке двойное расстояние.
                 // 3) НЕ РАБОТАЕТ СКРОЛЛИНГ СТЕКА :(
                 // 4) Оч тормозит
-                textStylesIteratingHorizontalStackOfLabels() 
-//                testFrameSetsByMaxWidthMaxHeight() //OK
-//                testRectFillsCanvasWhenNoDimensionsSet() //OK
-//                testRectFillsCanvasWhenSmallMinsSet() //OK
-//                testRectFrameOk()//OK
-          ).backgroundColor(CGColor.RED);
+                textStylesIteratingHorizontalStackOfLabels(),
+                testVStackWithTwoViewsNonfixAndSecond20HFix(), //OK
+                testVStackWithTwoViews20HFixAndSecondNonfix(), //OK
+                testHStackWithTwoViewsNonfixAndSecond20WFix(), //OK
+                testHStackWithTwoViews20WFixAndSecondNonfix(), //OK
+                testVStackWithTwoViewsViewFillsCanvas(), //OK
+                testHStackWithTwoViewsViewFillsCanvas(), //OK
+                testVStackWithOneViewFillsCanvas(), //OK
+                testZStackWithOneViewFillsCanvas(), //OK
+                testZStackWithTwoViewsFillsCanvasAndRespectsOrder(), //OK
+                testHStackWithOneViewFillsCanvas(), //ок
+                testFrameSetsByMaxWidthMaxHeight(), //OK
+                testRectFillsCanvasWhenNoDimensionsSet(), //OK
+                testRectFillsCanvasWhenSmallMinsSet(), //OK
+                testRectFrameOk()//OK
+    };
+
+    protected Displayable content() {
+        // TODO управление памятью,
+        // TODO отписка от подписок,
+        final CGCanvas canvas =
+                CG.Canvas(
+                    (CGDrawable) testScreens[testScreenIndex]
+                ).backgroundColor(CGColor.RED);
+
+        return canvas.handleKeyboard(new CGDrawable.KeyboardHandler() {
+            public void keyReleased(CGDrawable alwaysNull, int keyCode) {
+                int index = testScreenIndex;
+                S.println("INDEX WAS: " + index);
+                if (keyCode == CG.KEY_LEFT) {
+                    index = Math.max(0, index - 1);
+                } else if (keyCode == CG.KEY_RIGHT) {
+                    index = Math.min(testScreens.length - 1, index + 1);
+                }
+                S.println("INDEX NOW: " + index);
+                if (index == testScreenIndex) {
+                    S.println("INDEX SAME, BREAK");
+                    return;
+                }
+                S.println("INDEX RENEWED PROCEED");
+                testScreenIndex = index;
+                CGDrawable testScreen = (CGDrawable) testScreens[testScreenIndex];
+                canvas.setDrawable(testScreen);
+            }
+        });
     }
 
     private CGDrawable testHStackWithTwoViews20WFixAndSecondNonfix() {

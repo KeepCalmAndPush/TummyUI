@@ -70,6 +70,10 @@ public abstract class CGSomeDrawable implements CGDrawable {
     public CGDrawable canvas(CGCanvas canvas) {
         this.canvas = canvas;
 
+        if (canvas == null) {
+            return this;
+        }
+        
         this.startHandlingKeyboard();
         this.updateIntrinsicContentSize();
         canvas.setNeedsRepaint();
