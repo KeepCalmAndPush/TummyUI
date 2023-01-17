@@ -25,7 +25,7 @@ public class CGRectangle extends CGSomeDrawable {
         }
 
         CGInsets insets = this.contentInset();
-        int cornerRadius = cornerRadius();// * 2;
+        int cornerRadius = cornerRadius() * 2;
 
         int foregroundColor = this.color();
         if (foregroundColor != CG.NULL) {

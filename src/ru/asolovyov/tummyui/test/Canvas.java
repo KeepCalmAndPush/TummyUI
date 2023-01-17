@@ -45,6 +45,7 @@ public class Canvas extends UIMIDlet {
                 // 3) НЕ РАБОТАЕТ СКРОЛЛИНГ СТЕКА :(
                 // 4) Оч тормозит
                 testAnimationOk(),
+                testRectFrameOk(),//OK
                 textStylesIteratingHorizontalStackOfLabels(),
                 testVStackWithTwoViewsNonfixAndSecond20HFix(), //OK
                 testVStackWithTwoViews20HFixAndSecondNonfix(), //OK
@@ -59,7 +60,6 @@ public class Canvas extends UIMIDlet {
                 testFrameSetsByMaxWidthMaxHeight(), //OK
                 testRectFillsCanvasWhenNoDimensionsSet(), //OK
                 testRectFillsCanvasWhenSmallMinsSet(), //OK
-                testRectFrameOk()//OK
     };
 
     protected Displayable content() {
@@ -208,6 +208,7 @@ public class Canvas extends UIMIDlet {
         return CG.Rect()
                 .backgroundColor(CGColor.GREEN)
                 .frame(10, 10, 100, 100)
+                .cornerRadius(50)
                 ;
     }
 
@@ -215,8 +216,7 @@ public class Canvas extends UIMIDlet {
         CGDrawable rect =  CG.Rect()
                 .backgroundColor(0xFFFFFF)
                 .frame(0, 0, 20, 20)
-                .cornerRadius(5)
-                .animate(new CGAnimation(5000) {
+                .animate(new CGAnimation(3000) {
                     protected void animations(CGDrawable drawable) {
                         drawable
                                 .x(50).y(50)

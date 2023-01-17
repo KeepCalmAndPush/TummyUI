@@ -82,15 +82,15 @@ public abstract class CGAnimation {
 
         S.println("BG COLOR TARGET: " + Integer.toHexString(backgroundColorTarget));
 
-        this.xDelta = (this.xTarget - this.x) / cyclesCount;
-        this.yDelta = (this.yTarget - this.y) / cyclesCount;
-        this.widthDelta = (this.widthTarget - this.width) / cyclesCount;
-        this.heightDelta = (this.heightTarget - this.height) / cyclesCount;
+        this.xDelta = (this.xTarget - this.x) * 1000 / cyclesCount;
+        this.yDelta = (this.yTarget - this.y) * 1000 / cyclesCount;
+        this.widthDelta = (this.widthTarget - this.width) * 1000  / cyclesCount;
+        this.heightDelta = (this.heightTarget - this.height) * 1000 / cyclesCount;
 
-        this.colorDelta = (this.colorTarget - this.color) / cyclesCount;
-        this.backgroundColorDelta = (this.backgroundColorTarget - this.backgroundColor) / cyclesCount;
-        this.borderColorDelta = (this.borderColorTarget - this.borderColor) / cyclesCount;
-        this.cornerRadiusDelta = (this.cornerRadiusTarget - this.cornerRadius) / cyclesCount;
+        this.colorDelta = (this.colorTarget - this.color) * 1000  / cyclesCount;
+        this.backgroundColorDelta = (this.backgroundColorTarget - this.backgroundColor) * 1000  / cyclesCount;
+        this.borderColorDelta = (this.borderColorTarget - this.borderColor) * 1000  / cyclesCount;
+        this.cornerRadiusDelta = (this.cornerRadiusTarget - this.cornerRadius) * 1000  / cyclesCount;
         
         this.animateNextFrame();
     }
@@ -104,28 +104,28 @@ public abstract class CGAnimation {
             if (this.currentCycle == cyclesCount) {
                 getDrawable().x(this.xTarget);
             } else {
-                getDrawable().x(this.x + this.xDelta * this.currentCycle);
+                getDrawable().x(this.x + (this.xDelta * this.currentCycle) / 1000);
             }
         }
         if (yDelta != 0) {
             if (this.currentCycle == cyclesCount) {
                 getDrawable().y(this.yTarget);
             } else {
-                getDrawable().y(this.y + this.yDelta * this.currentCycle);
+                getDrawable().y(this.y + (this.yDelta * this.currentCycle) / 1000);
             }
         }
         if (widthDelta != 0) {
             if (this.currentCycle == cyclesCount) {
                 getDrawable().width(this.widthTarget);
             } else {
-                getDrawable().width(this.width + this.widthDelta * this.currentCycle);
+                getDrawable().width(this.width + (this.widthDelta * this.currentCycle) / 1000);
             }
         }
         if (heightDelta != 0) {
             if (this.currentCycle == cyclesCount) {
                 getDrawable().height(this.heightTarget);
             } else {
-                getDrawable().height(this.height + this.heightDelta * this.currentCycle);
+                getDrawable().height(this.height + (this.heightDelta * this.currentCycle) / 1000);
             }
         }
 
@@ -133,29 +133,30 @@ public abstract class CGAnimation {
             if (this.currentCycle == cyclesCount) {
                 getDrawable().color(this.colorTarget);
             } else {
-                getDrawable().color(this.color + this.colorDelta * this.currentCycle);
+                getDrawable().color(this.color + (this.colorDelta * this.currentCycle) / 1000);
             }
         }
+        //TODO КОЛОРЫ СЛОЖНЕЕ! ВИДАТЬ НАДО ПО КАЖДОЙ КОМПОНЕНТЕ ДВИГАТЬСЯ!
         if (backgroundColorDelta != 0) {
             if (this.currentCycle == cyclesCount) {
                 getDrawable().backgroundColor(backgroundColorTarget);
                 
             } else {
-                getDrawable().backgroundColor(this.backgroundColor + this.backgroundColorDelta * this.currentCycle);
+                getDrawable().backgroundColor(this.backgroundColor + (this.backgroundColorDelta * this.currentCycle) / 1000);
             }
         }
         if (borderColorDelta != 0) {
             if (this.currentCycle == cyclesCount) {
                 getDrawable().borderColor(this.borderColorTarget);
             } else {
-                getDrawable().borderColor(this.borderColor + this.borderColorDelta * this.currentCycle);
+                getDrawable().borderColor(this.borderColor + (this.borderColorDelta * this.currentCycle) / 1000);
             }
         }
         if (this.cornerRadiusDelta != 0) {
             if (this.currentCycle == cyclesCount) {
                 getDrawable().cornerRadius(this.cornerRadiusTarget);
             } else {
-                getDrawable().cornerRadius(this.cornerRadius + this.cornerRadiusDelta * this.currentCycle);
+                getDrawable().cornerRadius(this.cornerRadius + (this.cornerRadiusDelta * this.currentCycle) / 1000);
             }
         }
 
