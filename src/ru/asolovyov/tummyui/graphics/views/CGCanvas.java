@@ -13,6 +13,7 @@ import ru.asolovyov.combime.common.S;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.combime.operators.sequence.Drop;
 import ru.asolovyov.combime.operators.timing.Debounce;
+import ru.asolovyov.tummyui.graphics.CGDisplayLink;
 import ru.asolovyov.tummyui.graphics.CGFrame;
 import ru.asolovyov.tummyui.graphics.views.CGDrawable.KeyboardHandler;
 
@@ -27,6 +28,7 @@ public class CGCanvas extends Canvas {
     private Bool needsRepaint = new Bool(false);
 
     public void setNeedsRepaint() {
+        S.println("CANVAS SET NEEDS REPAINT!");
         this.needsRepaint.setBool(true);
     }
 
@@ -47,8 +49,9 @@ public class CGCanvas extends Canvas {
         
         S.debugln("CANVAS HAS " + content.length + " CHILDren");
         
-        this.needsRepaint.to(new Debounce(33)).sink(new Sink() {
+        this.needsRepaint.zip(CGDisplayLink.ticks).sink(new Sink() {
             protected void onValue(Object value) {
+               S.println("CANVAS REPAINT!!!");
                 repaint();
             }
         });

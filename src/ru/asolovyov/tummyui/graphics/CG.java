@@ -31,7 +31,7 @@ import ru.asolovyov.tummyui.data.List;
  * @author Администратор
  */
 public class CG {
-    public final static int FPS = 30;
+    public final static int FPS = 10;
     public final static int FRAME_MILLIS = 1000 / FPS;
 
     public final static int NULL = Integer.MIN_VALUE;

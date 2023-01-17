@@ -213,22 +213,22 @@ public class Canvas extends UIMIDlet {
 
     private CGDrawable testAnimationOk() {
         CGDrawable rect =  CG.Rect()
-                .backgroundColor(CGColor.GREEN)
+                .backgroundColor(0x000000)
                 .frame(10, 10, 100, 100)
                 .animate(new CGAnimation(3000) {
                     protected void animations(CGDrawable drawable) {
-                        drawable.x(100).y(3100).width(50).height(50).backgroundColor(CGColor.SKY_BLUE);
+                        drawable.width(50).height(50).backgroundColor(0xFFFFFF);
                 }})
                 ;
 
         return rect;
     }
     
-    Clock clock;
-    int i = 0;
-    Int arcColor = new Int(0xFFFF00);
-    Int backColor = new Int(0x0000FF);
-    Bool cond = new Bool(false);
+//    Clock clock;
+//    int i = 0;
+//    Int arcColor = new Int(0xFFFF00);
+//    Int backColor = new Int(0x0000FF);
+//    Bool cond = new Bool(false);
 
     /*
      CG.HStack(new GeometryReader() {
@@ -256,11 +256,6 @@ public class Canvas extends UIMIDlet {
 //            }
 //        });
 //    }
-
-    
-    // TODO запилить движок анимаций: сделать здоровенный метод в CG, типа animate(delay, duration, view, frame, bgcolor, borderColor, cornerRadius, inset итп)
-    // TODO сделать DisplayLink, это таймер который тикает раз в 33мс. В методе анимейт создавать объект анимации, который сушает дисплейЛинк и на каждый тик
-    // меняет переданные параметры на некоторую дельту = дюрейщен/33
 
     /*
      * !!! ТЕСТ КЕЙСЫ !!!

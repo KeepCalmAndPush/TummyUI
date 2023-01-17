@@ -310,13 +310,19 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     public void needsRelayout() {
-        this.needsRelayout(this.frame());
+        this.needsRelayout(null);
     }
 
     public void needsRelayout(CGFrame frame) {
         if (this.canvas() != null) {
             this.updateIntrinsicContentSize();
-            this.canvas().repaint(frame);
+            if (frame != null) {
+                // TODO CANVAS SET NEEDS REPAINT IN RECT!
+//                this.canvas().repaint(frame);
+                this.canvas.setNeedsRepaint();
+            } else {
+                this.canvas.setNeedsRepaint();
+            }
         }
     }
     
@@ -626,7 +632,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
 
     public CGDrawable animate(CGAnimation animation) {
         animation.setDrawable(this);
-        CGDisplayLink.shared.addAnimation(animation);
+        CGDisplayLink.addAnimation(animation);
         return this;
     }
 

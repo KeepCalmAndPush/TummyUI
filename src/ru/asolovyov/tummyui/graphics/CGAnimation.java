@@ -5,6 +5,8 @@
 
 package ru.asolovyov.tummyui.graphics;
 
+import ru.asolovyov.combime.common.S;
+import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.tummyui.graphics.views.CGDrawable;
 
 /**
@@ -52,16 +54,29 @@ public abstract class CGAnimation {
     }
 
     protected void setupAndBegin() {
-        this.xTarget = this.x = drawable.x();
-        this.yTarget = this.y = drawable.y();
-        this.widthTarget = this.width = drawable.width();
-        this.heightTarget = this.height = drawable.height();
+        this.x = drawable.x();
+        this.y = drawable.y();
+        this.width = drawable.width();
+        this.height = drawable.height();
 
-        this.colorTarget = this.color = drawable.color();
-        this.backgroundColorTarget = this.backgroundColor = drawable.backgroundColor();
-        this.borderColorTarget = this.borderColor = drawable.borderColor();
+        this.color = drawable.color();
+        this.backgroundColor = drawable.backgroundColor();
+        this.borderColor = drawable.borderColor();
+
+        S.println("BG COLOR ORIG: " + Integer.toHexString(drawable.backgroundColor()));
 
         this.animations(drawable);
+
+        this.xTarget = drawable.x();
+        this.yTarget = drawable.y();
+        this.widthTarget = drawable.width();
+        this.heightTarget = drawable.height();
+
+        this.colorTarget = drawable.color();
+        this.backgroundColorTarget = drawable.backgroundColor();
+        this.borderColorTarget = drawable.borderColor();
+
+        S.println("BG COLOR TARGET: " + Integer.toHexString(backgroundColorTarget));
 
         this.xDelta = (this.xTarget - this.x) / cyclesCount;
         this.yDelta = (this.yTarget - this.y) / cyclesCount;
@@ -71,7 +86,7 @@ public abstract class CGAnimation {
         this.colorDelta = (this.colorTarget - this.color) / cyclesCount;
         this.backgroundColorDelta = (this.backgroundColorTarget - this.backgroundColor) / cyclesCount;
         this.borderColorDelta = (this.borderColorTarget - this.borderColor) / cyclesCount;
-
+        
         this.animateNextFrame();
     }
 
@@ -79,15 +94,6 @@ public abstract class CGAnimation {
         if (this.isFinished()) {
             return;
         }
-
-        this.xTarget = getDrawable().x();
-        this.yTarget = getDrawable().y();
-        this.widthTarget = getDrawable().width();
-        this.heightTarget = getDrawable().height();
-
-        this.colorTarget = getDrawable().color();
-        this.backgroundColorTarget = getDrawable().backgroundColor();
-        this.borderColorTarget = getDrawable().borderColor();
         
         if (xDelta != 0) {
             if (this.currentCycle == cyclesCount) {
@@ -127,7 +133,16 @@ public abstract class CGAnimation {
         }
         if (backgroundColorDelta != 0) {
             if (this.currentCycle == cyclesCount) {
-                getDrawable().backgroundColor(this.backgroundColorTarget);
+                CGDisplayLink.ticks.next().sink(new Sink() {
+                    protected void onValue(Object value) {
+                        S.println("SUSL! "
+                        + Integer.toHexString(getDrawable().backgroundColor())
+                        + " " + Integer.toHexString(backgroundColorTarget)
+                        );
+                        getDrawable().backgroundColor(backgroundColorTarget);
+                    }
+                });
+                
             } else {
                 getDrawable().backgroundColor(this.backgroundColor + this.backgroundColorDelta * this.currentCycle);
             }
@@ -167,6 +182,10 @@ public abstract class CGAnimation {
      */
     public void setDrawable(CGDrawable drawable) {
         this.drawable = drawable;
-        this.setupAndBegin();
+        CGDisplayLink.ticks.next().sink(new Sink() {
+            protected void onValue(Object value) {
+                setupAndBegin();
+            }
+        });
     }
 }

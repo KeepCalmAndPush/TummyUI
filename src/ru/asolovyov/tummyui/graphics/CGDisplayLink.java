@@ -16,27 +16,27 @@ import ru.asolovyov.threading.Clock;
  * @author Администратор
  */
 public class CGDisplayLink {
-    public static final CGDisplayLink shared = new CGDisplayLink();
-    public IPublisher ticks = new PassthroughSubject();
-    private Vector animations = new Vector();
+    public static final IPublisher ticks = new PassthroughSubject();
+    private static final Vector animations = new Vector();
+    private static final Clock clock = new Clock(CG.FRAME_MILLIS);
 
-    private Clock clock;
-    private CGDisplayLink() {
-        this.clock = new Clock(CG.FRAME_MILLIS);
-        this.clock.add(new Runnable() {
+    static {
+        clock.add(new Runnable() {
             public void run() {
                 //TODO ПРОВЕРИТЬ А ТОЧНО ЛИ ВСЯ ЭТА ХРЕНЬ ВЫПОЛНИТСЯ ЗА 33мс
-                ((PassthroughSubject)ticks).sendValue(CGDisplayLink.this);
+                ((PassthroughSubject)ticks).sendValue(null);
                 handleAnimations();
             }
         });
     }
 
-    public void addAnimation(CGAnimation animation) {
-        this.animations.addElement(animation);
+    private CGDisplayLink() {}
+
+    public static void addAnimation(CGAnimation animation) {
+        animations.addElement(animation);
     }
 
-    private void handleAnimations() {
+    private static void handleAnimations() {
         Enumeration e = animations.elements();
         while (e.hasMoreElements()) {
             CGAnimation animation = (CGAnimation) e.nextElement();
