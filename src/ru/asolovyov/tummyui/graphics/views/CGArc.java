@@ -8,7 +8,6 @@ package ru.asolovyov.tummyui.graphics.views;
 import javax.microedition.lcdui.Graphics;
 import ru.asolovyov.combime.bindings.Int;
 import ru.asolovyov.combime.common.Sink;
-import ru.asolovyov.tummyui.bindings.Point;
 import ru.asolovyov.tummyui.graphics.CG;
 import ru.asolovyov.tummyui.graphics.CGFrame;
 import ru.asolovyov.tummyui.graphics.CGInsets;

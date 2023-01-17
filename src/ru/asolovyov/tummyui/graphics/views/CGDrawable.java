@@ -82,9 +82,9 @@ public interface CGDrawable {
     public CGDrawable contentInset(Insets inset);
     public CGDrawable contentInset(int top, int left, int bottom, int right);
 
-    public CGSize cornerRadius();
-    public CGDrawable cornerRaduis(CGSize cornerRadius);
-    public CGDrawable cornerRaduis(Size cornerRadiusBinding);
+    public int cornerRadius();
+    public CGDrawable cornerRadius(int cornerRadius);
+    public CGDrawable cornerRadius(Int cornerRadius);
 
     public int x();
     public CGDrawable x(Int x);

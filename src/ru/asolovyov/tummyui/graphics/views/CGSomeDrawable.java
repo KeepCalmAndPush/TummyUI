@@ -56,7 +56,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
 
     protected CurrentValueSubject/*<Point>*/ contentOffsetBinding = new CurrentValueSubject(new Point(CGPoint.zero()));
     protected CurrentValueSubject/*<Insets>*/ contentInsetBinding = new CurrentValueSubject(new Insets(CGInsets.zero()));
-    protected CurrentValueSubject/*<Size>*/ cornerRadiusBinding = new CurrentValueSubject(new Size(CGSize.zero()));
+    protected CurrentValueSubject/*<Size>*/ cornerRadiusBinding = new CurrentValueSubject(new Int(0));
 
     protected CurrentValueSubject/*<Bool>*/ isVisible = new CurrentValueSubject(new Bool(true));
     private CGCanvas canvas;
@@ -235,6 +235,8 @@ public abstract class CGSomeDrawable implements CGDrawable {
             return;
         }
 
+        int cornerRadius = cornerRadius();// * 2;
+
         int backgroundColor = this.backgroundColor();
         if (backgroundColor != CG.NULL) {
             g.setColor(backgroundColor);
@@ -243,8 +245,8 @@ public abstract class CGSomeDrawable implements CGDrawable {
                     frame.y,
                     frame.width,
                     frame.height,
-                    cornerRadius().width,
-                    cornerRadius().height);
+                    cornerRadius,
+                    cornerRadius);
         }
 
         int borderColor = this.borderColor();
@@ -256,8 +258,8 @@ public abstract class CGSomeDrawable implements CGDrawable {
                     frame.y,
                     frame.width,
                     frame.height,
-                    cornerRadius().width,
-                    cornerRadius().height);
+                    cornerRadius,
+                    cornerRadius);
         }
     }
 
@@ -608,17 +610,17 @@ public abstract class CGSomeDrawable implements CGDrawable {
         return this.intValueFrom(strokeStyle);
     }
 
-    public CGDrawable cornerRaduis(CGSize cornerRadius) {
-        return this.cornerRaduis(new Size(cornerRadius));
+    public CGDrawable cornerRadius(int cornerRadius) {
+        return this.cornerRadius(new Int(cornerRadius));
     }
 
-    public CGDrawable cornerRaduis(Size cornerRadiusBinding) {
+    public CGDrawable cornerRadius(Int cornerRadiusBinding) {
         this.cornerRadiusBinding.sendValue(cornerRadiusBinding);
         return this;
     }
 
-    public CGSize cornerRadius() {
-        return ((Size)this.cornerRadiusBinding.getValue()).getCGSize();
+    public int cornerRadius() {
+        return ((Int)this.cornerRadiusBinding.getValue()).getInt();
     }
 
     public CGDrawable borderColor(int borderColorHex) {

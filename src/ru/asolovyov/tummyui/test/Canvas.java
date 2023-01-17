@@ -213,11 +213,16 @@ public class Canvas extends UIMIDlet {
 
     private CGDrawable testAnimationOk() {
         CGDrawable rect =  CG.Rect()
-                .backgroundColor(0x000000)
-                .frame(10, 10, 100, 100)
-                .animate(new CGAnimation(3000) {
+                .backgroundColor(0xFFFFFF)
+                .frame(0, 0, 20, 20)
+                .cornerRadius(5)
+                .animate(new CGAnimation(5000) {
                     protected void animations(CGDrawable drawable) {
-                        drawable.width(50).height(50).backgroundColor(0xFFFFFF);
+                        drawable
+                                .x(50).y(50)
+                                .width(100).height(100)
+                                .cornerRadius(50)
+                                .backgroundColor(0xFFFFFF);
                 }})
                 ;
 
@@ -276,7 +281,7 @@ public class Canvas extends UIMIDlet {
                                 .color(0xFF0000)
                                 .backgroundColor(0x00FF00)
                                 .borderColor(0x0000FF)
-                                .cornerRaduis(new CGSize(20, 20))
+                                .cornerRadius(20)
                                 .width(50);
                     }
                 }).spacing(15),
@@ -301,7 +306,7 @@ public class Canvas extends UIMIDlet {
                                 .color(isEven ? CGColor.RED : CGColor.BLACK)
                                 .backgroundColor(isEven ? CGColor.GREEN : CGColor.WHITE)
                                 .borderColor(isEven ? CGColor.BLUE : CGColor.RED)
-                                .cornerRaduis(new CGSize(20, 20))
+                                .cornerRadius(20)
                                 .width(50);
                     }
                 })
@@ -309,7 +314,7 @@ public class Canvas extends UIMIDlet {
                         )
                         .backgroundColor(CGColor.LIGHT_SKY_BLUE)
                         .borderColor(CGColor.BLUE)
-                        .cornerRaduis(new CGSize(20, 20))
+                        .cornerRadius(20)
                         .maxHeight(160)
                         .maxWidth(160)
                         .x(10).y(10);
@@ -329,7 +334,7 @@ public class Canvas extends UIMIDlet {
 //                .color(0xFF0000)
 //                .backgroundColor(0x00FF00)
 //                .borderColor(0x0000FF)
-//                .cornerRaduis(new CGSize(20, 20))
+//                .cornerRadius(new CGSize(20, 20))
 //                .width(40),
 //
 //          CG.Text("он просто обрежется многоточием")
@@ -337,7 +342,7 @@ public class Canvas extends UIMIDlet {
 //                .color(0xFF0000)
 //                .backgroundColor(0x00FF00)
 //                .borderColor(0x0000FF)
-//                .cornerRaduis(new CGSize(20, 20))
+//                .cornerRadius(new CGSize(20, 20))
 //                .width(40),
 //
 //         CG.Text("как будто так и надо")
@@ -345,7 +350,7 @@ public class Canvas extends UIMIDlet {
 //                .color(0xFF0000)
 //                .backgroundColor(0x00FF00)
 //                .borderColor(0x0000FF)
-//                .cornerRaduis(new CGSize(20, 20))
+//                .cornerRadius(new CGSize(20, 20))
 //                .width(40)
 //                .height(70).width(100)
 

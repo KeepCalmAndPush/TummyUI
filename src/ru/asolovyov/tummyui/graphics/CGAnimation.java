@@ -37,9 +37,10 @@ public abstract class CGAnimation {
     private int backgroundColorDelta;
     private int borderColor;
     private int borderColorDelta;
-    private CGSize cornerRadius;
-    private CGSize cornerRadiusDelta;
+    private int cornerRadius;
+    private int cornerRadiusDelta;
 
+    //TODO отказаться от таргетной фигни в пользу вычитания и добавления на последнем цикле оставшейся разницы
     private int xTarget;
     private int yTarget;
     private int widthTarget;
@@ -48,6 +49,7 @@ public abstract class CGAnimation {
     private int colorTarget;
     private int backgroundColorTarget;
     private int borderColorTarget;
+    private int cornerRadiusTarget;
 
     public CGAnimation(int durationMillis) {
         this.cyclesCount = durationMillis / CG.FRAME_MILLIS;
@@ -62,6 +64,7 @@ public abstract class CGAnimation {
         this.color = drawable.color();
         this.backgroundColor = drawable.backgroundColor();
         this.borderColor = drawable.borderColor();
+        this.cornerRadius = drawable.cornerRadius();
 
         S.println("BG COLOR ORIG: " + Integer.toHexString(drawable.backgroundColor()));
 
@@ -75,6 +78,7 @@ public abstract class CGAnimation {
         this.colorTarget = drawable.color();
         this.backgroundColorTarget = drawable.backgroundColor();
         this.borderColorTarget = drawable.borderColor();
+        this.cornerRadiusTarget = drawable.cornerRadius();
 
         S.println("BG COLOR TARGET: " + Integer.toHexString(backgroundColorTarget));
 
@@ -86,6 +90,7 @@ public abstract class CGAnimation {
         this.colorDelta = (this.colorTarget - this.color) / cyclesCount;
         this.backgroundColorDelta = (this.backgroundColorTarget - this.backgroundColor) / cyclesCount;
         this.borderColorDelta = (this.borderColorTarget - this.borderColor) / cyclesCount;
+        this.cornerRadiusDelta = (this.cornerRadiusTarget - this.cornerRadius) / cyclesCount;
         
         this.animateNextFrame();
     }
@@ -133,15 +138,7 @@ public abstract class CGAnimation {
         }
         if (backgroundColorDelta != 0) {
             if (this.currentCycle == cyclesCount) {
-                CGDisplayLink.ticks.next().sink(new Sink() {
-                    protected void onValue(Object value) {
-                        S.println("SUSL! "
-                        + Integer.toHexString(getDrawable().backgroundColor())
-                        + " " + Integer.toHexString(backgroundColorTarget)
-                        );
-                        getDrawable().backgroundColor(backgroundColorTarget);
-                    }
-                });
+                getDrawable().backgroundColor(backgroundColorTarget);
                 
             } else {
                 getDrawable().backgroundColor(this.backgroundColor + this.backgroundColorDelta * this.currentCycle);
@@ -151,7 +148,14 @@ public abstract class CGAnimation {
             if (this.currentCycle == cyclesCount) {
                 getDrawable().borderColor(this.borderColorTarget);
             } else {
-                getDrawable().borderColor(this.borderColorDelta + this.borderColorDelta * this.currentCycle);
+                getDrawable().borderColor(this.borderColor + this.borderColorDelta * this.currentCycle);
+            }
+        }
+        if (this.cornerRadiusDelta != 0) {
+            if (this.currentCycle == cyclesCount) {
+                getDrawable().cornerRadius(this.cornerRadiusTarget);
+            } else {
+                getDrawable().cornerRadius(this.cornerRadius + this.cornerRadiusDelta * this.currentCycle);
             }
         }
 
