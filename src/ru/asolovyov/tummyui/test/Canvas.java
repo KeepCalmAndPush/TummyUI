@@ -40,12 +40,12 @@ public class Canvas extends UIMIDlet {
     private int testScreenIndex = 0;
     
     private Object[] testScreens = new Object[] {
-                //OK НО ТУТ ЕСТЬ ТРАБЛЫ 1) Если не задать высоты текстам, то все растягивается даже в ширину
+                // OK НО ТУТ ЕСТЬ ТРАБЛЫ 1) Если не задать высоты текстам, то все растягивается даже в ширину
                 // 2) Между ВСтеками в ХСтеке двойное расстояние.
                 // 3) НЕ РАБОТАЕТ СКРОЛЛИНГ СТЕКА :(
                 // 4) Оч тормозит
                 testAnimationOk(),
-                testRectFrameOk(),//OK
+                testRectFrameAndCornerRadiusOk(),//OK
                 textStylesIteratingHorizontalStackOfLabels(),
                 testVStackWithTwoViewsNonfixAndSecond20HFix(), //OK
                 testVStackWithTwoViews20HFixAndSecondNonfix(), //OK
@@ -204,7 +204,7 @@ public class Canvas extends UIMIDlet {
                 ;
     }
 
-    private CGDrawable testRectFrameOk() {
+    private CGDrawable testRectFrameAndCornerRadiusOk() {
         return CG.Rect()
                 .backgroundColor(CGColor.GREEN)
                 .frame(10, 10, 100, 100)
@@ -214,7 +214,7 @@ public class Canvas extends UIMIDlet {
 
     private CGDrawable testAnimationOk() {
         CGDrawable rect =  CG.Rect()
-                .backgroundColor(0xFFFFFF)
+                .backgroundColor(0x000000)
                 .frame(0, 0, 20, 20)
                 .animate(new CGAnimation(3000) {
                     protected void animations(CGDrawable drawable) {

@@ -4,6 +4,8 @@
  */
 package ru.asolovyov.tummyui.graphics;
 
+import ru.asolovyov.combime.common.S;
+
 /**
  *
  * @author Администратор
@@ -156,4 +158,44 @@ public class CGColor {
     public static final int WHITE_SMOKE = 0xF5F5F5;
     public static final int YELLOW = 0xFFFF00;
     public static final int YELLOW_GREEN = 0x9ACD32;
+
+    public static int redComponent(int color) {
+        return color - (color % 0xFF0000);
+//        return color & 0xFF;
+    }
+
+    public static int greenComponent(int color) {
+        int gColor = color - redComponent(color);
+        return gColor - (gColor % 0xFF00);
+//        return (color >> 8) & 0xFF;
+    }
+
+    public static int blueComponent(int color) {
+//        return (color >> 16) & 0xFF;
+        return (color - redComponent(color) - greenComponent(color));
+    }
+
+    private static String hex(int color) {
+        return Integer.toHexString(color);
+    }
+
+    public static int addDelta(int color, int delta) {
+//        int red = (redComponent(delta) << 16);
+//        int blue = (blueComponent(delta) << 8);
+//        int green = (greenComponent(delta));
+
+        int origColor = color;
+
+        int red = redComponent(delta);
+        int blue = blueComponent(delta);
+        int green = greenComponent(delta);
+
+        color += red;
+        color += blue;
+        color += green;
+
+        S.println("COLOR: " + hex(origColor) + " DELTA: " + hex(delta) + ", r: " + hex(red) + ", g: " + hex(green) + ", b: " + hex(blue));
+
+        return color;
+    }
 }

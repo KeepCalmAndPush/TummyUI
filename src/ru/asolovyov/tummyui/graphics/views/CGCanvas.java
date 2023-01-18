@@ -28,7 +28,7 @@ public class CGCanvas extends Canvas {
     private Bool needsRepaint = new Bool(false);
 
     public void setNeedsRepaint() {
-        S.println("CANVAS SET NEEDS REPAINT!");
+        S.debugln("CANVAS SET NEEDS REPAINT!");
         this.needsRepaint.setBool(true);
     }
 
@@ -51,7 +51,7 @@ public class CGCanvas extends Canvas {
         
         this.needsRepaint.zip(CGDisplayLink.ticks).sink(new Sink() {
             protected void onValue(Object value) {
-               S.println("CANVAS REPAINT!!!");
+                S.debugln("CANVAS REPAINT!!!");
                 repaint();
             }
         });
