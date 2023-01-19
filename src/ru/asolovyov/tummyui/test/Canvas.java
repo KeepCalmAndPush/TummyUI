@@ -216,7 +216,7 @@ public class Canvas extends UIMIDlet {
         CGDrawable rect =  CG.Rect()
                 .backgroundColor(CGColor.YELLOW)
                 .frame(0, 0, 20, 20)
-                .animate(new CGAnimation(3000) {
+                .animate(new CGAnimation(3000, CGAnimation.AUTOREVERSE) {
                     protected void animations(CGDrawable drawable) {
                         drawable
                                 .x(80).y(88)

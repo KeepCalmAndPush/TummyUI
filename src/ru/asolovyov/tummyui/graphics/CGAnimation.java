@@ -7,7 +7,6 @@ package ru.asolovyov.tummyui.graphics;
 
 import ru.asolovyov.combime.common.S;
 import ru.asolovyov.combime.common.Sink;
-import ru.asolovyov.combime.subjects.CurrentValueSubject;
 import ru.asolovyov.tummyui.graphics.views.CGDrawable;
 
 /**
@@ -15,6 +14,10 @@ import ru.asolovyov.tummyui.graphics.views.CGDrawable;
  * @author Администратор
  */
 public abstract class CGAnimation {
+    public static final int SIMPLE = 0;
+    public static final int LOOP = 1;
+    public static final int AUTOREVERSE = 2;
+
     protected abstract void animations(CGDrawable drawable);
     protected void completion(CGAnimation animation) {  };
 
@@ -27,7 +30,14 @@ public abstract class CGAnimation {
     // [Current, Target] x8
     private int[][] values = new int[PROPERTIES_COUNT][2];
 
+    private int type = SIMPLE;
+
     public CGAnimation(int durationMillis) {
+        this(durationMillis, SIMPLE);
+    }
+
+    public CGAnimation(int durationMillis, int type) {
+        this.type = type;
         this.cyclesCount = durationMillis / CG.FRAME_MILLIS;
     }
 
@@ -89,8 +99,28 @@ public abstract class CGAnimation {
         }
         
         this.currentCycle++;
+        
         if (this.isFinished()) {
             this.completion(this);
+            
+            if (this.type == LOOP) {
+                this.currentCycle = 0;
+            }
+            else if(this.type == AUTOREVERSE) {
+                this.currentCycle = 0;
+                this.reverseValues();
+            } else {
+                return;
+            }
+            animateNextFrame();
+        }
+    }
+
+    private void reverseValues() {
+        for (int i = 0; i < this.values.length; i++) {
+            int tmp = this.values[i][0];
+            this.values[i][0] = this.values[i][1];
+            this.values[i][1] = tmp;
         }
     }
 
