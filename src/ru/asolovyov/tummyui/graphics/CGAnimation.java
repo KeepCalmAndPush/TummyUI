@@ -5,6 +5,7 @@
 
 package ru.asolovyov.tummyui.graphics;
 
+import ru.asolovyov.combime.common.S;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.combime.subjects.CurrentValueSubject;
 import ru.asolovyov.tummyui.graphics.views.CGDrawable;
@@ -23,37 +24,8 @@ public abstract class CGAnimation {
 
     private int cyclesCount = 0;
     private int currentCycle = 0;
-    //[Current, Target, Delta] x8
-    private int[][] values = new int[PROPERTIES_COUNT][3];
-
-//    private int x;
-//    private int xDelta;
-//    private int y;
-//    private int yDelta;
-//    private int width;
-//    private int widthDelta;
-//    private int height;
-//    private int heightDelta;
-//
-//    private int color;
-//    private int colorDelta;
-//    private int backgroundColor;
-//    private int backgroundColorDelta;
-//    private int borderColor;
-//    private int borderColorDelta;
-//    private int cornerRadius;
-//    private int cornerRadiusDelta;
-//
-//    //TODO отказаться от таргетной фигни в пользу вычитания и добавления на последнем цикле оставшейся разницы
-//    private int xTarget;
-//    private int yTarget;
-//    private int widthTarget;
-//    private int heightTarget;
-//
-//    private int colorTarget;
-//    private int backgroundColorTarget;
-//    private int borderColorTarget;
-//    private int cornerRadiusTarget;
+    // [Current, Target] x8
+    private int[][] values = new int[PROPERTIES_COUNT][2];
 
     public CGAnimation(int durationMillis) {
         this.cyclesCount = durationMillis / CG.FRAME_MILLIS;
@@ -64,31 +36,17 @@ public abstract class CGAnimation {
         this.values[1][type] = drawable.y();
         this.values[2][type] = drawable.width();
         this.values[3][type] = drawable.height();
+        this.values[4][type] = drawable.cornerRadius();
 
-        this.values[4][type] = drawable.color();
-        this.values[5][type] = drawable.backgroundColor();
-        this.values[6][type] = drawable.borderColor();
-        this.values[7][type] = drawable.cornerRadius();
-    }
-
-    private void setDeltas() {
-        for (int i = 0; i < this.values.length; i++) {
-            int[] vector = this.values[i];
-            if (i == 4 || i ==5 || i == 6) {
-                //TODO  дельты цвета надо вычислять по-другому
-                //вообще мб уйти от хранимых дельт и в каждом кадре вычислять новое значение
-                vector[2] = (vector[1] - vector[0]) * (1000 / cyclesCount);
-            } else {
-                vector[2] = (vector[1] - vector[0]) * 1000 / cyclesCount;
-            }
-        }
+        this.values[5][type] = drawable.color();
+        this.values[6][type] = drawable.backgroundColor();
+        this.values[7][type] = drawable.borderColor();
     }
 
     protected void setupAndBegin() {
         this.setValues(0); //Originals
         this.animations(drawable);
         this.setValues(1); //Targets
-        this.setDeltas();
         
         this.animateNextFrame();
     }
@@ -100,44 +58,63 @@ public abstract class CGAnimation {
 
         for (int i = 0; i < this.values.length; i++) {
             int[] vector = this.values[i];
-            int delta = vector[2];
-            if (delta == 0) {
-                continue;
-            }
             int originalValue = vector[0];
             int targetValue = vector[1];
-            int nextValue = targetValue;
 
-            if (this.currentCycle != this.cyclesCount) {
-                delta = (delta * this.currentCycle) / 1000;
+            int currentFrameValue = this.makeCurrentFrameValue(originalValue, targetValue);
+            if (currentFrameValue == Integer.MIN_VALUE) {
+                continue;
+            }
+            
+            if (i == 0) { drawable.x(currentFrameValue); continue; }
+            if (i == 1) { drawable.y(currentFrameValue); continue; }
+            if (i == 2) { drawable.width(currentFrameValue); continue; }
+            if (i == 3) { drawable.height(currentFrameValue); continue; }
+            if (i == 4) { drawable.cornerRadius(currentFrameValue); continue; }
 
-                if (i == 4 || i ==5 || i == 6) {
-                    //TODO  дельты цвета надо вычислять по-другому
-                    nextValue = CGColor.addDelta(originalValue, delta);
-                } else {
-                   nextValue = originalValue + delta;
-                }
+            //COLORS
+            int r = makeCurrentFrameValue(CGColor.red(originalValue), CGColor.red(targetValue));
+            int g = makeCurrentFrameValue(CGColor.green(originalValue), CGColor.green(targetValue));
+            int b = makeCurrentFrameValue(CGColor.blue(originalValue), CGColor.blue(targetValue));
+            currentFrameValue = (r << 16) + (g << 8) + b;
+
+            if (i == 6) {
+                S.println("r g b " + r + " " + g + " " + b);
+                S.println("CFV: " + currentFrameValue);
             }
 
-            if (i == 0) { drawable.x(nextValue); continue; }
-            if (i == 1) { drawable.y(nextValue); continue; }
-            if (i == 2) { drawable.width(nextValue); continue; }
-            if (i == 3) { drawable.height(nextValue); continue; }
-
-            //TODO КОЛОРЫ СЛОЖНЕЕ! ВИДАТЬ НАДО ПО КАЖДОЙ КОМПОНЕНТЕ ДВИГАТЬСЯ!
-            if (i == 4) { drawable.color(nextValue); continue; }
-            if (i == 5) { drawable.backgroundColor(nextValue); continue; }
-            if (i == 6) { drawable.borderColor(nextValue); continue; }
-            
-            if (i == 7) { drawable.cornerRadius(nextValue); continue; }
+            if (i == 5) { drawable.color(currentFrameValue); continue; }
+            if (i == 6) { drawable.backgroundColor(currentFrameValue); continue; }
+            if (i == 7) { drawable.borderColor(currentFrameValue); continue; }
         }
         
-        
-
         this.currentCycle++;
         if (this.isFinished()) {
             this.completion(this);
         }
+    }
+
+    private int makeCurrentFrameValue(int source, int target) {
+        int delta = target - source;
+        if (delta == 0) {
+            return Integer.MIN_VALUE;
+        }
+        
+        int cycleDelta = 0;
+
+        int multiplier = 1;
+        while (cycleDelta == 0 && delta * multiplier <= Integer.MAX_VALUE) {
+            multiplier *= 10;
+            cycleDelta = delta * multiplier / this.cyclesCount;
+        }
+
+        delta = (cycleDelta * this.currentCycle) / multiplier;
+        if (delta == 0) {
+            return Integer.MIN_VALUE;
+        }
+
+        int value = source + delta;
+        return value;
     }
 
     public boolean isFinished() {

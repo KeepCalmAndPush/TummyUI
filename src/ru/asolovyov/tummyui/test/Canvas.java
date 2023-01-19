@@ -214,15 +214,15 @@ public class Canvas extends UIMIDlet {
 
     private CGDrawable testAnimationOk() {
         CGDrawable rect =  CG.Rect()
-                .backgroundColor(0x000000)
+                .backgroundColor(CGColor.YELLOW)
                 .frame(0, 0, 20, 20)
                 .animate(new CGAnimation(3000) {
                     protected void animations(CGDrawable drawable) {
                         drawable
-                                .x(50).y(50)
+                                .x(80).y(88)
                                 .width(100).height(100)
                                 .cornerRadius(50)
-                                .backgroundColor(0xFFFFFF);
+                                .backgroundColor(CGColor.BLUE);
                 }})
                 ;
 
