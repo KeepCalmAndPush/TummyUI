@@ -40,7 +40,11 @@ public class Canvas extends UIMIDlet {
     private int testScreenIndex = 0;
     
     private Object[] testScreens = new Object[] {
-//                testAnimationOk(),
+                testVSTextTitleAndHStackContent(), //OK, НО
+                //TODO Сделать чтобы у текста размер поджимался под размер самого текста
+                //вообще: систему приоритетов сжатия запилить
+                testVSTextTitleAndRectContent(), // OK
+                testAnimationOk(),
                 testAnimationYellowTrip(),
                 testRectFrameAndCornerRadiusOk(),//OK
 
@@ -63,52 +67,33 @@ public class Canvas extends UIMIDlet {
                 testRectFillsCanvasWhenNoDimensionsSet(), //OK
                 testRectFillsCanvasWhenSmallMinsSet(), //OK
     };
+    
+    private CGDrawable testVSTextTitleAndRectContent() {
+        return CG.VStack(
+                CG.Text("TITLE")
+                    .alignment(CG.CENTER)
+                    .height(20)
+                    .backgroundColor(CGColor.WHITE),
+                CG.Rect()
+                    .backgroundColor(CGColor.GREEN)
+                )
+                .backgroundColor(CGColor.ORANGE)
+                ;
+    }
 
-    protected Displayable content() {
-        // TODO управление памятью,
-        // TODO отписка от подписок,
-        final CGCanvas canvas =
-                CG.Canvas(
-                    (CGDrawable) testScreens[testScreenIndex]
-                ).backgroundColor(CGColor.RED);
-
-        return canvas.handleKeyboard(new CGDrawable.KeyboardHandler() {
-            public void keyReleased(CGDrawable alwaysNull, int keyCode) {
-                int index = testScreenIndex;
-                S.debugln("INDEX WAS: " + index);
-                if (keyCode == CG.KEY_LEFT) {
-                    index -= 1;
-                    if (index < 0) {
-                        index = testScreens.length - 1;
-                    }
-                } else if (keyCode == CG.KEY_RIGHT) {
-                    index += 1;
-                    if (index == testScreens.length) {
-                        index = 0;
-                    }
-                }
-                S.debugln("INDEX NOW: " + index);
-                if (index == testScreenIndex) {
-                    S.debugln("INDEX SAME, BREAK");
-                    return;
-                }
-                S.debugln("INDEX RENEWED PROCEED");
-                testScreenIndex = index;
-                // TODO ВЫСОТА ТЕКСТА СЧИТАЕТСЯ НЕПОЙМИ КАК
-                // ТЕКСТ ПОКАЗЫВАЕТСЯ НЕ ВСЕГДА
-                // ИНОГДА ТЕКСТ НЕ НА ВСЮ ШИРИНУ
-//                CGDrawable testScreen = CG.VStack(
-//                        CG.Text("Заголовок теста " + index)
-//                        .color(CGColor.BLACK)
-//                        .backgroundColor(CGColor.WHITE)
-//                        ,
-//
-//                        ((CGDrawable) testScreens[testScreenIndex]).height(188)
-//                        );
-                CGDrawable testScreen = (CGDrawable) testScreens[testScreenIndex];
-                canvas.setDrawable(testScreen);
-            }
-        });
+    private CGDrawable testVSTextTitleAndHStackContent() {
+        return CG.VStack(
+                CG.Text("TITLE")
+                    .alignment(CG.CENTER)
+                    .height(20)
+                    .backgroundColor(CGColor.WHITE),
+                CG.HStack(
+                    CG.Rect().backgroundColor(CGColor.BLUE),
+                    CG.Rect().backgroundColor(CGColor.YELLOW)
+                )
+                )
+                .backgroundColor(CGColor.ORANGE)
+                ;
     }
 
     private CGDrawable testHStackWithTwoViews20WFixAndSecondNonfix() {
@@ -214,6 +199,7 @@ public class Canvas extends UIMIDlet {
                 ;
     }
 
+    //TODO ОЧЕНЬ МНОГО КОДА. НАДО СДЕЛАТЬ АНИМАЦИЮ ПРОСТО СТРУКТУРОЙ ДАННЫХ И ЧЕЙНИТЬ ИХ ЧЕРЕЗ THEN/DELAY
     private CGDrawable testAnimationYellowTrip() {
         CGDrawable rect =  CG.Rect()
                 .backgroundColor(CGColor.YELLOW)
@@ -361,6 +347,53 @@ public class Canvas extends UIMIDlet {
                         .maxHeight(160)
                         .maxWidth(160)
                         .x(10).y(10);
+    }
+
+    protected Displayable content() {
+        // TODO управление памятью,
+        // TODO отписка от подписок,
+        final CGCanvas canvas =
+                CG.Canvas(
+                    (CGDrawable) testScreens[testScreenIndex]
+                ).backgroundColor(CGColor.RED);
+
+        return canvas.handleKeyboard(new CGDrawable.KeyboardHandler() {
+            public void keyReleased(CGDrawable alwaysNull, int keyCode) {
+                int index = testScreenIndex;
+                S.debugln("INDEX WAS: " + index);
+                if (keyCode == CG.KEY_LEFT) {
+                    index -= 1;
+                    if (index < 0) {
+                        index = testScreens.length - 1;
+                    }
+                } else if (keyCode == CG.KEY_RIGHT) {
+                    index += 1;
+                    if (index == testScreens.length) {
+                        index = 0;
+                    }
+                }
+                S.debugln("INDEX NOW: " + index);
+                if (index == testScreenIndex) {
+                    S.debugln("INDEX SAME, BREAK");
+                    return;
+                }
+                S.debugln("INDEX RENEWED PROCEED");
+                testScreenIndex = index;
+                // TODO ВЫСОТА ТЕКСТА СЧИТАЕТСЯ НЕПОЙМИ КАК
+                // ТЕКСТ ПОКАЗЫВАЕТСЯ НЕ ВСЕГДА
+                // ИНОГДА ТЕКСТ НЕ НА ВСЮ ШИРИНУ
+//                CGDrawable testScreen = CG.VStack(
+//                        CG.Text("Заголовок теста " + index)
+//                        .color(CGColor.BLACK)
+//                        .backgroundColor(CGColor.WHITE)
+//                        ,
+//
+//                        ((CGDrawable) testScreens[testScreenIndex]).height(188)
+//                        );
+                CGDrawable testScreen = (CGDrawable) testScreens[testScreenIndex];
+                canvas.setDrawable(testScreen);
+            }
+        });
     }
 }
 
