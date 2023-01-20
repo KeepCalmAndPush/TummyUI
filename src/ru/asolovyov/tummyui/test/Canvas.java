@@ -40,13 +40,15 @@ public class Canvas extends UIMIDlet {
     private int testScreenIndex = 0;
     
     private Object[] testScreens = new Object[] {
+//                testAnimationOk(),
+                testAnimationYellowTrip(),
+                testRectFrameAndCornerRadiusOk(),//OK
+
                 // OK НО ТУТ ЕСТЬ ТРАБЛЫ 1) Если не задать высоты текстам, то все растягивается даже в ширину
                 // 2) Между ВСтеками в ХСтеке двойное расстояние.
                 // 3) НЕ РАБОТАЕТ СКРОЛЛИНГ СТЕКА :(
                 // 4) Оч тормозит
-                testAnimationOk(),
-                testRectFrameAndCornerRadiusOk(),//OK
-                textStylesIteratingHorizontalStackOfLabels(),
+                textStylesIteratingHorizontalStackOfLabels(), // :(
                 testVStackWithTwoViewsNonfixAndSecond20HFix(), //OK
                 testVStackWithTwoViews20HFixAndSecondNonfix(), //OK
                 testHStackWithTwoViewsNonfixAndSecond20WFix(), //OK
@@ -212,15 +214,56 @@ public class Canvas extends UIMIDlet {
                 ;
     }
 
+    private CGDrawable testAnimationYellowTrip() {
+        CGDrawable rect =  CG.Rect()
+                .backgroundColor(CGColor.YELLOW)
+                .frame(10, 10, 50, 50)
+                .animate(new CGAnimation(1000) {
+                    protected void animations(CGDrawable drawable) {
+                        drawable.x(110);
+                    }
+                    protected void completion(final CGAnimation animation) {
+                        animation.getDrawable().animate(new CGAnimation(1000) {
+                            final CGAnimation parentAnimation = animation;
+                            protected void animations(CGDrawable drawable) {
+                                drawable.y(110);
+                            }
+                            
+                            protected void completion(CGAnimation animation) {
+                                animation.getDrawable().animate(new CGAnimation(1000) {
+                                    protected void animations(CGDrawable drawable) {
+                                        drawable.x(10);
+                                    }
+
+                                    protected void completion(CGAnimation animation) {
+                                        animation.getDrawable().animate(new CGAnimation(1000) {
+                                            protected void animations(CGDrawable drawable) {
+                                                drawable.y(10);
+                                            }
+                                            
+                                            protected void completion(CGAnimation animation) {
+                                                parentAnimation.restart();
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                    })
+                ;
+
+        return rect;
+    }
+
     private CGDrawable testAnimationOk() {
         CGDrawable rect =  CG.Rect()
                 .backgroundColor(CGColor.YELLOW)
-                .frame(0, 0, 20, 20)
+                .frame(10, 10, 50, 50)
                 .animate(new CGAnimation(3000, CGAnimation.AUTOREVERSE) {
                     protected void animations(CGDrawable drawable) {
                         drawable
-                                .x(80).y(88)
-                                .width(100).height(100)
+                                .x(80).y(88).width(100).height(100)
                                 .cornerRadius(50)
                                 .backgroundColor(CGColor.BLUE);
                 }})

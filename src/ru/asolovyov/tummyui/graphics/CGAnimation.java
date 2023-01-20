@@ -18,20 +18,19 @@ public abstract class CGAnimation {
     public static final int LOOP = 1;
     public static final int AUTOREVERSE = 2;
 
+    private static final int PROPERTIES_COUNT = 8;
+
     protected abstract void animations(CGDrawable drawable);
     protected void completion(CGAnimation animation) {  };
 
-    private CGDrawable drawable;
-
-    private static final int PROPERTIES_COUNT = 8;
+    protected CGDrawable drawable;
+    private int type = SIMPLE;
 
     private int cyclesCount = 0;
     private int currentCycle = 0;
     // [Current, Target] x8
     private int[][] values = new int[PROPERTIES_COUNT][2];
-
-    private int type = SIMPLE;
-
+    
     public CGAnimation(int durationMillis) {
         this(durationMillis, SIMPLE);
     }
@@ -62,11 +61,15 @@ public abstract class CGAnimation {
     }
 
     public void animateNextFrame() {
+//        S.println(this + " GONNA ANIMATE!");
         if (this.isFinished()) {
+//            S.println(this + " 1 FINISHED!");
             return;
         }
 
         for (int i = 0; i < this.values.length; i++) {
+//            S.println("VALUE");
+            
             int[] vector = this.values[i];
             int originalValue = vector[0];
             int targetValue = vector[1];
@@ -88,11 +91,6 @@ public abstract class CGAnimation {
             int b = makeCurrentFrameValue(CGColor.blue(originalValue), CGColor.blue(targetValue));
             currentFrameValue = (r << 16) + (g << 8) + b;
 
-            if (i == 6) {
-                S.println("r g b " + r + " " + g + " " + b);
-                S.println("CFV: " + currentFrameValue);
-            }
-
             if (i == 5) { drawable.color(currentFrameValue); continue; }
             if (i == 6) { drawable.backgroundColor(currentFrameValue); continue; }
             if (i == 7) { drawable.borderColor(currentFrameValue); continue; }
@@ -101,6 +99,8 @@ public abstract class CGAnimation {
         this.currentCycle++;
         
         if (this.isFinished()) {
+//            S.println(this + " 2 FINISHED!");
+            
             this.completion(this);
             
             if (this.type == LOOP) {
@@ -112,6 +112,7 @@ public abstract class CGAnimation {
             } else {
                 return;
             }
+            
             animateNextFrame();
         }
     }
@@ -149,6 +150,19 @@ public abstract class CGAnimation {
 
     public boolean isFinished() {
         return this.currentCycle > this.cyclesCount;
+    }
+
+    public void restart() {
+        S.println(this + " RESTART!");
+        for (int i = 0; i < values.length; i++) {
+            int[] is = values[i];
+            for (int j = 0; j < is.length; j++) {
+                S.print(" " + is[j]);
+            }
+            S.println("");
+        }
+        this.currentCycle = 0;
+        this.animateNextFrame();
     }
     
     public void abort() {
