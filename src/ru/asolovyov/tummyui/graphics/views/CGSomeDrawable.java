@@ -52,6 +52,9 @@ public abstract class CGSomeDrawable implements CGDrawable {
     protected CurrentValueSubject/*<Int>*/ color = new CurrentValueSubject(new Int(CG.NULL));
     protected CurrentValueSubject/*<Int>*/ backgroundColor = new CurrentValueSubject(new Int(CG.NULL));
     protected CurrentValueSubject/*<Int>*/ borderColor = new CurrentValueSubject(new Int(CG.NULL));
+    protected Int shadowColor = new Int(CG.NULL);
+    protected Point shadowOffset = new Point(1, 1);
+
     protected CurrentValueSubject/*<Int>*/ strokeStyle = new CurrentValueSubject(new Int(Graphics.SOLID));
 
     protected CurrentValueSubject/*<Point>*/ contentOffsetBinding = new CurrentValueSubject(new Point(CGPoint.zero()));
@@ -140,6 +143,16 @@ public abstract class CGSomeDrawable implements CGDrawable {
         minsMaxes.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
                 S.debugln("8 MINMAX: " + S.arrayToString((Object[])value));
+                relayout();
+            }
+        });
+
+        Publisher.combineLatest(new IPublisher[]{
+                    this.shadowColor,
+                    this.shadowOffset
+        }).removeDuplicates().sink(new Sink() {
+            protected void onValue(Object value) {
+                S.debugln("2 SHADOWS" + S.arrayToString((Object[])value));
                 relayout();
             }
         });
@@ -241,6 +254,18 @@ public abstract class CGSomeDrawable implements CGDrawable {
 
         int cornerRadius = cornerRadius() * 2;
 
+        int shadowColor = this.shadowColor();
+        if (shadowColor != CG.NULL) {
+            g.setColor(shadowColor);
+            g.fillRoundRect(
+                    frame.x + shadowOffset().x,
+                    frame.y + shadowOffset().y,
+                    frame.width,
+                    frame.height,
+                    cornerRadius,
+                    cornerRadius);
+        }
+
         int backgroundColor = this.backgroundColor();
         if (backgroundColor != CG.NULL) {
             g.setColor(backgroundColor);
@@ -312,6 +337,33 @@ public abstract class CGSomeDrawable implements CGDrawable {
 
     public CGDrawable color(Int backgroundColorHex) {
         this.color.sendValue(backgroundColorHex);
+        return this;
+    }
+
+    public int shadowColor() {
+        return this.shadowColor.getInt();
+    }
+
+    public CGDrawable shadowColor(int shadowColorHex) {
+        this.shadowColor.setInt(shadowColorHex);
+        return this;
+    }
+
+    public CGDrawable shadowColor(Int shadowColorHex) {
+        shadowColorHex.route(this.shadowColor);
+        return this;
+    }
+
+    public CGPoint shadowOffset() {
+        return this.shadowOffset.getCGPoint();
+    }
+
+    public CGDrawable shadowOffset(CGPoint shadowColorHex) {
+        this.shadowOffset.sendValue(shadowColorHex);
+        return this;
+    }
+    public CGDrawable shadowOffset(Point shadowColorHex) {
+        shadowColorHex.route(this.shadowOffset);
         return this;
     }
 

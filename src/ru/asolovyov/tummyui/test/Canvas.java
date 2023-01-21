@@ -12,6 +12,7 @@ import ru.asolovyov.tummyui.forms.UIMIDlet;
 import ru.asolovyov.tummyui.graphics.CG;
 import ru.asolovyov.tummyui.graphics.CGAnimation;
 import ru.asolovyov.tummyui.graphics.CGColor;
+import ru.asolovyov.tummyui.graphics.CGPoint;
 import ru.asolovyov.tummyui.graphics.views.CGDrawable;
 import ru.asolovyov.tummyui.graphics.views.CGCanvas;
 import ru.asolovyov.tummyui.graphics.views.CGStack;
@@ -36,7 +37,8 @@ public class Canvas extends UIMIDlet {
     private int testScreenIndex = 0;
     
     private Object[] testScreens = new Object[] {
-                testVSTextTitleAndRectContent(), // OK
+        testShadows()//ОК, тени работают, но ВСТек распидорашен. Нижний стек со вьюхами слишком уехал вниз.
+//                testVSTextTitleAndRectContent(), // OK
 //                testVSTextTitleAndHStackContent(), //OK,
 //
 //
@@ -63,6 +65,43 @@ public class Canvas extends UIMIDlet {
 //                testRectFillsCanvasWhenNoDimensionsSet(), //OK
 //                testRectFillsCanvasWhenSmallMinsSet(), //OK
     };
+
+    private CGDrawable testShadows() {
+        return CG.VStack(
+                    CG.HStack(
+                        CG.Rect()
+                            .width(50).height(50)
+                            .shadowColor(CGColor.BLACK)
+                            .shadowOffset(new CGPoint(5, 5))
+                            .backgroundColor(CGColor.RED)
+                            .cornerRadius(10)
+                            ,
+                        CG.Rect()
+                            .width(50).height(50)
+                            .shadowColor(CGColor.BLUE)
+                            .shadowOffset(new CGPoint(-5, 15))
+                            .backgroundColor(CGColor.GREEN)
+                    ).spacing(20)
+                     .borderColor(CGColor.BLACK),
+
+                    CG.HStack(
+                        CG.Rect()
+                            .width(50).height(50)
+                            .shadowColor(CGColor.GRAY)
+                            .shadowOffset(new CGPoint(5, -5))
+                            .backgroundColor(CGColor.BLUE),
+                        CG.Rect()
+                            .width(50).height(50)
+                            .shadowColor(CGColor.PINK)
+                            .shadowOffset(new CGPoint(-5, -5))
+                            .backgroundColor(CGColor.BLACK)
+                    )
+                    .spacing(20)
+                    .borderColor(CGColor.RED)
+                )
+                .backgroundColor(CGColor.WHITE)
+                ;
+    }
     
     private CGDrawable testVSTextTitleAndRectContent() {
         return CG.VStack(
@@ -73,8 +112,6 @@ public class Canvas extends UIMIDlet {
                         .backgroundColor(CGColor.WHITE),
                     CG.Rect()
                         .flexibilityHeight(99)
-//                        .height(50)
-                        //  TODO: игнорируется
                         .minHeight(50)
                         .backgroundColor(CGColor.GREEN)
                 ).backgroundColor(CGColor.ORANGE)
