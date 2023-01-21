@@ -7,16 +7,12 @@ package ru.asolovyov.tummyui.test;
 
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Font;
-import ru.asolovyov.combime.bindings.Bool;
-import ru.asolovyov.combime.bindings.Int;
 import ru.asolovyov.combime.common.S;
-import ru.asolovyov.threading.Clock;
 import ru.asolovyov.tummyui.forms.UIMIDlet;
 import ru.asolovyov.tummyui.graphics.CG;
 import ru.asolovyov.tummyui.graphics.CGAnimation;
 import ru.asolovyov.tummyui.graphics.CGColor;
 import ru.asolovyov.tummyui.graphics.views.CGDrawable;
-import ru.asolovyov.tummyui.graphics.CGSize;
 import ru.asolovyov.tummyui.graphics.views.CGCanvas;
 import ru.asolovyov.tummyui.graphics.views.CGStack;
 
@@ -40,44 +36,48 @@ public class Canvas extends UIMIDlet {
     private int testScreenIndex = 0;
     
     private Object[] testScreens = new Object[] {
-                testVSTextTitleAndHStackContent(), //OK, НО
-                //TODO Сделать чтобы у текста размер поджимался под размер самого текста
-                //вообще: систему приоритетов сжатия запилить
                 testVSTextTitleAndRectContent(), // OK
-                testAnimationOk(),
-                testAnimationYellowTrip(),
-                testRectFrameAndCornerRadiusOk(),//OK
-
-                // OK НО ТУТ ЕСТЬ ТРАБЛЫ 1) Если не задать высоты текстам, то все растягивается даже в ширину
-                // 2) Между ВСтеками в ХСтеке двойное расстояние.
-                // 3) НЕ РАБОТАЕТ СКРОЛЛИНГ СТЕКА :(
-                // 4) Оч тормозит
-                textStylesIteratingHorizontalStackOfLabels(), // :(
-                testVStackWithTwoViewsNonfixAndSecond20HFix(), //OK
-                testVStackWithTwoViews20HFixAndSecondNonfix(), //OK
-                testHStackWithTwoViewsNonfixAndSecond20WFix(), //OK
-                testHStackWithTwoViews20WFixAndSecondNonfix(), //OK
-                testVStackWithTwoViewsViewFillsCanvas(), //OK
-                testHStackWithTwoViewsViewFillsCanvas(), //OK
-                testVStackWithOneViewFillsCanvas(), //OK
-                testZStackWithOneViewFillsCanvas(), //OK
-                testZStackWithTwoViewsFillsCanvasAndRespectsOrder(), //OK
-                testHStackWithOneViewFillsCanvas(), //ок
-                testFrameSetsByMaxWidthMaxHeight(), //OK
-                testRectFillsCanvasWhenNoDimensionsSet(), //OK
-                testRectFillsCanvasWhenSmallMinsSet(), //OK
+//                testVSTextTitleAndHStackContent(), //OK,
+//
+//
+//                testAnimationOk(),
+//                testAnimationYellowTrip(),
+//                testRectFrameAndCornerRadiusOk(),//OK
+//
+//                // OK НО ТУТ ЕСТЬ ТРАБЛЫ 1) Если не задать высоты текстам, то все растягивается даже в ширину
+//                // 2) Между ВСтеками в ХСтеке двойное расстояние.
+//                // 3) НЕ РАБОТАЕТ СКРОЛЛИНГ СТЕКА :(
+//                // 4) Оч тормозит
+//                textStylesIteratingHorizontalStackOfLabels(), // :(
+//                testVStackWithTwoViewsNonfixAndSecond20HFix(), //OK
+//                testVStackWithTwoViews20HFixAndSecondNonfix(), //OK
+//                testHStackWithTwoViewsNonfixAndSecond20WFix(), //OK
+//                testHStackWithTwoViews20WFixAndSecondNonfix(), //OK
+//                testVStackWithTwoViewsViewFillsCanvas(), //OK
+//                testHStackWithTwoViewsViewFillsCanvas(), //OK
+//                testVStackWithOneViewFillsCanvas(), //OK
+//                testZStackWithOneViewFillsCanvas(), //OK
+//                testZStackWithTwoViewsFillsCanvasAndRespectsOrder(), //OK
+//                testHStackWithOneViewFillsCanvas(), //ок
+//                testFrameSetsByMaxWidthMaxHeight(), //OK
+//                testRectFillsCanvasWhenNoDimensionsSet(), //OK
+//                testRectFillsCanvasWhenSmallMinsSet(), //OK
     };
     
     private CGDrawable testVSTextTitleAndRectContent() {
         return CG.VStack(
-                CG.Text("TITLE")
-                    .alignment(CG.CENTER)
-                    .height(20)
-                    .backgroundColor(CGColor.WHITE),
-                CG.Rect()
-                    .backgroundColor(CGColor.GREEN)
-                )
-                .backgroundColor(CGColor.ORANGE)
+                    CG.Text("TITLE")
+                        .alignment(CG.CENTER)
+                        .font(Font.getFont(Font.FACE_MONOSPACE, Font.STYLE_BOLD, Font.SIZE_LARGE))
+                        .flexibilityHeight(100)
+                        .backgroundColor(CGColor.WHITE),
+                    CG.Rect()
+                        .flexibilityHeight(99)
+//                        .height(50)
+                        //  TODO: игнорируется
+                        .minHeight(50)
+                        .backgroundColor(CGColor.GREEN)
+                ).backgroundColor(CGColor.ORANGE)
                 ;
     }
 
@@ -85,7 +85,6 @@ public class Canvas extends UIMIDlet {
         return CG.VStack(
                 CG.Text("TITLE")
                     .alignment(CG.CENTER)
-                    .height(20)
                     .backgroundColor(CGColor.WHITE),
                 CG.HStack(
                     CG.Rect().backgroundColor(CGColor.BLUE),

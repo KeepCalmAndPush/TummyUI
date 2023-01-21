@@ -11,6 +11,9 @@ import ru.asolovyov.combime.common.S;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.tummyui.bindings.Size;
 import java.lang.Math.*;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
 import ru.asolovyov.combime.operators.mapping.Map;
 import ru.asolovyov.threading.DispatchQueue;
 import ru.asolovyov.tummyui.bindings.Point;
@@ -26,26 +29,35 @@ import ru.asolovyov.tummyui.graphics.CGSize;
  * @author Администратор
  */
 public class CGStack extends CGSomeDrawable {
-
     public static abstract class DrawableFactory {
-
         public abstract CGDrawable itemFor(Object viewModel);
     }
 
-    {
-        this.drawables = new Arr(new CGDrawable[]{});
-    }
+    protected DrawableFactory factory;
+
     public final static int AXIS_HORIZONTAL = 0;
     public final static int AXIS_VERTICAL = 1;
     public final static int AXIS_Z = 2;
-    private int nextLeft = 0;
-    private int nextTop = 0;
+    
     //TODO сделать биндинги как в CGSomeDrawable
-    protected Arr drawables;
-    protected Int alignment = new Int(CG.LEFT);
+    protected Arr drawables = new Arr(new CGDrawable[]{});
+    protected Int alignment = new Int(CG.CENTER | CG.LEFT);
     protected Int axis = new Int(AXIS_HORIZONTAL);
     protected Int maxContentWidthBinding = new Int(Integer.MAX_VALUE);
     protected Int maxContentHeightBinding = new Int(Integer.MAX_VALUE);
+    
+    protected Int spacing = new Int(0);
+    protected Arr models = new Arr(new Object[]{});
+    protected Size contentSize = new Size(0, 0);
+
+    private List repeatedKeys = new List();
+    private DispatchQueue keyRepeatQueue = new DispatchQueue(120);
+    
+    private int nextLeft = 0;
+    private int nextTop = 0;
+
+    private Hashtable drawablesGroupedByWidthFlexibility = new Hashtable();
+    private Hashtable drawablesGroupedByHeightFlexibility = new Hashtable();
 
     public CGStack maxContentWidth(int width) {
         this.maxContentWidthBinding.setInt(width);
@@ -56,18 +68,14 @@ public class CGStack extends CGSomeDrawable {
         this.maxContentHeightBinding.setInt(height);
         return this;
     }
-
-    // TODO хуйня какая-то эти биндинги. НЕ НАДО ЗАМЕНЯТЬ ВНУТРЕННИЙ СУБСКРИПШЕН!
-    // Надо наверно иметь ОДИН ПРОТЕКТЕД БИНДИНГ и ОДИН СУБСКРИПШЕН.
-    // Когд получаем новый биндинг, то ТЕРМИНИРУЕМ СУБСКРИПШЕН, НАЧИНАЕМ СЛИВАТЬ ДАННЫЕ ИЗ НОВОГО БИНДИНГА В ТЕКУЩИЙ
-    // И СОХРАНЯЕМ СУБСКРИПШЕН ЭТОГО СЛИВАНИЯ.
+    
     public CGStack maxContentWidth(Int width) {
         this.maxContentWidthBinding = width;
         this.maxContentWidthBinding.sink(new Sink() {
 
             protected void onValue(Object value) {
                 updateIntrinsicContentSize();
-                needsRelayout();
+                relayout();
             }
         });
         return this;
@@ -76,10 +84,9 @@ public class CGStack extends CGSomeDrawable {
     public CGStack maxContentHeight(Int height) {
         this.maxContentHeightBinding = height;
         this.maxContentHeightBinding.sink(new Sink() {
-
             protected void onValue(Object value) {
                 updateIntrinsicContentSize();
-                needsRelayout();
+                relayout();
             }
         });
         return this;
@@ -92,10 +99,9 @@ public class CGStack extends CGSomeDrawable {
     public CGStack spacing(Int spacing) {
         this.spacing = spacing;
         this.spacing.sink(new Sink() {
-
             protected void onValue(Object value) {
                 updateIntrinsicContentSize();
-                needsRelayout();
+                relayout();
             }
         });
         return this;
@@ -105,12 +111,6 @@ public class CGStack extends CGSomeDrawable {
         this.spacing.setInt(spacing);
         return this;
     }
-    protected Int spacing = new Int(0);
-    protected Arr models = new Arr(new Object[]{});
-    protected DrawableFactory factory;
-    protected Size contentSize = new Size(0, 0);
-    private List repeatedKeys = new List();
-    private DispatchQueue keyRepeatQueue = new DispatchQueue(120);
 
     public Size contentSize() {
         return contentSize;
@@ -125,7 +125,6 @@ public class CGStack extends CGSomeDrawable {
 
         this.models.to(
                 new Map() {
-
                     public Object mapValue(Object value) {
                         Object[] models = (Object[]) value;
                         CGDrawable[] drawables = new CGDrawable[models.length];
@@ -161,25 +160,23 @@ public class CGStack extends CGSomeDrawable {
         this.drawables = drawables;
 
         this.axis.sink(new Sink() {
-
             protected void onValue(Object value) {
                 updateIntrinsicContentSize();
-                needsRelayout(frame());
+                relayout(frame());
             }
         });
 
         this.alignment.sink(new Sink() {
-
             protected void onValue(Object value) {
-                needsRelayout();
+                relayout();
             }
         });
 
         this.drawables.sink(new Sink() {
-
             protected void onValue(Object value) {
+                groupDrawablesByFlexibility();
                 updateIntrinsicContentSize();
-                needsRelayout(frame());
+                relayout(frame());
             }
         });
 
@@ -218,8 +215,8 @@ public class CGStack extends CGSomeDrawable {
         }
     }
 
-    public void needsRelayout(CGFrame frame) {
-        super.needsRelayout(frame);
+    public void relayout(CGFrame frame) {
+        super.relayout(frame);
         if (this.canvas() != null) {
             this.pushFrameToChildren();
         }
@@ -583,7 +580,7 @@ public class CGStack extends CGSomeDrawable {
         int delta = size.width - contentWidth;
         S.debugln("DELTA WIDTH " + delta);
 
-        int remainingDelta = this.adjustChildrenDimensions(drawables, false, delta);
+        int remainingDelta = this.adjustChildrenDimensions(false, delta);
 
         delta += (delta > 0) ? -remainingDelta : +remainingDelta;
         contentWidth += delta;
@@ -592,7 +589,7 @@ public class CGStack extends CGSomeDrawable {
         delta = size.height - contentHeight;
         S.debugln("DELTA HEIGHT " + delta);
 
-        remainingDelta = this.adjustChildrenDimensions(drawables, true, delta);
+        remainingDelta = this.adjustChildrenDimensions(true, delta);
 
         delta += (delta > 0) ? -remainingDelta : +remainingDelta;
         S.debugln("DELTA HEIGHT " + delta);
@@ -647,45 +644,42 @@ public class CGStack extends CGSomeDrawable {
     }
 
     // TODO ВОЗМОЖНО вот тут надо еще и ориджины/инсеты двигать
-    private int adjustChildrenDimensions(CGDrawable[] views, final boolean isHeight, final int delta) {
+    private int adjustChildrenDimensions(final boolean isHeight, final int delta) {
         if (delta == 0) {
             return delta;
         }
 
-        final boolean isExpanding = delta > 0;
-        S.debugln("IS EXPANDING " + isExpanding);
-        S.debugln("IS HEIGT " + isHeight);
-
         int remainingDelta = Math.abs(delta);
-
-        Object[] adjustables = S.filter(views, new S.Filter() {
-
-            public boolean filter(Object object) {
-                CGDrawable view = (CGDrawable) object;
-                if (isExpanding) {
-                    return isHeight
-                            ? view.maxHeight() > view.height()
-                            : view.maxWidth() > view.width();
-                }
-                return isHeight
-                        ? view.height() > view.minHeight()
-                        : view.width() > view.minWidth();
-            }
-        });
-
-        S.debugln(adjustables.length + " ADJUSTABLES: " + adjustables);
-
         boolean isAxisDimension = this.axis.getInt() == (isHeight ? AXIS_VERTICAL : AXIS_HORIZONTAL);
+        
+        final boolean isExpanding = delta > 0;
+        S.println("\nDELTA: " + delta + " IS EXPANDING: " + isExpanding + " IS HEIGHT: " + isHeight + "\n" + (isAxisDimension ? "!!!AXIS" : "!!!NOT AXIS"));
 
         if (false == isAxisDimension) {
-            S.debugln("if (false == isAxisDimension) {");
+            Object[] adjustables = this.drawables.getArray();
+            adjustables = S.filter(adjustables, new S.Filter() {
+                public boolean filter(Object object) {
+                    CGDrawable view = (CGDrawable) object;
+                    if (isExpanding) {
+                        return isHeight
+                                ? view.maxHeight() > view.height()
+                                : view.maxWidth() > view.width();
+                    }
+                    return isHeight
+                            ? view.height() > view.minHeight()
+                            : view.width() > view.minWidth();
+                }
+            });
+
+            S.println(adjustables.length + " ADJUSTABLES: " + adjustables);
+            
             int maxDelta = 0;
             for (int i = 0; i < adjustables.length; i++) {
                 CGSomeDrawable view = (CGSomeDrawable) adjustables[i];
                 int viewDelta = 0;
                 int value = isHeight ? view.height() : view.width();
 
-                S.debugln("WILL ADJUST " + (isHeight ? "HEIGHT" : "WIDTH") + " OF " + view + " CUR VALUE " + value);
+                S.println("WILL ADJUST " + (isHeight ? "HEIGHT" : "WIDTH") + " OF " + view + " CUR VALUE " + value);
 
                 if (isExpanding) {
                     viewDelta = isHeight
@@ -700,67 +694,141 @@ public class CGStack extends CGSomeDrawable {
                 viewDelta = Math.min(viewDelta, remainingDelta);
 
                 value += (isExpanding ? +viewDelta : -viewDelta);
-                S.debugln("ADJUST VALUE BINDING WILL SET " + value);
 
                 if (isHeight && value != view.height()) {
+                    S.println("ADJUST VALUE BINDING WILL SET " + value);
                     view.heightBinding.sendValue(new Int(value));
                 } else if (value != view.width()) {
+                    S.println("ADJUST VALUE BINDING WILL SET " + value);
                     view.widthBinding.sendValue(new Int(value));
                 }
 
                 maxDelta = Math.max(maxDelta, Math.abs(viewDelta));
             }
 
-            S.debugln("REMAINIG DELTA " + remainingDelta + "; MAX DELTA " + maxDelta);
+            S.println("REMAINIG DELTA " + remainingDelta + "; MAX DELTA " + maxDelta);
             return remainingDelta - maxDelta;
         }
+        
+        Hashtable groupedAdjustables = isHeight ? this.drawablesGroupedByHeightFlexibility : this.drawablesGroupedByWidthFlexibility;
+        Enumeration ekeys = groupedAdjustables.keys();
+        int flexibilities[] = new int[groupedAdjustables.size()];
+        int iKeyIndex = 0;
 
-        S.debugln("IS isAxisDimension ");
+        S.println("GROUPED ADJUSTABLES: " + flexibilities.length);
 
-        int adjustablesCount = adjustables.length;
-        while (adjustablesCount > 0 && remainingDelta > 0) {
-            int sliceToShare = remainingDelta / adjustables.length;
-            for (int i = 0; i < adjustablesCount; i++) {
-                CGSomeDrawable view = (CGSomeDrawable) adjustables[i];
-                int extremeValue = isExpanding
-                        ? isHeight ? view.maxHeight() : view.maxWidth()
-                        : isHeight ? view.minHeight() : view.minWidth();
-                int value = isHeight ? view.height() : view.width();
+        while(ekeys.hasMoreElements()) {
+            Integer integerKey = (Integer) ekeys.nextElement();
+            flexibilities[iKeyIndex] = integerKey.intValue();
 
-                S.debugln("WILL ADJUST " + (isHeight ? "HEIGHT" : "WIDTH") + " OF " + view + " CUR VALUE " + value);
+            S.println("ADJ: " + groupedAdjustables.get(integerKey));
+            
+            iKeyIndex++;
+        }
+        
+        S.sort(flexibilities, 0, flexibilities.length - 1);
+        
+        for(int flexibilityKeyIndex = flexibilities.length - 1; flexibilityKeyIndex >= 0; flexibilityKeyIndex--) {
+            int flexibility = flexibilities[flexibilityKeyIndex];
 
-                int spaceToAdjust = isExpanding
-                        ? extremeValue - value
-                        : value - extremeValue;
+            Vector adjustablesVector = (Vector) groupedAdjustables.get(new Integer(flexibility));
+            Object[] adjustables = S.toArray(adjustablesVector);
 
-                spaceToAdjust = Math.min(spaceToAdjust, sliceToShare);
-                value += isExpanding ? +spaceToAdjust : -spaceToAdjust;
-
-                S.debugln("VALUE BINDING WILL SET " + value);
-
-                if (isHeight && value != view.height()) {
-                    view.heightBinding.sendValue(new Int(value));
-                } else if (value != view.width()) {
-                    view.widthBinding.sendValue(new Int(value));
-                } else {
-                    adjustablesCount--;
+            adjustables = S.filter(adjustables, new S.Filter() {
+                public boolean filter(Object object) {
+                    CGDrawable view = (CGDrawable) object;
+                    if (isExpanding) {
+                        return isHeight
+                                ? view.maxHeight() > view.height()
+                                : view.maxWidth() > view.width();
+                    }
+                    return isHeight
+                            ? view.height() > view.minHeight()
+                            : view.width() > view.minWidth();
                 }
+            });
 
-                S.debugln("REMAINIG DELTA " + remainingDelta + "; spaceToAdjust " + spaceToAdjust);
+            S.println(adjustables.length + " ADJUSTABLES: " + adjustables);
 
-                remainingDelta -= spaceToAdjust;
-                if (value == extremeValue) {
-                    adjustablesCount--;
+            int adjustablesCount = adjustables.length;
+            while (adjustablesCount > 0 && remainingDelta > 0) {
+                int sliceToShare = remainingDelta / adjustables.length;
+                for (int i = 0; i < adjustablesCount; i++) {
+                    CGSomeDrawable view = (CGSomeDrawable) adjustables[i];
+                    int extremeValue = isExpanding
+                            ? isHeight ? view.maxHeight() : view.maxWidth()
+                            : isHeight ? view.minHeight() : view.minWidth();
+                    int value = isHeight ? view.height() : view.width();
+
+                    S.println("WILL ADJUST " + (isHeight ? "HEIGHT" : "WIDTH") + " OF " + view + " CUR VALUE " + value);
+
+                    int spaceToAdjust = isExpanding
+                            ? extremeValue - value
+                            : value - extremeValue;
+
+                    spaceToAdjust = Math.min(spaceToAdjust, sliceToShare);
+                    value += isExpanding ? +spaceToAdjust : -spaceToAdjust;
+
+                    S.println("VALUE BINDING WILL SET " + value);
+
+                    if (isHeight && value != view.height()) {
+                        view.heightBinding.sendValue(new Int(value));
+                    } else if (value != view.width()) {
+                        view.widthBinding.sendValue(new Int(value));
+                    } else {
+                        adjustablesCount--;
+                    }
+
+                    S.println("REMAINIG DELTA " + remainingDelta + "; spaceToAdjust " + spaceToAdjust);
+
+                    remainingDelta -= spaceToAdjust;
+                    if (value == extremeValue) {
+                        adjustablesCount--;
+                    }
                 }
             }
         }
-
-        S.debugln("REMAINIG DELTA " + remainingDelta);
+        
+        S.println("REMAINIG DELTA " + remainingDelta);
         return remainingDelta;
     }
 
+    private void groupDrawablesByFlexibility() {
+        this.drawablesGroupedByWidthFlexibility = new Hashtable();
+        this.drawablesGroupedByHeightFlexibility = new Hashtable();
+
+        CGDrawable[] drawables = (CGDrawable[]) this.drawables.getArray();
+        Hashtable[] tables = new Hashtable[]{
+            this.drawablesGroupedByWidthFlexibility,
+            this.drawablesGroupedByHeightFlexibility
+        };
+
+        for (int i = 0; i < drawables.length; i++) {
+            CGDrawable drawable = drawables[i];
+            for (int j = 0; j < drawable.flexibility().length; j++) {
+                Hashtable hashtable = tables[j];
+                if (j == 0 && !(drawable.hasGrowableWidth() || drawable.hasShrinkableWidth())) {
+                    continue;
+                }
+                else if(j == 1 && !(drawable.hasGrowableHeight() || drawable.hasShrinkableHeight())) {
+                    continue;
+                }
+                Integer flexibility = new Integer(drawable.flexibility()[j]);
+                Vector group = (Vector) hashtable.get(flexibility);
+                if (group == null) {
+                    group = new Vector();
+                    hashtable.put(flexibility, group);
+                }
+                group.addElement(drawable);
+            }
+        }
+    }
+    
     protected void updateIntrinsicContentSize() {
         super.updateIntrinsicContentSize();
+        
+        this.groupDrawablesByFlexibility();
+
         S.debugln(this + " will updateContentSizeAndChildrenDimensions()");
         this.updateContentSizeAndChildrenDimensions();
 

@@ -59,6 +59,10 @@ public abstract class CGSomeDrawable implements CGDrawable {
     protected CurrentValueSubject/*<Size>*/ cornerRadiusBinding = new CurrentValueSubject(new Int(0));
 
     protected CurrentValueSubject/*<Bool>*/ isVisible = new CurrentValueSubject(new Bool(true));
+
+    private int flexibilityWidth = CGDrawable.FLEXIBILITY_DEFAULT;
+    private int flexibilityHeight = CGDrawable.FLEXIBILITY_DEFAULT;
+
     private CGCanvas canvas;
 
     private KeyboardHandler keyboardHandler;
@@ -86,7 +90,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
         this.intrinsicContentSizeBinding.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
                 S.debugln(CGSomeDrawable.this + " DID UPDATE INTRINSIC " + value);
-                needsRelayout();
+                relayout();
             }
         });
 
@@ -100,7 +104,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
         xyWidthHeight.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
                 S.debugln("XYWH 4: " + S.arrayToString((Object[])value));
-                needsRelayout();
+                relayout();
             }
         });
         
@@ -118,7 +122,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
                         Object[] values = ((Object[])value);
                         S.debugln("8 COLORS: " + S.arrayToString(values));
 
-                        needsRelayout();
+                        relayout();
                     }
                 });
 
@@ -136,7 +140,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
         minsMaxes.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
                 S.debugln("8 MINMAX: " + S.arrayToString((Object[])value));
-                needsRelayout();
+                relayout();
             }
         });
     }
@@ -311,26 +315,20 @@ public abstract class CGSomeDrawable implements CGDrawable {
         return this;
     }
 
-    public void needsRelayout() {
-        this.needsRelayout(null);
+    public void relayout() {
+        this.relayout(null);
     }
 
-    public void needsRelayout(CGFrame frame) {
+    public void relayout(CGFrame frame) {
         if (this.canvas() != null) {
             this.updateIntrinsicContentSize();
-            if (frame != null) {
-                // TODO CANVAS SET NEEDS REPAINT IN RECT!
-//                this.canvas().repaint(frame);
-                this.canvas.setNeedsRepaint();
-            } else {
-                this.canvas.setNeedsRepaint();
-            }
+            this.canvas.setNeedsRepaint();
         }
     }
     
     public CGFrame intrinsicAwareFrame() {
         CGFrame frame = this.frame();
-        S.debugln(this + " WILL SAY ITS INTRAWARE FRAME!");
+        S.println(this + " WILL SAY ITS INTRAWARE FRAME!");
 
         CGSize size = this.intrinsicContentSize();
         CGInsets insets = this.contentInset();
@@ -338,13 +336,13 @@ public abstract class CGSomeDrawable implements CGDrawable {
         int width = size.width + insets.left + insets.right;
         int height = size.height + insets.top + insets.bottom;
 
-        width = Math.max(width, frame.width);
-        height = Math.max(height, frame.height);
+        width = Math.max(width, Math.max(frame.width, minWidth()));
+        height = Math.max(height, Math.max(frame.width, minHeight()));
 
         frame.width = width;
         frame.height = height;
 
-        S.debugln(this + " INTRAWARE FRAME IS " + frame);
+        S.println(this + " INTRAWARE FRAME IS " + frame);
 
         return frame;
     }
@@ -629,6 +627,36 @@ public abstract class CGSomeDrawable implements CGDrawable {
 
     public CGDrawable borderColor(Int borderColorHex) {
         this.borderColor.sendValue(borderColorHex);
+        return this;
+    }
+
+    public int[] flexibility() {
+        return new int[]{ this.flexibilityWidth, this.flexibilityHeight };
+    }
+
+    public CGDrawable flexibility(int[] flexibility) {
+        this.flexibilityWidth(flexibility[0]);
+        this.flexibilityHeight(flexibility[1]);
+        return this;
+    }
+
+    public int flexibilityWidth() {
+        return this.flexibilityWidth;
+    }
+
+    public CGDrawable flexibilityWidth(int flexibility) {
+        this.flexibilityWidth = flexibility;
+        this.relayout();
+        return this;
+    }
+
+    public int flexibilityHeight() {
+        return this.flexibilityHeight;
+    }
+
+    public CGDrawable flexibilityHeight(int flexibility) {
+        this.flexibilityHeight = flexibility;
+        this.relayout();
         return this;
     }
 

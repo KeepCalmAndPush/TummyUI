@@ -39,9 +39,12 @@ public class CGImage extends CGSomeDrawable {
         
         this.image.sink(new Sink() {
             protected void onValue(Object value) {
-                CGImage.this.needsRelayout(frame());
+                CGImage.this.relayout(frame());
             }
         });
+
+        this.flexibility(new int[]{ CGDrawable.FLEXIBILITY_LOW, CGDrawable.FLEXIBILITY_LOW });
+
         return this;
     }
 

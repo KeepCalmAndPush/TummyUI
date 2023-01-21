@@ -22,6 +22,11 @@ import ru.asolovyov.tummyui.graphics.CGSize;
  * @author Администратор
  */
 public interface CGDrawable {
+
+    public static final int FLEXIBILITY_LOW = 64;
+    public static final int FLEXIBILITY_DEFAULT = 128;
+    public static final int FLEXIBILITY_HIGH = 192;
+
     public static abstract class GeometryReader {
         public abstract void read(CGDrawable self, CGFrame frame);
     }
@@ -39,8 +44,8 @@ public interface CGDrawable {
     public CGDrawable stroke(int strokeStyle);
     public CGDrawable stroke(Int strokeStyle);
 
-    public void needsRelayout();
-    public void needsRelayout(CGFrame frame);
+    public void relayout();
+    public void relayout(CGFrame frame);
 
     public CGDrawable readGeometry(GeometryReader reader);
     public GeometryReader geometryReader();
@@ -138,6 +143,15 @@ public interface CGDrawable {
     public boolean hasGrowableWidth();
     public boolean hasShrinkableHeight();
     public boolean hasGrowableHeight();
+
+    //[widthFlexibility, heightFlexibility]
+    public int[] flexibility();
+    public CGDrawable flexibility(int[] flexibility);
+
+    public int flexibilityWidth();
+    public int flexibilityHeight();
+    public CGDrawable flexibilityWidth(int flexibility);
+    public CGDrawable flexibilityHeight(int flexibility);
     
     public boolean isVisible();
     public CGDrawable isVisible(boolean isVisible);
