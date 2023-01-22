@@ -48,9 +48,7 @@ public class CGImage extends CGSomeDrawable {
         return this;
     }
 
-    public void draw(Graphics g) {
-        super.draw(g);
-        CGFrame frame = this.frame();
+    protected void drawContent(Graphics g, CGFrame frame) {
         Image originalImage = (Image)this.image.getObject();
 
         CGInsets insets = this.contentInset();

@@ -8,6 +8,7 @@ package ru.asolovyov.tummyui.graphics.views;
 import javax.microedition.lcdui.Graphics;
 import ru.asolovyov.combime.bindings.Bool;
 import ru.asolovyov.combime.common.Sink;
+import ru.asolovyov.tummyui.graphics.CGFrame;
 
 /**
  *
@@ -42,8 +43,7 @@ public class CGIf extends CGSomeDrawable {
     }
 
     //TODO Хитрая обработка инсетов и офсетов
-    public void draw(Graphics g) {
-        super.draw(g);
+    protected void drawContent(Graphics g, CGFrame frame) {
         if(this.conditionBinding.getBoolean()) {
             this.ifItem.draw(g);
         } else {

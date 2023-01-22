@@ -35,10 +35,15 @@ import ru.asolovyov.tummyui.graphics.views.CGStack;
  */
 public class Canvas extends UIMIDlet {
     private int testScreenIndex = 0;
-    
+
+    //TODO РАЗОБРАТЬСЯ ПОЧЕМУ З_СТЭК ДЕЛИТ РАЗМЕРЫ МЕЖДУ ВСЕМИ ВЬЮХАМИ
+    //TODO СДЕЛАТЬ ПАБЛИШЕРЫНЙ МЕТОД REPLACE/PIPE
     private Object[] testScreens = new Object[] {
-        testThickBorders(),
-//        testShadows()//ОК, тени работают, но ВСТек распидорашен. Нижний стек со вьюхами слишком уехал вниз.
+          testLanguageTopRightUI()
+//        testThickBordersInsideZStack(), //ok
+//        testZSTextTitleAndRectContent(),//ok
+//        testThickBorders(), //  OK но скругления дырявые
+//        testShadows(), //ОК
 //                testVSTextTitleAndRectContent(), // OK
 //                testVSTextTitleAndHStackContent(), //OK,
 //
@@ -48,7 +53,6 @@ public class Canvas extends UIMIDlet {
 //                testRectFrameAndCornerRadiusOk(),//OK
 //
 //                // OK НО ТУТ ЕСТЬ ТРАБЛЫ 1) Если не задать высоты текстам, то все растягивается даже в ширину
-//                // 2) Между ВСтеками в ХСтеке двойное расстояние.
 //                // 3) НЕ РАБОТАЕТ СКРОЛЛИНГ СТЕКА :(
 //                // 4) Оч тормозит
 //                textStylesIteratingHorizontalStackOfLabels(), // :(
@@ -59,7 +63,7 @@ public class Canvas extends UIMIDlet {
 //                testVStackWithTwoViewsViewFillsCanvas(), //OK
 //                testHStackWithTwoViewsViewFillsCanvas(), //OK
 //                testVStackWithOneViewFillsCanvas(), //OK
-//                testZStackWithOneViewFillsCanvas(), //OK
+//                
 //                testZStackWithTwoViewsFillsCanvasAndRespectsOrder(), //OK
 //                testHStackWithOneViewFillsCanvas(), //ок
 //                testFrameSetsByMaxWidthMaxHeight(), //OK
@@ -67,17 +71,56 @@ public class Canvas extends UIMIDlet {
 //                testRectFillsCanvasWhenSmallMinsSet(), //OK
     };
 
-    private CGDrawable testThickBorders() {
-        // TODO ЕСЛИ Z-STACK то КОНТЕНТ АНИМИРОВАННО КУДА-ТО УЛЕТАЕТ!
+
+    private CGDrawable testLanguageTopRightUI() {
+        return CG.ZStack(
+                    CG.HStack(
+                        CG.Rect()
+                            .backgroundColor(CGColor.BLUE),
+                        CG.Rect()
+                            .backgroundColor(CGColor.YELLOW)
+                    ),
+
+                    CG.HStack(
+                        CG.Text("123|RU|EN")
+                        .alignment(CG.RIGHT)
+                        .color(CGColor.BLUE)
+                        .backgroundColor(CGColor.GREEN)
+                        .height(100)
+                        .flexibilityWidth(0)
+                    )
+                    .alignment(CG.TOP | CG.RIGHT)
+                    .borderColor(CGColor.BLACK)
+                )
+                ;
+    }
+
+    private CGDrawable testThickBordersInsideZStack() {
         return CG.ZStack(
                 CG.Rect()
-                  .backgroundColor(CGColor.RED)
                   .width(150).height(50)
-                  .borderColor(CGColor.BLUE)
-                  .borderWidth(10)
+                  .shadowColor(CGColor.GRAY).shadowOffset(5, 5)
                   .cornerRadius(20)
-                  .shadowColor(CGColor.GRAY)
-                  .shadowOffset(10, 10)
+
+                  .backgroundColor(CGColor.RED)
+                  .borderColor(CGColor.BLUE).borderWidth(10)
+                )
+                .alignment(CG.LEFT | CG.VCENTER)
+                .backgroundColor(CGColor.WHITE)
+                ;
+    }
+
+
+    private CGDrawable testThickBorders() {
+        // TODO ЕСЛИ Z-STACK то КОНТЕНТ АНИМИРОВАННО КУДА-ТО УЛЕТАЕТ!
+        return CG.HStack(
+                CG.Rect()
+                  .width(150).height(50)
+                  .shadowColor(CGColor.GRAY).shadowOffset(5, 5)
+                  .cornerRadius(20)
+
+                  .backgroundColor(CGColor.RED)
+                  .borderColor(CGColor.BLUE).borderWidth(10)
                 )
                 .backgroundColor(CGColor.WHITE)
                 ;
@@ -351,23 +394,27 @@ public class Canvas extends UIMIDlet {
     private CGDrawable textStylesIteratingHorizontalStackOfLabels() {
         return CG.HStack(
                 new CGStack(
-                CGStack.AXIS_VERTICAL,
-                new Object[]{new Integer(Font.SIZE_SMALL), new Integer(Font.SIZE_MEDIUM)},
-                new CGStack.DrawableFactory() {
-                    public CGDrawable itemFor(Object viewModel) {
-                        int size = ((Integer) viewModel).intValue();
-                        return CG.Text("12345")
-                                //TODO CG.RIGHT выносит текст на ПОЛБУКВЫ БЛЕАТЬ ЗА ГРАНИЦУ ФРЕЙМА!
-                                .alignment(CG.VCENTER | CG.RIGHT)
-                                .font(Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_PLAIN, size))
-                                .color(0xFF0000)
-                                .backgroundColor(0x00FF00)
-                                .borderColor(0x0000FF)
-                                .cornerRadius(20)
-                                .width(50);
-                    }
-                }).spacing(15),
-                        new CGStack(
+                    CGStack.AXIS_VERTICAL,
+                    new Object[]{new Integer(Font.SIZE_SMALL), new Integer(Font.SIZE_MEDIUM)},
+                    new CGStack.DrawableFactory() {
+                        public CGDrawable itemFor(Object viewModel) {
+                           int size = ((Integer) viewModel).intValue();
+                           return CG.Text("12345")
+                                   //TODO CG.RIGHT выносит текст на ПОЛБУКВЫ БЛЕАТЬ ЗА ГРАНИЦУ ФРЕЙМА!
+                                   .alignment(CG.VCENTER | CG.RIGHT)
+                                   .font(Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_PLAIN, size))
+                                   .color(0xFF0000)
+                                   .backgroundColor(0x00FF00)
+                                    .borderColor(0x0000FF)
+                                    .cornerRadius(20)
+                                    .width(50);
+                         }
+                }).spacing(15)
+                  .borderColor(CGColor.ORANGE).borderWidth(3)
+//                  .cornerRadius(10)
+                  ,
+                  
+                new CGStack(
                 CGStack.AXIS_VERTICAL,
                 new Object[]{
                     new Integer(Font.STYLE_PLAIN),
@@ -388,12 +435,16 @@ public class Canvas extends UIMIDlet {
                                 .color(isEven ? CGColor.RED : CGColor.BLACK)
                                 .backgroundColor(isEven ? CGColor.GREEN : CGColor.WHITE)
                                 .borderColor(isEven ? CGColor.BLUE : CGColor.RED)
-                                .cornerRadius(20)
-                                .width(50);
+                                .cornerRadius(10)
+                                .width(50)
+                                .height(30);
                     }
                 })
                         .spacing(5)
+                        .borderColor(CGColor.BLUE_VIOLET).borderWidth(3)
+//                        .cornerRadius(10)
                         )
+                        .spacing(10)
                         .backgroundColor(CGColor.LIGHT_SKY_BLUE)
                         .borderColor(CGColor.BLUE)
                         .cornerRadius(20)

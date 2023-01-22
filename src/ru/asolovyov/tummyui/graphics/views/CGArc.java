@@ -40,14 +40,7 @@ public class CGArc extends CGSomeDrawable {
         return this;
     }
 
-    public void draw(Graphics g) {
-        super.draw(g);
-
-        CGFrame frame = frame();
-        if (frame == null) {
-            return;
-        }
-
+    protected void drawContent(Graphics g, CGFrame frame) {
         CGInsets insets = this.contentInset();
 
         int fillColor = this.color();

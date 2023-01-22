@@ -24,7 +24,7 @@ public class CGDisplayLink {
         clock.add(new Runnable() {
             public void run() {
                 //TODO ПРОВЕРИТЬ А ТОЧНО ЛИ ВСЯ ЭТА ХРЕНЬ ВЫПОЛНИТСЯ ЗА 33мс
-                ((PassthroughSubject)ticks).sendValue(null);
+                ((PassthroughSubject)ticks).sendValue(clock);
                 handleAnimations();
             }
         });

@@ -53,7 +53,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
     protected CurrentValueSubject/*<Int>*/ backgroundColor = new CurrentValueSubject(new Int(CG.NULL));
     protected CurrentValueSubject/*<Int>*/ borderColor = new CurrentValueSubject(new Int(CG.NULL));
     
-    protected Int borderWidth = new Int(0);
+    protected Int borderWidth = new Int(1);
     protected Int shadowColor = new Int(CG.NULL);
     protected Point shadowOffset = new Point(1, 1);
 
@@ -94,7 +94,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
     private void setupSubscriptions() {
         this.intrinsicContentSizeBinding.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
-                S.debugln(CGSomeDrawable.this + " DID UPDATE INTRINSIC " + value);
+                S.println(CGSomeDrawable.this + " DID UPDATE INTRINSIC " + value);
                 relayout();
             }
         });
@@ -249,15 +249,9 @@ public abstract class CGSomeDrawable implements CGDrawable {
         return y(new Int(y));
     }
 
-    public void draw(Graphics g) {
-        CGFrame frame = intrinsicAwareFrame();
-        if (frame == null) {
-            return;
-        }
-
-        int cornerRadius = cornerRadius() * 2;
-
+    protected void drawShadow(Graphics g, CGFrame frame) {
         int shadowColor = this.shadowColor();
+        int cornerRadius = cornerRadius() * 2;
         if (shadowColor != CG.NULL) {
             g.setColor(shadowColor);
             g.fillRoundRect(
@@ -268,14 +262,14 @@ public abstract class CGSomeDrawable implements CGDrawable {
                     cornerRadius,
                     cornerRadius);
         }
+    }
 
-        int borderWidth = this.borderWidth();
-
-        int borderColor = this.borderColor();
-        if (borderColor != CG.NULL && borderWidth > 0) {
-            g.setStrokeStyle(this.strokeStyle());
-            g.setColor(borderColor);
-
+    protected void drawBackground(Graphics g, CGFrame frame) {
+        int backgroundColor = this.backgroundColor();
+        int cornerRadius = cornerRadius() * 2;
+        
+        if (backgroundColor != CG.NULL) {
+            g.setColor(backgroundColor);
             g.fillRoundRect(
                     frame.x,
                     frame.y,
@@ -284,18 +278,55 @@ public abstract class CGSomeDrawable implements CGDrawable {
                     cornerRadius,
                     cornerRadius);
         }
+    }
 
-        int backgroundColor = this.backgroundColor();
-        if (backgroundColor != CG.NULL) {
-            g.setColor(backgroundColor);
-            g.fillRoundRect(
-                    frame.x + borderWidth,
-                    frame.y + borderWidth,
-                    frame.width - 2*borderWidth,
-                    frame.height - 2*borderWidth,
-                    cornerRadius - borderWidth,
-                    cornerRadius - borderWidth);
+    protected abstract void drawContent(Graphics g, CGFrame frame);
+
+    protected void drawBorder(Graphics g, CGFrame frame) {
+        int borderWidth = this.borderWidth();
+        int borderColor = this.borderColor();
+        int cornerRadius = cornerRadius() * 2;
+
+        if (borderColor != CG.NULL && borderWidth > 0) {
+            g.setStrokeStyle(this.strokeStyle());
+            g.setColor(borderColor);
+
+            for (int i = 0; i < borderWidth; i ++) {
+                    g.drawRoundRect(
+                    frame.x + i,
+                    frame.y + i,
+                    frame.width - 2*i,
+                    frame.height - 2*i,
+                    cornerRadius - 2 * i,
+                    cornerRadius - 2 * i);
+//
+//                    g.drawRoundRect(
+//                    frame.x,
+//                    frame.y + i,
+//                    frame.width,
+//                    frame.height - 2*i,
+//                    cornerRadius - i,
+//                    cornerRadius - i);
+                }
         }
+    }
+
+    public void draw(Graphics g) {
+        CGFrame frame = intrinsicAwareFrame();
+        if (frame == null) {
+            return;
+        }
+
+        this.drawShadow(g, frame);
+        this.drawBackground(g, frame);
+        CGFrame contentFrame = frame.copy();
+        contentFrame.x += borderWidth();
+        contentFrame.y += borderWidth();
+        contentFrame.width -= 2*borderWidth();
+        contentFrame.height -= 2*borderWidth();
+
+        this.drawContent(g, contentFrame);
+        this.drawBorder(g, frame);
     }
 
     public CGFrame frame() {

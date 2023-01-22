@@ -74,12 +74,11 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
         return this.text;
     }
 
-    public void draw(Graphics g) {
-        super.draw(g);
-        CGFrame frame = intrinsicAwareFrame();
+    protected void drawContent(Graphics g, CGFrame frame) {
         if (frame == null) {
             return;
         }
+        
         g.setFont(getFont());
         g.setColor(this.color());
 

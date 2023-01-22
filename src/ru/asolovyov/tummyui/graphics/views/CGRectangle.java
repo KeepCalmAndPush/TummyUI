@@ -16,41 +16,21 @@ import ru.asolovyov.tummyui.graphics.CGInsets;
  */
 public class CGRectangle extends CGSomeDrawable {
 
-    public void draw(Graphics g) {
-        super.draw(g);
-
-        CGFrame frame = intrinsicAwareFrame();
-        if (frame == null) {
-            return;
-        }
-
+    protected void drawContent(Graphics g, CGFrame frame) {
         CGInsets insets = this.contentInset();
         int cornerRadius = cornerRadius() * 2;
+        int borderWidth = this.borderWidth();
 
         int foregroundColor = this.color();
         if (foregroundColor != CG.NULL) {
             g.setColor(foregroundColor);
             g.fillRoundRect(
-                    frame.x + insets.left,
-                    frame.y + insets.top,
-                    frame.width - insets.left - insets.right,
-                    frame.height - insets.top - insets.bottom,
-                    cornerRadius,
-                    cornerRadius);
-        }
-
-        int strokeColor = this.borderColor();
-        if (strokeColor != CG.NULL) {
-            g.setStrokeStyle(this.strokeStyle());
-            g.setColor(strokeColor);
-
-            g.drawRoundRect(
-                    frame.x,
-                    frame.y,
-                    frame.width,
-                    frame.height,
-                    cornerRadius,
-                    cornerRadius);
+                    frame.x + insets.left + borderWidth,
+                    frame.y + insets.top + borderWidth,
+                    frame.width - insets.horizontal() - 2*borderWidth,
+                    frame.height - insets.vertical() - 2*borderWidth,
+                    cornerRadius - borderWidth,
+                    cornerRadius - borderWidth);
         }
     }
 }
