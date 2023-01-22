@@ -37,7 +37,8 @@ public class Canvas extends UIMIDlet {
     private int testScreenIndex = 0;
     
     private Object[] testScreens = new Object[] {
-        testShadows()//ОК, тени работают, но ВСТек распидорашен. Нижний стек со вьюхами слишком уехал вниз.
+        testThickBorders(),
+//        testShadows()//ОК, тени работают, но ВСТек распидорашен. Нижний стек со вьюхами слишком уехал вниз.
 //                testVSTextTitleAndRectContent(), // OK
 //                testVSTextTitleAndHStackContent(), //OK,
 //
@@ -66,20 +67,36 @@ public class Canvas extends UIMIDlet {
 //                testRectFillsCanvasWhenSmallMinsSet(), //OK
     };
 
+    private CGDrawable testThickBorders() {
+        // TODO ЕСЛИ Z-STACK то КОНТЕНТ АНИМИРОВАННО КУДА-ТО УЛЕТАЕТ!
+        return CG.ZStack(
+                CG.Rect()
+                  .backgroundColor(CGColor.RED)
+                  .width(150).height(50)
+                  .borderColor(CGColor.BLUE)
+                  .borderWidth(10)
+                  .cornerRadius(20)
+                  .shadowColor(CGColor.GRAY)
+                  .shadowOffset(10, 10)
+                )
+                .backgroundColor(CGColor.WHITE)
+                ;
+    }
+
     private CGDrawable testShadows() {
         return CG.VStack(
                     CG.HStack(
                         CG.Rect()
                             .width(50).height(50)
                             .shadowColor(CGColor.BLACK)
-                            .shadowOffset(new CGPoint(5, 5))
+                            .shadowOffset(5, 5)
                             .backgroundColor(CGColor.RED)
                             .cornerRadius(10)
                             ,
                         CG.Rect()
                             .width(50).height(50)
                             .shadowColor(CGColor.BLUE)
-                            .shadowOffset(new CGPoint(-5, 15))
+                            .shadowOffset(-5, 15)
                             .backgroundColor(CGColor.GREEN)
                     ).spacing(20)
                      .borderColor(CGColor.BLACK),
@@ -88,12 +105,12 @@ public class Canvas extends UIMIDlet {
                         CG.Rect()
                             .width(50).height(50)
                             .shadowColor(CGColor.GRAY)
-                            .shadowOffset(new CGPoint(5, -5))
+                            .shadowOffset(5, -5)
                             .backgroundColor(CGColor.BLUE),
                         CG.Rect()
                             .width(50).height(50)
                             .shadowColor(CGColor.PINK)
-                            .shadowOffset(new CGPoint(-5, -5))
+                            .shadowOffset(-5, -5)
                             .backgroundColor(CGColor.BLACK)
                     )
                     .spacing(20)

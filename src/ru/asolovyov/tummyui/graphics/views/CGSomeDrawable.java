@@ -52,6 +52,8 @@ public abstract class CGSomeDrawable implements CGDrawable {
     protected CurrentValueSubject/*<Int>*/ color = new CurrentValueSubject(new Int(CG.NULL));
     protected CurrentValueSubject/*<Int>*/ backgroundColor = new CurrentValueSubject(new Int(CG.NULL));
     protected CurrentValueSubject/*<Int>*/ borderColor = new CurrentValueSubject(new Int(CG.NULL));
+    
+    protected Int borderWidth = new Int(0);
     protected Int shadowColor = new Int(CG.NULL);
     protected Point shadowOffset = new Point(1, 1);
 
@@ -149,7 +151,8 @@ public abstract class CGSomeDrawable implements CGDrawable {
 
         Publisher.combineLatest(new IPublisher[]{
                     this.shadowColor,
-                    this.shadowOffset
+                    this.shadowOffset,
+                    this.borderWidth
         }).removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
                 S.debugln("2 SHADOWS" + S.arrayToString((Object[])value));
@@ -266,9 +269,13 @@ public abstract class CGSomeDrawable implements CGDrawable {
                     cornerRadius);
         }
 
-        int backgroundColor = this.backgroundColor();
-        if (backgroundColor != CG.NULL) {
-            g.setColor(backgroundColor);
+        int borderWidth = this.borderWidth();
+
+        int borderColor = this.borderColor();
+        if (borderColor != CG.NULL && borderWidth > 0) {
+            g.setStrokeStyle(this.strokeStyle());
+            g.setColor(borderColor);
+
             g.fillRoundRect(
                     frame.x,
                     frame.y,
@@ -278,17 +285,16 @@ public abstract class CGSomeDrawable implements CGDrawable {
                     cornerRadius);
         }
 
-        int borderColor = this.borderColor();
-        if (borderColor != CG.NULL) {
-            g.setStrokeStyle(this.strokeStyle());
-            g.setColor(borderColor);
-            g.drawRoundRect(
-                    frame.x,
-                    frame.y,
-                    frame.width,
-                    frame.height,
-                    cornerRadius,
-                    cornerRadius);
+        int backgroundColor = this.backgroundColor();
+        if (backgroundColor != CG.NULL) {
+            g.setColor(backgroundColor);
+            g.fillRoundRect(
+                    frame.x + borderWidth,
+                    frame.y + borderWidth,
+                    frame.width - 2*borderWidth,
+                    frame.height - 2*borderWidth,
+                    cornerRadius - borderWidth,
+                    cornerRadius - borderWidth);
         }
     }
 
@@ -358,8 +364,8 @@ public abstract class CGSomeDrawable implements CGDrawable {
         return this.shadowOffset.getCGPoint();
     }
 
-    public CGDrawable shadowOffset(CGPoint shadowColorHex) {
-        this.shadowOffset.sendValue(shadowColorHex);
+    public CGDrawable shadowOffset(int x, int y) {
+        this.shadowOffset.sendValue(new CGPoint(x, y));
         return this;
     }
     public CGDrawable shadowOffset(Point shadowColorHex) {
@@ -389,7 +395,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
         int height = size.height + insets.top + insets.bottom;
 
         width = Math.max(width, Math.max(frame.width, minWidth()));
-        height = Math.max(height, Math.max(frame.width, minHeight()));
+        height = Math.max(height, Math.max(frame.height, minHeight()));
 
         frame.width = width;
         frame.height = height;
@@ -711,6 +717,21 @@ public abstract class CGSomeDrawable implements CGDrawable {
         this.relayout();
         return this;
     }
+
+    public int borderWidth() {
+        return this.borderWidth.getInt();
+    }
+    
+    public CGDrawable borderWidth(int borderWidth) {
+        this.borderWidth.setInt(borderWidth);
+        return this;
+    }
+
+    public CGDrawable borderWidth(Int borderWidth) {
+        this.borderWidth.getInt();
+        return this;
+    }
+
 
     public CGDrawable animate(CGAnimation animation) {
         animation.setDrawable(this);

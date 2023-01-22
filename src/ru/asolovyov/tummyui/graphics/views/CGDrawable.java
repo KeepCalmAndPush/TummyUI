@@ -70,12 +70,16 @@ public interface CGDrawable {
     public CGDrawable borderColor(int borderColorHex);
     public CGDrawable borderColor(Int borderColorHex);
 
+    public int borderWidth();
+    public CGDrawable borderWidth(int borderWidth);
+    public CGDrawable borderWidth(Int borderWidth);
+
     public int shadowColor();
     public CGDrawable shadowColor(int shadowColorHex);
     public CGDrawable shadowColor(Int shadowColorHex);
 
     public CGPoint shadowOffset();
-    public CGDrawable shadowOffset(CGPoint shadowColorHex);
+    public CGDrawable shadowOffset(int x, int y);
     public CGDrawable shadowOffset(Point shadowColorHex);
 
     public CGSize intrinsicContentSize();
