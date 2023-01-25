@@ -22,6 +22,8 @@ import ru.asolovyov.tummyui.graphics.CGSize;
  */
 public interface CGDrawable {
 
+    public static final int[] FLEXIBILITY_ALL_NONE = new int[]{0, 0};
+
     public static final int FLEXIBILITY_NONE = 0;
     public static final int FLEXIBILITY_LOW = 64;
     public static final int FLEXIBILITY_DEFAULT = 128;

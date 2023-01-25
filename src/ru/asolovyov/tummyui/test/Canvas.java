@@ -74,23 +74,37 @@ public class Canvas extends UIMIDlet {
 
     private CGDrawable testLanguageTopRightUI() {
         return CG.ZStack(
-                    CG.HStack(
-                        CG.Rect()
-                            .backgroundColor(CGColor.BLUE),
-                        CG.Rect()
-                            .backgroundColor(CGColor.YELLOW)
-                    ),
+//                CG.Rect().backgroundColor(CGColor.YELLOW)
+//                .height(150),
+//                CG.Rect()
+//                .backgroundColor(CGColor.BLUE)
+//                .height(100)
 
-                    CG.HStack(
+                // Наличие стека среди чилдов заставляет распидорашиваться вторую вьюху:
+                // из второй неважно какой вьюхи вычитается размер стека
+                // АЛАЙМЕНТ ПРИМЕНЯЕТСЯ
+                CG.Rect().backgroundColor(CGColor.YELLOW),
+
+                CG.HStack(
                         CG.Text("123|RU|EN")
-                        .alignment(CG.RIGHT)
+                        .alignment(CG.CENTER)
                         .color(CGColor.BLUE)
                         .backgroundColor(CGColor.GREEN)
-                        .height(100)
-                        .flexibilityWidth(0)
+                        .flexibility(CGDrawable.FLEXIBILITY_ALL_NONE)
                     )
                     .alignment(CG.TOP | CG.RIGHT)
                     .borderColor(CGColor.BLACK)
+
+                    
+
+                    
+//                    CG.HStack(
+//                        CG.Rect()
+//                            .backgroundColor(CGColor.BLUE),
+//                        CG.Rect()
+//                            .backgroundColor(CGColor.YELLOW)
+//                    )
+                    
                 )
                 ;
     }

@@ -260,7 +260,6 @@ public class CGStack extends CGSomeDrawable {
         final boolean isBottom = CG.isBitSet(alignmentInt, CG.BOTTOM);
 
         this.drawables.forEach(new Arr.Enumerator() {
-
             public void onElement(Object element) {
                 CGDrawable child = (CGDrawable) element;
                 CGFrame childFrame = child.intrinsicAwareFrame();
@@ -319,7 +318,6 @@ public class CGStack extends CGSomeDrawable {
         final boolean isRight = CG.isBitSet(alignmentInt, CG.RIGHT);
 
         this.drawables.forEach(new Arr.Enumerator() {
-
             public void onElement(Object element) {
                 CGDrawable child = (CGDrawable) element;
                 CGFrame childFrame = child.intrinsicAwareFrame();
@@ -356,24 +354,15 @@ public class CGStack extends CGSomeDrawable {
 
         final CGFrame thisFrame = frame();
         final CGInsets contentInsets = contentInset();
+        int alignment = this.alignment.getInt();
 
-        for (int i = 0; i < this.drawables.getArray().length; i++) {
-            CGDrawable object = (CGDrawable) this.drawables.getArray()[i];
-            CGFrame frame = object.intrinsicAwareFrame();
+        final boolean isVCenter = CG.isBitSet(alignment, CG.VCENTER);
+        final boolean isTop = CG.isBitSet(alignment, CG.TOP);
+        final boolean isBottom = CG.isBitSet(alignment, CG.BOTTOM);
 
-            frame.width = thisFrame.width;
-            frame.height = thisFrame.height;
-        }
-
-        int alignmentInt = this.alignment.getInt();
-
-        final boolean isVCenter = CG.isBitSet(alignmentInt, CG.VCENTER);
-        final boolean isTop = CG.isBitSet(alignmentInt, CG.TOP);
-        final boolean isBottom = CG.isBitSet(alignmentInt, CG.BOTTOM);
-
-        final boolean isHCenter = CG.isBitSet(alignmentInt, CG.HCENTER);
-        final boolean isLeft = CG.isBitSet(alignmentInt, CG.LEFT);
-        final boolean isRight = CG.isBitSet(alignmentInt, CG.RIGHT);
+        final boolean isHCenter = CG.isBitSet(alignment, CG.HCENTER);
+        final boolean isLeft = CG.isBitSet(alignment, CG.LEFT);
+        final boolean isRight = CG.isBitSet(alignment, CG.RIGHT);
 
         S.println("VC top bott ; HC left right " + isVCenter + isTop + isBottom + "; " + isHCenter + isLeft + isRight);
 
@@ -585,10 +574,12 @@ public class CGStack extends CGSomeDrawable {
         S.println("2 BEFORE MASSIVE CALCULATIONS CONTENT SIZE IS: " + contentWidth + "x" + contentHeight);
 
         CGSize size = this.adjustFrameToContentSize(contentWidth, contentHeight);
-        S.println("3 CGSize size = this.adjustFrameToContentSize(contentWidth, contentHeight);");
-        S.println(size);
+        S.println("3 CGSize size = this.adjustFrameToContentSize(contentWidth, contentHeight); " + size);
 
-        int delta = size.width - contentWidth;
+        int delta = size.width;
+        if (axis != AXIS_Z) {
+            delta -= contentWidth;
+        }
         
         S.println("4 DELTA WIDTH " + delta);
 
@@ -598,7 +589,11 @@ public class CGStack extends CGSomeDrawable {
         contentWidth += delta;
         S.println("5 DELTA WIDTH " + delta);
 
-        delta = size.height - contentHeight;
+        delta = size.height;
+        if (axis != AXIS_Z) {
+            delta -= contentHeight;
+        }
+
         S.println("6 DELTA HEIGHT " + delta);
 
         remainingDelta = this.adjustChildrenDimensions(true, delta);
@@ -627,34 +622,7 @@ public class CGStack extends CGSomeDrawable {
 
         return contentSize;
     }
-
-    private CGSize adjustFrameToContentSize(int contentWidth, int contentHeight) {
-        CGSize size = this.frame().getCGSize();
-        S.println("adjustFrameToContentSize " + size);
-
-        if (this.height() < contentHeight && this.hasGrowableHeight()) {
-            S.println("1 adjustFrameToContentSize");
-            int height = Math.min(contentHeight, this.maxHeight());
-            size.height = height;
-        } else if (contentHeight > this.height() && this.hasShrinkableHeight()) {
-            S.println("2 adjustFrameToContentSize");
-            int height = Math.max(contentHeight, this.minHeight());
-            size.height = height;
-        }
-
-        if (contentWidth > this.width() && this.hasGrowableWidth()) {
-            S.println("3 adjustFrameToContentSize");
-            int width = Math.min(contentWidth, this.maxWidth());
-            size.width = width;
-        } else if (contentWidth > this.width() && this.hasShrinkableWidth()) {
-            S.println("4 adjustFrameToContentSize");
-            int width = Math.max(contentWidth, this.minWidth());
-            size.width = width;
-        }
-
-        return size;
-    }
-
+    
     // TODO ВОЗМОЖНО вот тут надо еще и ориджины/инсеты двигать
     private int adjustChildrenDimensions(final boolean isHeight, final int delta) {
         if (delta == 0) {
@@ -665,11 +633,12 @@ public class CGStack extends CGSomeDrawable {
         boolean isAxisDimension = this.axis.getInt() == (isHeight ? AXIS_VERTICAL : AXIS_HORIZONTAL);
         
         final boolean isExpanding = delta > 0;
-        S.println("\nDELTA: " + delta + " IS EXPANDING: " + isExpanding + " IS HEIGHT: " + isHeight + "\n" + (isAxisDimension ? "!!!AXIS" : "!!!NOT AXIS"));
 
         Hashtable groupedAdjustables = isHeight ? this.drawablesGroupedByHeightFlexibility : this.drawablesGroupedByWidthFlexibility;
         
         if (false == isAxisDimension) {
+            S.println("NAX DELTA: " + delta + " IS EXPANDING: " + isExpanding + " IS HEIGHT: " + isHeight + "\n" + (isAxisDimension ? "!!!AXIS" : "!!!NOT AXIS"));
+
             Vector allAdjustables = new Vector();
             Enumeration values = groupedAdjustables.elements();
             while (values.hasMoreElements()) {
@@ -680,7 +649,7 @@ public class CGStack extends CGSomeDrawable {
                 }
             }
             Object[] adjustables = S.toArray(allAdjustables);
-            S.println("ALL ADJUSTABLES: " + allAdjustables.size());
+            S.println("NAX ALL ADJUSTABLES: " + allAdjustables.size());
             
             adjustables = S.filter(adjustables, new S.Filter() {
                 public boolean filter(Object object) {
@@ -696,44 +665,56 @@ public class CGStack extends CGSomeDrawable {
                 }
             });
 
-            S.println(adjustables.length + " ADJUSTABLES: " + adjustables);
+            S.println("NAX " + adjustables.length + " ADJUSTABLES: " + adjustables);
             
             int maxDelta = 0;
             for (int i = 0; i < adjustables.length; i++) {
                 CGSomeDrawable view = (CGSomeDrawable) adjustables[i];
+                int value = 0;
                 int viewDelta = 0;
-                int value = isHeight ? view.height() : view.width();
 
-                S.println("WILL ADJUST " + (isHeight ? "HEIGHT" : "WIDTH") + " OF " + view + " CUR VALUE " + value);
-
-                if (isExpanding) {
-                    viewDelta = isHeight
-                            ? view.maxHeight() - view.height()
-                            : view.maxWidth() - view.width();
+                if (axis.getInt() == AXIS_Z) {
+                    value = isHeight
+                            ? Math.min(view.maxHeight(), delta)
+                            : Math.min(view.maxWidth(), delta);
                 } else {
-                    viewDelta = isHeight
-                            ? view.height() - view.minHeight()
-                            : view.width() - view.minWidth();
+                    value = isHeight ? view.height() : view.width();
+                    
+                    if (isExpanding) {
+                        viewDelta = isHeight
+                                ? view.maxHeight() - view.height()
+                                : view.maxWidth() - view.width();
+                    } else {
+                        viewDelta = isHeight
+                                ? view.height() - view.minHeight()
+                                : view.width() - view.minWidth();
+                    }
+
+                    viewDelta = Math.min(viewDelta, remainingDelta);
+
+                    value += (isExpanding ? +viewDelta : -viewDelta);
                 }
 
-                viewDelta = Math.min(viewDelta, remainingDelta);
-
-                value += (isExpanding ? +viewDelta : -viewDelta);
+                S.print("NAX WILL ADJUST " + (isHeight ? "HEIGHT" : "WIDTH") + " OF " + view + " CUR VALUE " + value + " NEW VALUE ");
 
                 if (isHeight && value != view.height()) {
-                    S.println("ADJUST VALUE BINDING WILL SET " + value);
+                    S.print("NAX " + value);
                     view.heightBinding.sendValue(new Int(value));
                 } else if (value != view.width()) {
-                    S.println("ADJUST VALUE BINDING WILL SET " + value);
+                    S.print("NAX " + value);
                     view.widthBinding.sendValue(new Int(value));
                 }
+
+                S.println("");
 
                 maxDelta = Math.max(maxDelta, Math.abs(viewDelta));
             }
 
-            S.println("REMAINIG DELTA " + remainingDelta + "; MAX DELTA " + maxDelta);
+            S.println("NAX REMAINIG DELTA " + remainingDelta + "; MAX DELTA " + maxDelta);
             return remainingDelta - maxDelta;
         }
+
+        S.println("AX DELTA: " + delta + " IS EXPANDING: " + isExpanding + " IS HEIGHT: " + isHeight + "\n" + (isAxisDimension ? "!!!AXIS" : "!!!NOT AXIS"));
         
         Enumeration ekeys = groupedAdjustables.keys();
         int flexibilities[] = new int[groupedAdjustables.size()];
@@ -784,7 +765,7 @@ public class CGStack extends CGSomeDrawable {
                             : isHeight ? view.minHeight() : view.minWidth();
                     int value = isHeight ? view.height() : view.width();
 
-                    S.println("WILL ADJUST " + (isHeight ? "HEIGHT" : "WIDTH") + " OF " + view + " CUR VALUE " + value);
+                    S.println("AX WILL ADJUST " + (isHeight ? "HEIGHT" : "WIDTH") + " OF " + view + " CUR VALUE " + value);
 
                     int spaceToAdjust = isExpanding
                             ? extremeValue - value
@@ -815,6 +796,33 @@ public class CGStack extends CGSomeDrawable {
         
         S.println("REMAINIG DELTA " + remainingDelta);
         return remainingDelta;
+    }
+
+    private CGSize adjustFrameToContentSize(int contentWidth, int contentHeight) {
+        CGSize size = this.frame().getCGSize();
+        S.println("adjustFrameToContentSize " + size);
+
+        if (this.height() < contentHeight && this.hasGrowableHeight()) {
+            S.println("1 adjustFrameToContentSize");
+            int height = Math.min(contentHeight, this.maxHeight());
+            size.height = height;
+        } else if (contentHeight > this.height() && this.hasShrinkableHeight()) {
+            S.println("2 adjustFrameToContentSize");
+            int height = Math.max(contentHeight, this.minHeight());
+            size.height = height;
+        }
+
+        if (contentWidth > this.width() && this.hasGrowableWidth()) {
+            S.println("3 adjustFrameToContentSize");
+            int width = Math.min(contentWidth, this.maxWidth());
+            size.width = width;
+        } else if (contentWidth > this.width() && this.hasShrinkableWidth()) {
+            S.println("4 adjustFrameToContentSize");
+            int width = Math.max(contentWidth, this.minWidth());
+            size.width = width;
+        }
+
+        return size;
     }
 
     private void groupDrawablesByFlexibility() {
