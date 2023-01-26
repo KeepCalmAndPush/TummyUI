@@ -39,9 +39,9 @@ public class Canvas extends UIMIDlet {
     //TODO РАЗОБРАТЬСЯ ПОЧЕМУ З_СТЭК ДЕЛИТ РАЗМЕРЫ МЕЖДУ ВСЕМИ ВЬЮХАМИ
     //TODO СДЕЛАТЬ ПАБЛИШЕРЫНЙ МЕТОД REPLACE/PIPE
     private Object[] testScreens = new Object[] {
-          testLanguageTopRightUI()
+        testLanguageTopRightUI(),
 //        testThickBordersInsideZStack(), //ok
-//        testZSTextTitleAndRectContent(),//ok
+////        testZSTextTitleAndRectContent(),//ok
 //        testThickBorders(), //  OK но скругления дырявые
 //        testShadows(), //ОК
 //                testVSTextTitleAndRectContent(), // OK
@@ -63,7 +63,7 @@ public class Canvas extends UIMIDlet {
 //                testVStackWithTwoViewsViewFillsCanvas(), //OK
 //                testHStackWithTwoViewsViewFillsCanvas(), //OK
 //                testVStackWithOneViewFillsCanvas(), //OK
-//                
+//
 //                testZStackWithTwoViewsFillsCanvasAndRespectsOrder(), //OK
 //                testHStackWithOneViewFillsCanvas(), //ок
 //                testFrameSetsByMaxWidthMaxHeight(), //OK
@@ -74,15 +74,6 @@ public class Canvas extends UIMIDlet {
 
     private CGDrawable testLanguageTopRightUI() {
         return CG.ZStack(
-//                CG.Rect().backgroundColor(CGColor.YELLOW)
-//                .height(150),
-//                CG.Rect()
-//                .backgroundColor(CGColor.BLUE)
-//                .height(100)
-
-                // Наличие стека среди чилдов заставляет распидорашиваться вторую вьюху:
-                // из второй неважно какой вьюхи вычитается размер стека
-                // АЛАЙМЕНТ ПРИМЕНЯЕТСЯ
                 CG.Rect().backgroundColor(CGColor.YELLOW),
 
                 CG.HStack(
@@ -94,17 +85,6 @@ public class Canvas extends UIMIDlet {
                     )
                     .alignment(CG.TOP | CG.RIGHT)
                     .borderColor(CGColor.BLACK)
-
-                    
-
-                    
-//                    CG.HStack(
-//                        CG.Rect()
-//                            .backgroundColor(CGColor.BLUE),
-//                        CG.Rect()
-//                            .backgroundColor(CGColor.YELLOW)
-//                    )
-                    
                 )
                 ;
     }

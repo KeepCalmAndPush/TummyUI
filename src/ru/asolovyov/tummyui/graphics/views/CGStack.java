@@ -485,7 +485,7 @@ public class CGStack extends CGSomeDrawable {
 
         S.debugln("\nCONTENT OFFSET NOW: " + contentOffset.x + "; " + contentOffset.y + "\n");
 
-        contentOffsetBinding.sendValue(new Point(contentOffset));
+        contentOffsetBinding.sendValue(contentOffset);
     }
 
     private void scheduleKeyRepeatedHandling(final Integer keyCode) {
@@ -613,11 +613,13 @@ public class CGStack extends CGSomeDrawable {
         S.println("AFTER MASSIVE CALCULATIONS STACK SIZE IS: " + size);
 
         if (size.width != this.width()) {
-            this.widthBinding.sendValue(new Int(size.width));
+            S.println("9 WIDTH");
+            this.widthBinding.setInt(size.width);
         }
 
         if (size.height != this.height()) {
-            this.heightBinding.sendValue(new Int(size.height));
+            S.println("9 HEIGHT");
+            this.heightBinding.setInt(size.height);
         }
 
         return contentSize;
@@ -699,10 +701,10 @@ public class CGStack extends CGSomeDrawable {
 
                 if (isHeight && value != view.height()) {
                     S.print("NAX " + value);
-                    view.heightBinding.sendValue(new Int(value));
+                    view.heightBinding.setInt(value);
                 } else if (value != view.width()) {
                     S.print("NAX " + value);
-                    view.widthBinding.sendValue(new Int(value));
+                    view.widthBinding.setInt(value);
                 }
 
                 S.println("");
@@ -777,9 +779,9 @@ public class CGStack extends CGSomeDrawable {
                     S.println("VALUE BINDING WILL SET " + value);
 
                     if (isHeight && value != view.height()) {
-                        view.heightBinding.sendValue(new Int(value));
+                        view.heightBinding.setInt(value);
                     } else if (value != view.width()) {
-                        view.widthBinding.sendValue(new Int(value));
+                        view.widthBinding.setInt(value);
                     } else {
                         adjustablesCount--;
                     }

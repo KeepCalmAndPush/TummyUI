@@ -114,8 +114,8 @@ public class CGCanvas extends Canvas {
             S.debugln("CANVAS WILL SET CHILD Width: " + widthToSet + ", Height: " + heightToSet);
             S.debugln(child + " w: {" + child.minWidth() + "-" + child.maxWidth() + "}; {" + child.minHeight() + "-" + child.maxHeight() + "}");
 
-            child.widthBinding.sendValue(new Int(widthToSet));
-            child.heightBinding.sendValue(new Int(heightToSet));
+            child.widthBinding.setInt(widthToSet);
+            child.heightBinding.setInt(heightToSet);
         }
 
         this.setNeedsRepaint();

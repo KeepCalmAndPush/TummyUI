@@ -34,8 +34,8 @@ public class CGImage extends CGSomeDrawable {
     public CGImage image(Obj image) {
         this.image = image;
         Image iImage = (Image)image.getObject();
-        this.widthBinding.sendValue(new Int(iImage.getWidth()));
-        this.heightBinding.sendValue(new Int(iImage.getHeight()));
+        this.widthBinding.setInt(iImage.getWidth());
+        this.heightBinding.setInt(iImage.getHeight());
         
         this.image.sink(new Sink() {
             protected void onValue(Object value) {
@@ -68,8 +68,8 @@ public class CGImage extends CGSomeDrawable {
     public CGDrawable sizeToFit() {
         Image image = (Image)this.image.getValue();
         if (image != null) {
-            this.widthBinding.sendValue(new Int(image.getWidth()));
-            this.heightBinding.sendValue(new Int(image.getHeight()));
+            this.widthBinding.setInt(image.getWidth());
+            this.heightBinding.setInt(image.getHeight());
         }
         return this;
     }
