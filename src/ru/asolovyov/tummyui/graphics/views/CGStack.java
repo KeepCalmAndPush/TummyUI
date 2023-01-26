@@ -41,6 +41,7 @@ public class CGStack extends CGSomeDrawable {
     
     //TODO сделать биндинги как в CGSomeDrawable
     protected Arr drawables = new Arr(new CGDrawable[]{});
+
     protected Int alignment = new Int(CG.CENTER);
     protected Int axis = new Int(AXIS_HORIZONTAL);
     protected Int maxContentWidthBinding = new Int(Integer.MAX_VALUE);
@@ -131,14 +132,14 @@ public class CGStack extends CGSomeDrawable {
         this.factory = factory;
         this.models = models;
 
-        S.debugln(" CGStack(Int axis, Int alignment, Arr models, DrawableFactory factory) " + drawables);
+        S.println(" CGStack(Int axis, Int alignment, Arr models, DrawableFactory factory) " + drawables);
 
         this.models.to(
                 new Map() {
                     public Object mapValue(Object value) {
                         Object[] models = (Object[]) value;
                         CGDrawable[] drawables = new CGDrawable[models.length];
-                        S.debugln("KEK CGDrawable[] drawables = new CGDrawable[models.length]; " + drawables);
+                        S.println("KEK CGDrawable[] drawables = new CGDrawable[models.length]; " + drawables);
                         for (int i = 0; i < models.length; i++) {
                             Object model = models[i];
 
@@ -164,7 +165,7 @@ public class CGStack extends CGSomeDrawable {
 
     public CGStack(Int axis, Int alignment, Arr drawables) {
         super();
-        S.debugln("KEK CGSTACK WILL SET DRAWABLES: " + drawables);
+        S.println("KEK CGSTACK WILL SET DRAWABLES: " + drawables);
         this.axis = axis;
         this.alignment = alignment;
         this.drawables = drawables;
@@ -205,7 +206,7 @@ public class CGStack extends CGSomeDrawable {
             return;
         }
 
-        S.debugln(this + "CGSTACK DRAW!");
+        S.println(this + "CGSTACK DRAW!");
 
         if (this.axis.getInt() == AXIS_HORIZONTAL) {
             this.hDraw(g);
@@ -217,7 +218,7 @@ public class CGStack extends CGSomeDrawable {
     }
 
     private void pushFrameToChildren() {
-        S.debugln("KEK DRAWABLES " + this.drawables.getArray());
+        S.println("KEK DRAWABLES " + this.drawables.getArray());
         CGDrawable[] drawables = (CGDrawable[]) this.drawables.getArray();
         for (int i = 0; i < drawables.length; i++) {
             CGDrawable drawable = drawables[i];
@@ -337,7 +338,7 @@ public class CGStack extends CGSomeDrawable {
                 childFrame.x -= contentOffset().x;
                 childFrame.y -= contentOffset().y;
 
-                S.debugln("VSTACK Will draw " + child + " " + childFrame.x + ", " + childFrame.y + "; " + childFrame.width + ", " + childFrame.height);
+                S.println("VSTACK Will draw " + child + " " + childFrame.x + ", " + childFrame.y + "; " + childFrame.width + ", " + childFrame.height);
 
                 child.origin(childFrame.x, childFrame.y);
 
@@ -423,7 +424,7 @@ public class CGStack extends CGSomeDrawable {
         keyPublisher.sink(new Sink() {
 
             protected void onValue(Object value) {
-                S.debugln("PRESS DETECTED: " + value);
+                S.println("PRESS DETECTED: " + value);
                 super.onValue(value);
 
                 int keyCode = keyPublisher.getInt();
@@ -451,16 +452,16 @@ public class CGStack extends CGSomeDrawable {
         CGFrame thisFrame = frame();
 
         if (contentSize.height > thisFrame.height) {
-            S.debugln("contentSize.height > thisFrame.height");
+            S.println("contentSize.height > thisFrame.height");
             int extent = contentSize.height - thisFrame.height;
 
             if (keyCode == CG.KEY_UP) {//t
-                S.debugln("keyCode == Canvas.UP");
+                S.println("keyCode == Canvas.UP");
                 contentOffset.y = Math.max(
                         contentOffset.y - 5,
                         -(extent - contentInset.top));
             } else if (keyCode == CG.KEY_DOWN) {//b
-                S.debugln("keyCode == Canvas.DOWN");
+                S.println("keyCode == Canvas.DOWN");
                 contentOffset.y = Math.min(
                         contentOffset.y + 5,
                         extent + contentInset.bottom);
@@ -468,22 +469,22 @@ public class CGStack extends CGSomeDrawable {
         }
 
         if (contentSize.width > thisFrame.width) {
-            S.debugln("contentSize.width > thisFrame.width");
+            S.println("contentSize.width > thisFrame.width");
             int extent = contentSize.width - thisFrame.width;
             if (keyCode == CG.KEY_LEFT) {//l
-                S.debugln("Canvas.LEFT");
+                S.println("Canvas.LEFT");
                 contentOffset.x = Math.max(
                         contentOffset.x - 5,
                         -(extent + contentInset.left));
             } else if (keyCode == CG.KEY_RIGHT) { //r
-                S.debugln("keyCode == Canvas.RIGHT");
+                S.println("keyCode == Canvas.RIGHT");
                 contentOffset.x = Math.min(
                         contentOffset.x + 5,
                         extent + contentInset.right);
             }
         }
 
-        S.debugln("\nCONTENT OFFSET NOW: " + contentOffset.x + "; " + contentOffset.y + "\n");
+        S.println("\nCONTENT OFFSET NOW: " + contentOffset.x + "; " + contentOffset.y + "\n");
 
         contentOffsetBinding.sendValue(contentOffset);
     }
@@ -509,7 +510,7 @@ public class CGStack extends CGSomeDrawable {
         keyPublisher.sink(new Sink() {
 
             protected void onValue(Object value) {
-                S.debugln("PRESS RELEASED: " + value);
+                S.println("PRESS RELEASED: " + value);
                 super.onValue(value);
 
                 Integer keyCode = new Integer(keyPublisher.getInt());
@@ -700,10 +701,10 @@ public class CGStack extends CGSomeDrawable {
                 S.print("NAX WILL ADJUST " + (isHeight ? "HEIGHT" : "WIDTH") + " OF " + view + " CUR VALUE " + value + " NEW VALUE ");
 
                 if (isHeight && value != view.height()) {
-                    S.print("NAX " + value);
+                    S.print(" NAX " + value);
                     view.heightBinding.setInt(value);
-                } else if (value != view.width()) {
-                    S.print("NAX " + value);
+                } else if (!isHeight && value != view.width()) {
+                    S.print(" NAX " + value);
                     view.widthBinding.setInt(value);
                 }
 
@@ -780,7 +781,7 @@ public class CGStack extends CGSomeDrawable {
 
                     if (isHeight && value != view.height()) {
                         view.heightBinding.setInt(value);
-                    } else if (value != view.width()) {
+                    } else if (!isHeight && value != view.width()) {
                         view.widthBinding.setInt(value);
                     } else {
                         adjustablesCount--;
@@ -837,6 +838,8 @@ public class CGStack extends CGSomeDrawable {
             this.drawablesGroupedByHeightFlexibility
         };
 
+        S.println("WILL GROUP DRAWABLES: " + drawables.length);
+
         for (int i = 0; i < drawables.length; i++) {
             CGDrawable drawable = drawables[i];
             for (int j = 0; j < drawable.flexibility().length; j++) {
@@ -864,6 +867,8 @@ public class CGStack extends CGSomeDrawable {
     
     protected void updateIntrinsicContentSize() {
         super.updateIntrinsicContentSize();
+
+        S.println(this + " will GROUP ADJUSTABLES");
         
         this.groupDrawablesByFlexibility();
 
@@ -874,5 +879,6 @@ public class CGStack extends CGSomeDrawable {
         S.println(this + " DID UPDATE SIZES, NOW HAS: " + size);
 
         this.intrinsicContentSizeBinding.sendValue(size);
+        S.println("DID SEND NEW SIZE TO INTRINSIC OK");
     }
 }

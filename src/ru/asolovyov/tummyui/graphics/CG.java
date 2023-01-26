@@ -166,7 +166,7 @@ public class CG {
     }
 
     public static CGStack HStack(CGDrawable d1, CGDrawable d2) {
-        S.debugln("KEK CGStack(Int axis, Int alignment, Arr drawables) " + new Arr(new CGDrawable[] {d1, d2}));
+        S.println("KEK CGStack(Int axis, Int alignment, Arr drawables) " + new Arr(new CGDrawable[] {d1, d2}));
         return new CGStack(new Int(CGStack.AXIS_HORIZONTAL), new Arr(new CGDrawable[] {d1, d2}));
     }
 
@@ -225,7 +225,7 @@ public class CG {
 
         int lineHeight = font.getHeight();
 
-        S.debugln("makeMultilineText FROM TEXT: " + text);
+        S.println("makeMultilineText FROM TEXT: " + text);
 
         for (int characterIndex = 0; characterIndex < text.length(); characterIndex++) {
             char currentCharacter = text.charAt(characterIndex);

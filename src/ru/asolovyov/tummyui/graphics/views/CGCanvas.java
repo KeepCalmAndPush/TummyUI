@@ -28,7 +28,7 @@ public class CGCanvas extends Canvas {
     private Bool needsRepaint = new Bool(false);
 
     public void setNeedsRepaint() {
-        S.debugln("CANVAS SET NEEDS REPAINT!");
+        S.println("CANVAS SET NEEDS REPAINT!");
         this.needsRepaint.setBool(true);
     }
 
@@ -47,11 +47,11 @@ public class CGCanvas extends Canvas {
         
         this.setDrawables(content);
         
-        S.debugln("CANVAS HAS " + content.length + " CHILDren");
+        S.println("CANVAS HAS " + content.length + " CHILDren");
         
         this.needsRepaint.zip(CGDisplayLink.ticks).sink(new Sink() {
             protected void onValue(Object value) {
-                S.debugln("CANVAS REPAINT!!!");
+                S.println("CANVAS REPAINT!!!");
                 repaint();
             }
         });
@@ -93,26 +93,33 @@ public class CGCanvas extends Canvas {
     }
 
     public void setDrawables(CGDrawable[] content) {
+        S.println("1 CANVAS");
         for (int i = 0; i < this.content.length; i++) {
+            S.println("2 CANVAS");
             CGDrawable drawable = content[i];
             drawable.canvas(null);
         }
 
         this.content = content;
 
+        S.println("3 CANVAS");
+
         for (int i = 0; i < this.content.length; i++) {
+            S.println("4 CANVAS");
             CGDrawable drawable = content[i];
             drawable.canvas(this);
         }
 
         if (content.length == 1) {
+            S.println("5 CANVAS");
+            
             CGSomeDrawable child = (CGSomeDrawable) content[0];
 
             int widthToSet = Math.min(this.getWidth(), child.maxWidth());
             int heightToSet = Math.min(this.getHeight(), child.maxHeight());
 
-            S.debugln("CANVAS WILL SET CHILD Width: " + widthToSet + ", Height: " + heightToSet);
-            S.debugln(child + " w: {" + child.minWidth() + "-" + child.maxWidth() + "}; {" + child.minHeight() + "-" + child.maxHeight() + "}");
+            S.println("CANVAS WILL SET CHILD Width: " + widthToSet + ", Height: " + heightToSet);
+            S.println(child + " w: {" + child.minWidth() + "-" + child.maxWidth() + "}; {" + child.minHeight() + "-" + child.maxHeight() + "}");
 
             child.widthBinding.setInt(widthToSet);
             child.heightBinding.setInt(heightToSet);

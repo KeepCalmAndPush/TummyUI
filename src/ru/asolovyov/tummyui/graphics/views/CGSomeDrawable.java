@@ -80,9 +80,13 @@ public abstract class CGSomeDrawable implements CGDrawable {
     public CGDrawable canvas(CGCanvas canvas) {
         this.canvas = canvas;
 
+        S.println("WILL SET CANVAS! " + canvas);
+
         if (canvas == null) {
             return this;
         }
+
+        S.println("DID SET CANVAS! " + canvas);
         
         this.startHandlingKeyboard();
         this.updateIntrinsicContentSize();
@@ -105,7 +109,9 @@ public abstract class CGSomeDrawable implements CGDrawable {
             this.heightBinding,
         }).removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
-                S.println("XYWH 4: " + S.arrayToString((Object[])value));
+                Object[] values = (Object[]) value;
+                S.println(CGSomeDrawable.this + " XYWH 4: " + S.arrayToString(values));
+
                 relayout();
             }
         });
@@ -157,7 +163,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     public CGDrawable width(Int width) {
-        S.debugln(this + " KEK WILL SET WIDTH BINDING " + width);
+        S.println(this + " KEK WILL SET WIDTH BINDING " + width);
 
         int value = width.getInt();
         this.initMinMaxWidth(value);
@@ -168,16 +174,16 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     private void initMinMaxWidth(int value) {
-        if (minWidth() == CG.NULL && value != CG.NULL) {
+        if (minWidthBinding.getInt() == CG.NULL && value != CG.NULL) {
             minWidth(value);
         }
-        if (maxWidth() == CG.NULL && value != CG.NULL) {
+        if (maxWidthBinding.getInt() == CG.NULL && value != CG.NULL) {
             maxWidth(value);
         }
     }
 
     public CGDrawable width(int width) {
-        S.debugln(this + " KEK WILL SET WIDTH " + width);
+        S.println(this + " KEK WILL SET WIDTH " + width);
         this.initMinMaxWidth(width);
         this.widthBinding.setInt(width);
         return this;
@@ -192,16 +198,18 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     private void initMinMaxHeight(int value) {
-        if (minHeight() == CG.NULL && value != CG.NULL) {
+        if (minHeightBinding.getInt() == CG.NULL && value != CG.NULL) {
+            S.println("WILL INIT MIN HEIGHT " + value);
             minHeight(value);
         }
-        if (maxHeight() == CG.NULL && value != CG.NULL) {
+        if (maxHeightBinding.getInt() == CG.NULL && value != CG.NULL) {
+            S.println("WILL INIT MAX HEIGHT " + value);
             maxHeight(value);
         }
     }
 
     public CGDrawable height(int height) {
-        S.debugln(this + " KEK WILL SET HEIGHT " + height);
+        S.println(this + " KEK WILL SET HEIGHT " + height);
         this.initMinMaxHeight(height);
         this.heightBinding.setInt(height);
         return this;
@@ -235,10 +243,10 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     private void initMinMaxX(int value) {
-        if (minX() == CG.NULL && value != CG.NULL) {
+        if (minXBinding.getInt() == CG.NULL && value != CG.NULL) {
             minX(value);
         }
-        if (maxX() == CG.NULL && value != CG.NULL) {
+        if (maxXBinding.getInt() == CG.NULL && value != CG.NULL) {
             maxX(value);
         }
     }
@@ -257,10 +265,10 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     private void initMinMaxY(int value) {
-        if (minY()== CG.NULL && value != CG.NULL) {
+        if (minYBinding.getInt()== CG.NULL && value != CG.NULL) {
             minY(value);
         }
-        if (maxY() == CG.NULL && value != CG.NULL) {
+        if (maxYBinding.getInt() == CG.NULL && value != CG.NULL) {
             maxY(value);
         }
     }
@@ -357,13 +365,13 @@ public abstract class CGSomeDrawable implements CGDrawable {
 
     public CGDrawable frame(int x, int y, int width, int height) {
         CGFrame frame = new CGFrame(x, y, width, height);
-        S.debugln(this + " will be given a frame comps " + frame);
+        S.println(this + " will be given a frame comps " + frame);
         
         return this.frame(frame);
     }
 
     public CGDrawable frame(CGFrame frame) {
-        S.debugln(this + " will be given a CGFrame " + frame);
+        S.println(this + " will be given a CGFrame " + frame);
         
         this.x(frame.x);
         this.y(frame.y);
@@ -430,11 +438,14 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     public void relayout() {
+        S.println("relayout()");
         this.relayout(null);
     }
 
     public void relayout(CGFrame frame) {
+        S.println("relayout(CGFrame frame) CANVAS " + canvas);
         if (this.canvas() != null) {
+            S.println("WILL RELAYOUT!");
             this.updateIntrinsicContentSize();
             this.canvas.setNeedsRepaint();
         }
@@ -732,7 +743,8 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     public CGDrawable cornerRadius(int cornerRadius) {
-        return this.cornerRadius(cornerRadius);
+        this.cornerRadiusBinding.setInt(cornerRadius);
+        return this;
     }
 
     public CGDrawable cornerRadius(Int cornerRadiusBinding) {
@@ -745,7 +757,8 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     public CGDrawable borderColor(int borderColorHex) {
-        return this.borderColor(borderColorHex);
+        this.borderColor.setInt(borderColorHex);
+        return this;
     }
 
     public CGDrawable borderColor(Int borderColorHex) {

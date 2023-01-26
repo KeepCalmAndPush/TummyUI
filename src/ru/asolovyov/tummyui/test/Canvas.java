@@ -36,16 +36,15 @@ import ru.asolovyov.tummyui.graphics.views.CGStack;
 public class Canvas extends UIMIDlet {
     private int testScreenIndex = 0;
 
-    //TODO РАЗОБРАТЬСЯ ПОЧЕМУ З_СТЭК ДЕЛИТ РАЗМЕРЫ МЕЖДУ ВСЕМИ ВЬЮХАМИ
     //TODO СДЕЛАТЬ ПАБЛИШЕРЫНЙ МЕТОД REPLACE/PIPE
     private Object[] testScreens = new Object[] {
         testLanguageTopRightUI(),
-//        testThickBordersInsideZStack(), //ok
-////        testZSTextTitleAndRectContent(),//ok
-//        testThickBorders(), //  OK но скругления дырявые
-//        testShadows(), //ОК
-//                testVSTextTitleAndRectContent(), // OK
-//                testVSTextTitleAndHStackContent(), //OK,
+        testThickBordersInsideZStack(), //ok
+//        testZSTextTitleAndRectContent(),//ok
+        testThickBorders(), //  OK но скругления дырявые
+        testShadows(), //ОК
+                testVSTextTitleAndRectContent(), // OK
+                testVSTextTitleAndHStackContent(), //OK,
 //
 //
 //                testAnimationOk(),
@@ -56,7 +55,7 @@ public class Canvas extends UIMIDlet {
 //                // 3) НЕ РАБОТАЕТ СКРОЛЛИНГ СТЕКА :(
 //                // 4) Оч тормозит
 //                textStylesIteratingHorizontalStackOfLabels(), // :(
-//                testVStackWithTwoViewsNonfixAndSecond20HFix(), //OK
+//                testVStackWithTwoViewsNonfixAndSecond20HFix(), // OK
 //                testVStackWithTwoViews20HFixAndSecondNonfix(), //OK
 //                testHStackWithTwoViewsNonfixAndSecond20WFix(), //OK
 //                testHStackWithTwoViews20WFixAndSecondNonfix(), //OK
@@ -84,7 +83,7 @@ public class Canvas extends UIMIDlet {
                         .flexibility(CGDrawable.FLEXIBILITY_ALL_NONE)
                     )
                     .alignment(CG.TOP | CG.RIGHT)
-                    .borderColor(CGColor.BLACK)
+                    .borderColor(CGColor.PINK).borderWidth(5)
                 )
                 ;
     }
@@ -93,11 +92,13 @@ public class Canvas extends UIMIDlet {
         return CG.ZStack(
                 CG.Rect()
                   .width(150).height(50)
-                  .shadowColor(CGColor.GRAY).shadowOffset(5, 5)
+                  .shadowColor(CGColor.GRAY)
+                  .shadowOffset(5, 5)
                   .cornerRadius(20)
 
                   .backgroundColor(CGColor.RED)
-                  .borderColor(CGColor.BLUE).borderWidth(10)
+                  .borderColor(CGColor.BLUE)
+                  .borderWidth(10)
                 )
                 .alignment(CG.LEFT | CG.VCENTER)
                 .backgroundColor(CGColor.WHITE)
@@ -214,7 +215,7 @@ public class Canvas extends UIMIDlet {
     private CGDrawable testVStackWithTwoViewsNonfixAndSecond20HFix() {
         return CG.VStack(
                 CG.Rect().backgroundColor(CGColor.BLUE),
-                CG.Rect().backgroundColor(CGColor.YELLOW).height(20)
+                CG.Rect().backgroundColor(CGColor.YELLOW).height(60)
                 )
                 .backgroundColor(CGColor.ORANGE)
                 ;
@@ -256,7 +257,7 @@ public class Canvas extends UIMIDlet {
         return CG.ZStack(
                 CG.Rect().backgroundColor(CGColor.YELLOW)
                 ,
-                CG.Rect().backgroundColor(CGColor.BLUE)
+                CG.Rect().backgroundColor(CGColor.BLUE).width(100).height(100)
                 );
     }
 

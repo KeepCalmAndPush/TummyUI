@@ -39,7 +39,7 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
         this.text = text;
         this.text.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
-                S.debugln("CGTEXT TEXT: " + value);
+                S.println("CGTEXT TEXT: " + value);
                 updateIntrinsicContentSize();
             }
         });
@@ -52,7 +52,7 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
     }
 
     public CGText text(String text) {
-        S.debugln("CGTEXT SET TEXT: " + text);
+        S.println("CGTEXT SET TEXT: " + text);
         this.text.setString(text);
         return this;
     }
