@@ -15,8 +15,8 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 import ru.asolovyov.combime.operators.mapping.Map;
+import ru.asolovyov.combime.publishers.Publisher;
 import ru.asolovyov.threading.DispatchQueue;
-import ru.asolovyov.tummyui.bindings.Point;
 import ru.asolovyov.tummyui.data.List;
 import ru.asolovyov.tummyui.graphics.CG;
 import ru.asolovyov.tummyui.graphics.CGFrame;
@@ -38,8 +38,7 @@ public class CGStack extends CGSomeDrawable {
     public final static int AXIS_HORIZONTAL = 0;
     public final static int AXIS_VERTICAL = 1;
     public final static int AXIS_Z = 2;
-    
-    //TODO сделать биндинги как в CGSomeDrawable
+   
     protected Arr drawables = new Arr(new CGDrawable[]{});
 
     protected Int alignment = new Int(CG.CENTER);
@@ -71,25 +70,12 @@ public class CGStack extends CGSomeDrawable {
     }
     
     public CGStack maxContentWidth(Int width) {
-        this.maxContentWidthBinding = width;
-        this.maxContentWidthBinding.sink(new Sink() {
-
-            protected void onValue(Object value) {
-                updateIntrinsicContentSize();
-                relayout();
-            }
-        });
+        width.route(this.maxContentWidthBinding);
         return this;
     }
 
     public CGStack maxContentHeight(Int height) {
-        this.maxContentHeightBinding = height;
-        this.maxContentHeightBinding.sink(new Sink() {
-            protected void onValue(Object value) {
-                updateIntrinsicContentSize();
-                relayout();
-            }
-        });
+        height.route(this.maxContentHeightBinding);
         return this;
     }
 
@@ -98,13 +84,7 @@ public class CGStack extends CGSomeDrawable {
     }
 
     public CGStack spacing(Int spacing) {
-        this.spacing = spacing;
-        this.spacing.sink(new Sink() {
-            protected void onValue(Object value) {
-                updateIntrinsicContentSize();
-                relayout();
-            }
-        });
+        spacing.route(this.spacing);
         return this;
     }
 
@@ -130,9 +110,53 @@ public class CGStack extends CGSomeDrawable {
     public CGStack(Int axis, Int alignment, Arr models, DrawableFactory factory) {
         this(axis, alignment, new Arr(new CGDrawable[]{}));
         this.factory = factory;
-        this.models = models;
 
         S.println(" CGStack(Int axis, Int alignment, Arr models, DrawableFactory factory) " + drawables);
+        models.route(this.models);
+    }
+
+    public CGStack(int axis, Object[] models, DrawableFactory factory) {
+        this(new Int(axis), new Int(CG.CENTER), new Arr(models), factory);
+    }
+
+    public CGStack(Int axis, Arr models, DrawableFactory factory) {
+        this(axis, new Int(CG.CENTER), models, factory);
+    }
+
+    public CGStack(Int axis, Arr drawables) {
+        this(axis, new Int(CG.CENTER), drawables);
+    }
+
+    public CGStack(Int axis, Int alignment, Arr drawables) {
+        super();
+        S.println("KEK CGSTACK WILL SET DRAWABLES: " + drawables);
+        
+        this.subscribeToBindings();
+        
+        axis.route(this.axis);
+        alignment.route(this.alignment);
+        drawables.route(this.alignment);
+    }
+
+    private void subscribeToBindings() {
+        Publisher.combineLatest(new Publisher[] {
+            this.alignment,
+            this.axis,
+            this.maxContentWidthBinding,
+            this.maxContentHeightBinding,
+            this.spacing,
+            this.contentSize,
+        }).removeDuplicates().sink(new Sink() {
+            protected void onValue(Object value) {
+                relayout();
+            }
+        });
+
+        this.drawables.removeDuplicates().sink(new Sink() {
+            protected void onValue(Object value) {
+                relayout();
+            }
+        });
 
         this.models.to(
                 new Map() {
@@ -151,54 +175,8 @@ public class CGStack extends CGSomeDrawable {
                 }).route(drawables);
     }
 
-    public CGStack(int axis, Object[] models, DrawableFactory factory) {
-        this(new Int(axis), new Int(CG.CENTER), new Arr(models), factory);
-    }
-
-    public CGStack(Int axis, Arr models, DrawableFactory factory) {
-        this(axis, new Int(CG.CENTER), models, factory);
-    }
-
-    public CGStack(Int axis, Arr drawables) {
-        this(axis, new Int(CG.CENTER), drawables);
-    }
-
-    public CGStack(Int axis, Int alignment, Arr drawables) {
-        super();
-        S.println("KEK CGSTACK WILL SET DRAWABLES: " + drawables);
-        this.axis = axis;
-        this.alignment = alignment;
-        this.drawables = drawables;
-
-        this.axis.sink(new Sink() {
-            protected void onValue(Object value) {
-                updateIntrinsicContentSize();
-                relayout(frame());
-            }
-        });
-
-        this.alignment.sink(new Sink() {
-            protected void onValue(Object value) {
-                relayout();
-            }
-        });
-
-        this.drawables.sink(new Sink() {
-            protected void onValue(Object value) {
-                groupDrawablesByFlexibility();
-                updateIntrinsicContentSize();
-                relayout(frame());
-            }
-        });
-
-        //TODO Trigger subscription
-        this.spacing = spacing;
-        this.maxContentWidthBinding = maxContentWidthBinding;
-        this.maxContentHeightBinding = maxContentHeightBinding;
-    }
-
-    public Int axis() {
-        return axis;
+    public int axis() {
+        return axis.getInt();
     }
 
     protected void drawContent(Graphics g, CGFrame frame) {
@@ -406,7 +384,6 @@ public class CGStack extends CGSomeDrawable {
         this.subscribeToKeyReleased();
 
         this.drawables.forEach(new Arr.Enumerator() {
-
             public void onElement(Object element) {
                 CGDrawable drawable = (CGDrawable) element;
                 drawable.canvas(CGStack.this.canvas());
@@ -700,10 +677,12 @@ public class CGStack extends CGSomeDrawable {
 
                 S.print("NAX WILL ADJUST " + (isHeight ? "HEIGHT" : "WIDTH") + " OF " + view + " CUR VALUE " + value + " NEW VALUE ");
 
-                if (isHeight && value != view.height()) {
-                    S.print(" NAX " + value);
-                    view.heightBinding.setInt(value);
-                } else if (!isHeight && value != view.width()) {
+                if (isHeight) {
+                    if (value != view.height()) {
+                        S.print(" NAX " + value);
+                        view.heightBinding.setInt(value);
+                    }
+                } else if (value != view.width()) {
                     S.print(" NAX " + value);
                     view.widthBinding.setInt(value);
                 }

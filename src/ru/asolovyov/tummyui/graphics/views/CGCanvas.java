@@ -48,6 +48,12 @@ public class CGCanvas extends Canvas {
         this.setDrawables(content);
         
         S.println("CANVAS HAS " + content.length + " CHILDren");
+
+        this.backgroundColor.sink(new Sink() {
+            protected void onValue(Object value) {
+                repaint();
+            }
+        });
         
         this.needsRepaint.zip(CGDisplayLink.ticks).sink(new Sink() {
             protected void onValue(Object value) {
@@ -150,12 +156,7 @@ public class CGCanvas extends Canvas {
     }
 
     public CGCanvas backgroundColor(Int backgroundColorHex) {
-        this.backgroundColor = backgroundColorHex;
-        this.backgroundColor.sink(new Sink() {
-            protected void onValue(Object value) {
-                repaint();
-            }
-        });
+        backgroundColorHex.route(this.backgroundColor);
         return this;
     }
 

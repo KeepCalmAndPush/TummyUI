@@ -20,31 +20,34 @@ import ru.asolovyov.tummyui.graphics.CGSize;
  * @author Администратор
  */
 public class CGImage extends CGSomeDrawable {
-    private Obj image;
+    private Obj image = (Obj) new Obj(null).drop(1);
 
     public CGImage() {
         super();
+        this.flexibility(new int[]{ CGDrawable.FLEXIBILITY_LOW, CGDrawable.FLEXIBILITY_LOW });
+
+        this.image.sink(new Sink() {
+            protected void onValue(Object value) {
+                Image image = (Image)value;
+                widthBinding.setInt(image.getWidth());
+                heightBinding.setInt(image.getHeight());
+                relayout();
+            }
+        });
     }
 
     public CGImage(Obj image) {
-        super();
-        this.image(image);
+        this();
+        image.route(this.image);
     }
 
     public CGImage image(Obj image) {
-        this.image = image;
-        Image iImage = (Image)image.getObject();
-        this.widthBinding.setInt(iImage.getWidth());
-        this.heightBinding.setInt(iImage.getHeight());
-        
-        this.image.sink(new Sink() {
-            protected void onValue(Object value) {
-                CGImage.this.relayout(frame());
-            }
-        });
+        image.route(this.image);
+        return this;
+    }
 
-        this.flexibility(new int[]{ CGDrawable.FLEXIBILITY_LOW, CGDrawable.FLEXIBILITY_LOW });
-
+    public CGImage image(Image image) {
+        this.image.sendValue(image);
         return this;
     }
 

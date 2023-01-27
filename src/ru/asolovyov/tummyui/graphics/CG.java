@@ -102,11 +102,11 @@ public class CG {
     }
 
     public static CGText Text(Str string) {
-        return new CGText(string);
+        return (new CGText().text(string));
     }
 
     public static CGText Text(String string) {
-        return new CGText(new Str(string));
+        return (new CGText().text(string));
     }
 
     public static CGCanvas Canvas(CGDrawable content) {

@@ -12,7 +12,6 @@ import ru.asolovyov.combime.bindings.Obj;
 import ru.asolovyov.combime.bindings.Str;
 import ru.asolovyov.combime.common.S;
 import ru.asolovyov.combime.common.Sink;
-import ru.asolovyov.tummyui.bindings.Size;
 import ru.asolovyov.tummyui.graphics.CG;
 import ru.asolovyov.tummyui.graphics.CG.MultilineText;
 import ru.asolovyov.tummyui.graphics.CGFrame;
@@ -26,28 +25,37 @@ import ru.asolovyov.tummyui.graphics.CGSize;
 public class CGText extends CGSomeDrawable implements CGFontSupporting {
     private Str text = new Str("");
     private Obj font = new Obj(Font.getDefaultFont());
-    private Int anchor = new Int(CG.TOP | CG.LEFT);
+    private Int alignment = new Int(CG.TOP | CG.LEFT);
 
-    public CGText(Str text) {
+    public CGText() {
         super();
-        //TODO подписаться на остальное
-        this.text(text);
-        this.font(font);
-    }
-    
-    public CGText text(Str text) {
-        this.text = text;
+
+        this.updateContentInset();
+        this.flexibility(new int[]{ CGDrawable.FLEXIBILITY_DEFAULT, CGDrawable.FLEXIBILITY_LOW });
+
         this.text.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
                 S.println("CGTEXT TEXT: " + value);
-                updateIntrinsicContentSize();
+                relayout();
             }
         });
-        int inset = this.getFont().getHeight() / 4;
-        this.contentInset(inset / 2, inset, inset / 2, inset);
 
-        this.flexibility(new int[]{ CGDrawable.FLEXIBILITY_DEFAULT, CGDrawable.FLEXIBILITY_LOW });
+        this.alignment.removeDuplicates().sink(new Sink() {
+            protected void onValue(Object value) {
+                relayout(frame());
+            }
+        });
 
+        this.font.removeDuplicates().sink(new Sink() {
+            protected void onValue(Object value) {
+                updateContentInset();
+                relayout();
+            }
+        });
+    }
+    
+    public CGText text(Str text) {
+        text.route(this.text);
         return this;
     }
 
@@ -58,20 +66,26 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
     }
 
     public CGText alignment(int anchor) {
-        return this.alignment(new Int(anchor));
+        this.alignment.setInt(anchor);
+        return this;
     }
     
     public CGText alignment(Int anchor) {
-        anchor.route(this.anchor);
+        anchor.route(this.alignment);
         return this;
     }
 
-    private int getAlignment() {
-        return this.anchor.getInt();
+    private void updateContentInset() {
+        int inset = this.getFont().getHeight() / 4;
+        this.contentInset(inset / 2, inset, inset / 2, inset);
     }
 
-    public Str text() {
-        return this.text;
+    private int alignment() {
+        return this.alignment.getInt();
+    }
+
+    public String text() {
+        return this.text.getString();
     }
 
     protected void drawContent(Graphics g, CGFrame frame) {
@@ -86,7 +100,7 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
 
         String text = this.text.getString();
         Font font = this.getFont();
-        int anchor = this.getAlignment();
+        int anchor = this.alignment();
 
         MultilineText multilineText = CG.makeMultilineText(text, font, frame.getCGSize());
         
@@ -114,16 +128,12 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
     }
 
     public CGFontSupporting font(Font font) {
-        return this.font(new Obj(font));
+        this.font.setObject(font);
+        return this;
     }
 
     public CGFontSupporting font(Obj font) {
-        this.font = font;
-        this.font.removeDuplicates().sink(new Sink() {
-            protected void onValue(Object value) {
-                relayout();
-            }
-        });
+        font.route(this.font);
         return this;
     }
 

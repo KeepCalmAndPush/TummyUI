@@ -38,13 +38,18 @@ public class Canvas extends UIMIDlet {
 
     //TODO СДЕЛАТЬ ПАБЛИШЕРЫНЙ МЕТОД REPLACE/PIPE
     private Object[] testScreens = new Object[] {
-        testLanguageTopRightUI(),
-        testThickBordersInsideZStack(), //ok
-//        testZSTextTitleAndRectContent(),//ok
-        testThickBorders(), //  OK но скругления дырявые
-        testShadows(), //ОК
-                testVSTextTitleAndRectContent(), // OK
-                testVSTextTitleAndHStackContent(), //OK,
+        testVSTextTitleAndHStackContent(), //FAIL, текст уехал вправо, Встек делит контент как 179:1
+//        testLanguageTopRightUI(),
+//        testThickBordersInsideZStack(), //ok
+////        testZSTextTitleAndRectContent(),//ok
+//        testThickBorders(), //  OK но скругления дырявые
+//        testShadows(), //ОК
+//                testVSTextTitleAndRectContent(), // OK
+                
+                /*
+CGRectangle@17bec2a1 CGFrame@58b9e22a (0,20; 179,340), {x: 24...24, y: 20...20; wi: 0...INF, he: 0...INF} INTRAWARE FRAME IS CGFrame@58b9e22a (0,20; 179,340)
+CGRectangle@1ea89420 CGFrame@8a91c1ae (179,20; 156,340), {x: 203...203, y: 20...20; wi: 0...INF, he: 0...INF} WILL SAY ITS INTRAWARE FRAME!
+                 */
 //
 //
 //                testAnimationOk(),
