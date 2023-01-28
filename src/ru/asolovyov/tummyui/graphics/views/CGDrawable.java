@@ -47,7 +47,8 @@ public interface CGDrawable {
     public CGDrawable stroke(Int strokeStyle);
 
     public void relayout();
-    public void relayout(CGFrame frame);
+    public void repaint();
+    public void repaint(CGFrame frame);
 
     public CGDrawable readGeometry(GeometryReader reader);
     public GeometryReader geometryReader();
@@ -157,8 +158,7 @@ public interface CGDrawable {
     public boolean hasGrowableWidth();
     public boolean hasShrinkableHeight();
     public boolean hasGrowableHeight();
-
-    //[widthFlexibility, heightFlexibility]
+    
     public int[] flexibility();
     public CGDrawable flexibility(int[] flexibility);
 

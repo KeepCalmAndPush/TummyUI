@@ -59,10 +59,10 @@ public class CG {
         return (mask & bit) == bit;
     }
     
-    public static CGArc Arc(int startAngle, int endAngle) {
+    public static CGArc Arc(int startAngle, int arcAngle) {
         return new CGArc()
                 .startAngle(new Int(startAngle))
-                .endAngle(new Int(endAngle));
+                .arcAngle(new Int(arcAngle));
     }
 
     public static CGArc Circle() {

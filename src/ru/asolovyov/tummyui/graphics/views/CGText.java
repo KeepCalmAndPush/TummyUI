@@ -42,7 +42,7 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
 
         this.alignment.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
-                relayout(frame());
+                repaint();
             }
         });
 

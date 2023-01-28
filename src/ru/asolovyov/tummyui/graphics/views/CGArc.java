@@ -18,18 +18,23 @@ import ru.asolovyov.tummyui.graphics.CGInsets;
  * @author Администратор
  */
 public class CGArc extends CGSomeDrawable {
-    private Int startAngleBinding;
-    private Int endAngleBinding;
+    private Int startAngleBinding = new Int(0);
+    private Int arcAngleBinding = new Int(270);
+
+    protected Int fillColor = new Int(CG.NULL);
+    protected Int strokeWidth = new Int(1);
 
     public CGArc() {
         super();
         
         Publisher.combineLatest(new Publisher[] {
             this.startAngleBinding,
-            this.endAngleBinding
+            this.arcAngleBinding,
+            this.fillColor,
+            this.strokeWidth
         }).removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
-                relayout();
+                repaint();
             }
         });
     }
@@ -39,8 +44,8 @@ public class CGArc extends CGSomeDrawable {
         return this;
     }
 
-    public CGArc endAngle(Int endAngleBinding) {
-        endAngleBinding.route(this.endAngleBinding);
+    public CGArc arcAngle(Int arcAngleBinding) {
+        arcAngleBinding.route(this.arcAngleBinding);
         return this;
     }
 
@@ -49,15 +54,43 @@ public class CGArc extends CGSomeDrawable {
         return this;
     }
 
-    public CGArc endAngle(int endAngleBinding) {
-        this.endAngleBinding.setInt(endAngleBinding);
+    public CGArc arcAngle(int arcAngleBinding) {
+        this.arcAngleBinding.setInt(arcAngleBinding);
+        return this;
+    }
+
+    public int fillColor() {
+        return fillColor.getInt();
+    }
+
+    public CGArc fillColor(int colorHex) {
+        this.fillColor.setInt(colorHex);
+        return this;
+    }
+
+    public CGArc fillColor(Int fillColor) {
+        fillColor.route(this.fillColor);
+        return this;
+    }
+    
+    public int strokeWidth() {
+        return strokeWidth.getInt();
+    }
+
+    public CGArc strokeWidth(int width) {
+        this.strokeWidth.setInt(width);
+        return this;
+    }
+
+    public CGArc strokeWidth(Int width) {
+        width.route(this.strokeWidth);
         return this;
     }
 
     protected void drawContent(Graphics g, CGFrame frame) {
         CGInsets insets = this.contentInset();
 
-        int fillColor = this.color();
+        int fillColor = this.fillColor();
         if (fillColor != CG.NULL) {
             g.setColor(fillColor);
             g.fillArc(
@@ -66,7 +99,7 @@ public class CGArc extends CGSomeDrawable {
                 frame.width - insets.left - insets.right,
                 frame.height - insets.top - insets.bottom,
                 startAngleBinding.getInt(),
-                endAngleBinding.getInt()
+                arcAngleBinding.getInt()
                 );
         }
 
@@ -74,14 +107,43 @@ public class CGArc extends CGSomeDrawable {
         if (color != CG.NULL) {
             g.setColor(color);
             g.setStrokeStyle(this.strokeStyle());
-            g.drawArc(
-                frame.x + insets.left,
-                frame.y + insets.top,
-                frame.width - insets.left - insets.right,
-                frame.height - insets.top - insets.bottom,
-                startAngleBinding.getInt(),
-                endAngleBinding.getInt()
-                );
+
+            if (strokeWidth() <= 1) {
+                g.drawArc(
+                        frame.x + insets.left,
+                        frame.y + insets.top,
+                        frame.width - insets.left - insets.right,
+                        frame.height - insets.top - insets.bottom,
+                        startAngleBinding.getInt(),
+                        arcAngleBinding.getInt());
+
+                return;
+            }
+
+            fillColor = fillColor != CG.NULL ? fillColor : backgroundColor();
+            if (fillColor == CG.NULL) {
+                return;
+            }
+
+            g.fillArc(
+                        frame.x + insets.left,
+                        frame.y + insets.top,
+                        frame.width - insets.left - insets.right,
+                        frame.height - insets.top - insets.bottom,
+                        startAngleBinding.getInt(),
+                        arcAngleBinding.getInt());
+
+            int width1 = strokeWidth();
+            int width2 = 2*width1;
+
+           g.setColor(fillColor);
+           g.fillArc(
+                        frame.x + insets.left + width1,
+                        frame.y + insets.top + width1,
+                        frame.width - insets.left - insets.right - width2,
+                        frame.height - insets.top - insets.bottom - width2,
+                        startAngleBinding.getInt() - width2,
+                        359);
         }
     }
 }

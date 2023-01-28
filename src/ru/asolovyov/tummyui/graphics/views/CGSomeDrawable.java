@@ -117,10 +117,8 @@ public abstract class CGSomeDrawable implements CGDrawable {
         });
         
         Publisher.combineLatest(new IPublisher[] {
-                    this.color,
-                    this.backgroundColor,
-                    this.borderColor,
-                    this.strokeStyle,
+                    this.shadowColor,
+                    this.shadowOffset,
                     this.contentOffsetBinding,
                     this.contentInsetBinding,
                     this.cornerRadiusBinding,
@@ -151,13 +149,15 @@ public abstract class CGSomeDrawable implements CGDrawable {
         });
 
         Publisher.combineLatest(new IPublisher[]{
-                    this.shadowColor,
-                    this.shadowOffset,
+                    this.color,
+                    this.backgroundColor,
+                    this.borderColor,
+                    this.strokeStyle,
                     this.borderWidth
         }).removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
                 S.println("2 SHADOWS" + S.arrayToString((Object[])value));
-                relayout();
+                repaint();
             }
         });
     }
@@ -438,17 +438,28 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     public void relayout() {
-        S.println("relayout()");
-        this.relayout(null);
-    }
-
-    public void relayout(CGFrame frame) {
-        S.println("relayout(CGFrame frame) CANVAS " + canvas);
+        S.println("relayout() CANVAS " + canvas);
         if (this.canvas() != null) {
             S.println("WILL RELAYOUT!");
             this.updateIntrinsicContentSize();
             this.canvas.setNeedsRepaint();
         }
+    }
+    
+    public void repaint() {
+        if (this.canvas() == null) {
+            return;
+        }
+        
+        this.repaint(frame());
+    }
+    
+    public void repaint(CGFrame frame) {
+        if (this.canvas() == null) {
+            return;
+        }
+        
+        this.canvas.repaint(frame.x, frame.y, frame.width, frame.height);
     }
     
     public CGFrame intrinsicAwareFrame() {

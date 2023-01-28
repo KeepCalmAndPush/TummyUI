@@ -7,14 +7,23 @@ package ru.asolovyov.tummyui.test;
 
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Font;
+import javax.microedition.lcdui.Graphics;
 import ru.asolovyov.combime.common.S;
+import ru.asolovyov.combime.common.Sink;
+import ru.asolovyov.threading.Clock;
 import ru.asolovyov.tummyui.forms.UIMIDlet;
 import ru.asolovyov.tummyui.graphics.CG;
 import ru.asolovyov.tummyui.graphics.CGAnimation;
 import ru.asolovyov.tummyui.graphics.CGColor;
+import ru.asolovyov.tummyui.graphics.CGDisplayLink;
+import ru.asolovyov.tummyui.graphics.CGFrame;
 import ru.asolovyov.tummyui.graphics.CGPoint;
+import ru.asolovyov.tummyui.graphics.CGSize;
+import ru.asolovyov.tummyui.graphics.views.CGArc;
 import ru.asolovyov.tummyui.graphics.views.CGDrawable;
 import ru.asolovyov.tummyui.graphics.views.CGCanvas;
+import ru.asolovyov.tummyui.graphics.views.CGLine;
+import ru.asolovyov.tummyui.graphics.views.CGPattern;
 import ru.asolovyov.tummyui.graphics.views.CGStack;
 
 /**
@@ -36,9 +45,13 @@ import ru.asolovyov.tummyui.graphics.views.CGStack;
 public class Canvas extends UIMIDlet {
     private int testScreenIndex = 0;
 
+    //TODO REPAINT ТОЖЕ СИНХРОНИЗИРОВАТЬ С ТАЙМЕРОМ!
     //TODO СДЕЛАТЬ ПАБЛИШЕРЫНЙ МЕТОД REPLACE/PIPE
     private Object[] testScreens = new Object[] {
-        testVSTextTitleAndHStackContent(), //FAIL, текст уехал вправо, Встек делит контент как 179:1
+        testPattern(),//OK
+//        testLine(),//OK
+//        testArc(),//OK
+//        testVSTextTitleAndHStackContent(),//OK
 //        testLanguageTopRightUI(),
 //        testThickBordersInsideZStack(), //ok
 ////        testZSTextTitleAndRectContent(),//ok
@@ -74,6 +87,74 @@ CGRectangle@1ea89420 CGFrame@8a91c1ae (179,20; 156,340), {x: 203...203, y: 20...
 //                testRectFillsCanvasWhenNoDimensionsSet(), //OK
 //                testRectFillsCanvasWhenSmallMinsSet(), //OK
     };
+
+    private int testArcAngle = 0;
+    int i = 0;
+
+    private CGDrawable testPattern() {
+        CGPattern pattern = new CGPattern() {
+            public void drawTile(Graphics g, CGFrame frame) {
+                g.setColor(CGColor.WHITE);
+                g.fillRect(frame.x, frame.y, frame.width, frame.height);
+
+                int h = frame.height / 2;
+
+                g.setColor(CGColor.BLACK);
+                g.fillRect(frame.x, frame.y, h, h);
+                g.fillRect(frame.x + h, frame.y + h, h, h);
+            }
+        };
+
+        return CG.ZStack(
+                pattern
+                    .tileSize(new CGSize(32, 32))
+                );
+    }
+
+    private CGDrawable testArc() {
+        final CGArc arc = (CGArc) CG.Arc(testArcAngle, 270)
+                    .strokeWidth(5)
+                    .backgroundColor(CGColor.WHITE)
+                    .color(CGColor.GREEN)
+                    .width(50)
+                    .height(50);
+
+        CGDisplayLink.ticks.sink(new Sink() {
+            protected void onValue(Object value) {
+                int start = testArcAngle % 360;
+                arc.startAngle(start);
+                testArcAngle += 10;
+            }
+        });
+
+        return CG.ZStack(
+//                CG.Rect().backgroundColor(CGColor.WHITE),
+                arc
+                );
+    }
+
+    private CGDrawable testLine() {
+        final CGLine line1 = (CGLine) CG.Line()
+                    .strokeWidth(10)
+                    .backgroundColor(CGColor.WHITE)
+                    .color(CGColor.GREEN)
+                    .width(50)
+                    .height(50);
+        
+        CGLine line2 = (CGLine) CG.Line()
+                    .isInverted(true)
+                    .strokeWidth(10)
+                    .backgroundColor(CGColor.WHITE)
+                    .color(CGColor.GREEN)
+                    .width(50)
+                    .height(50);
+
+        return CG.HStack(
+//                CG.Rect().backgroundColor(CGColor.WHITE),
+                line1,
+                line2
+                ).spacing(10);
+    }
 
 
     private CGDrawable testLanguageTopRightUI() {

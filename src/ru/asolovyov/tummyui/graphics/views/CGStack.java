@@ -135,7 +135,7 @@ public class CGStack extends CGSomeDrawable {
         
         axis.route(this.axis);
         alignment.route(this.alignment);
-        drawables.route(this.alignment);
+        drawables.route(this.drawables);
     }
 
     private void subscribeToBindings() {
@@ -206,8 +206,8 @@ public class CGStack extends CGSomeDrawable {
         }
     }
 
-    public void relayout(CGFrame frame) {
-        super.relayout(frame);
+    public void relayout() {
+        super.relayout();
         if (this.canvas() != null) {
             this.pushFrameToChildren();
         }

@@ -13,6 +13,7 @@ import ru.asolovyov.combime.common.S;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.combime.operators.sequence.Drop;
 import ru.asolovyov.combime.operators.timing.Debounce;
+import ru.asolovyov.tummyui.graphics.CG;
 import ru.asolovyov.tummyui.graphics.CGDisplayLink;
 import ru.asolovyov.tummyui.graphics.CGFrame;
 import ru.asolovyov.tummyui.graphics.views.CGDrawable.KeyboardHandler;
@@ -24,7 +25,7 @@ import ru.asolovyov.tummyui.graphics.views.CGDrawable.KeyboardHandler;
 
 public class CGCanvas extends Canvas {
     private CGDrawable[] content = new CGDrawable[]{};
-    private Int backgroundColor;
+    private Int backgroundColor = new Int(CG.NULL);
     private Bool needsRepaint = new Bool(false);
 
     public void setNeedsRepaint() {
