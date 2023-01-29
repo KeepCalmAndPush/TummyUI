@@ -295,6 +295,8 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     protected void drawBackground(Graphics g, CGFrame frame) {
+        S.println(this + " WILL DRAW BACKGROUND IN FRAME " + frame);
+        
         int backgroundColor = this.backgroundColor();
         int cornerRadius = cornerRadius() * 2;
         
@@ -342,20 +344,24 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     public void draw(Graphics g) {
-        CGFrame frame = intrinsicAwareFrame();
+        CGFrame frame = frame();
         if (frame == null) {
             return;
         }
 
         this.drawShadow(g, frame);
         this.drawBackground(g, frame);
-        CGFrame contentFrame = frame.copy();
-        contentFrame.x += borderWidth();
-        contentFrame.y += borderWidth();
-        contentFrame.width -= 2*borderWidth();
-        contentFrame.height -= 2*borderWidth();
 
+        CGFrame oldClip = new CGFrame(g.getClipX(), g.getClipY(), g.getClipWidth(), g.getClipHeight());
+
+        CGFrame contentFrame = frame.insetting(borderWidth(), borderWidth());
+        g.clipRect(contentFrame.x, contentFrame.y, contentFrame.width, contentFrame.height);
         this.drawContent(g, contentFrame);
+
+//        g.setClip(0, 0, 180, 208);
+        g.setClip(oldClip.x, oldClip.y, oldClip.width, oldClip.height);
+
+
         this.drawBorder(g, frame);
     }
 
@@ -464,7 +470,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
     
     public CGFrame intrinsicAwareFrame() {
         CGFrame frame = this.frame();
-        S.println(this + " WILL SAY ITS INTRAWARE FRAME!");
+//        S.println(this + " WILL SAY ITS INTRAWARE FRAME!");
 
         CGSize size = this.intrinsicContentSize();
         CGInsets insets = this.contentInset();
@@ -478,7 +484,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
         frame.width = width;
         frame.height = height;
 
-        S.println(this + " INTRAWARE FRAME IS " + frame);
+//        S.println(this + " INTRAWARE FRAME IS " + frame);
 
         return frame;
     }

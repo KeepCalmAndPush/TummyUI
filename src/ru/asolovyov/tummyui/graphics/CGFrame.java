@@ -69,6 +69,19 @@ public final class CGFrame {
         return this.x + this.width;
     }
 
+    public void inset(int x, int y) {
+        this.x += x;
+        this.y += y;
+        this.width -= 2*x;
+        this.height -= 2*y;
+    }
+
+    public CGFrame insetting(int x, int y) {
+        CGFrame copy = this.copy();
+        copy.inset(x, y);
+        return copy;
+    }
+
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;

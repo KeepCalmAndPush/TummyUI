@@ -41,7 +41,7 @@ public class CGStack extends CGSomeDrawable {
    
     protected Arr drawables = new Arr(new CGDrawable[]{});
 
-    protected Int alignment = new Int(CG.CENTER);
+    protected Int alignment = new Int(CG.TOP | CG.HCENTER);
     protected Int axis = new Int(AXIS_HORIZONTAL);
     protected Int maxContentWidthBinding = new Int(Integer.MAX_VALUE);
     protected Int maxContentHeightBinding = new Int(Integer.MAX_VALUE);
@@ -107,8 +107,8 @@ public class CGStack extends CGSomeDrawable {
         return contentSize;
     }
 
-    public CGStack(Int axis, Int alignment, Arr models, DrawableFactory factory) {
-        this(axis, alignment, new Arr(new CGDrawable[]{}));
+    public CGStack(Int axis, Arr models, DrawableFactory factory) {
+        this(axis, new Arr(new CGDrawable[]{}));
         this.factory = factory;
 
         S.println(" CGStack(Int axis, Int alignment, Arr models, DrawableFactory factory) " + drawables);
@@ -116,30 +116,22 @@ public class CGStack extends CGSomeDrawable {
     }
 
     public CGStack(int axis, Object[] models, DrawableFactory factory) {
-        this(new Int(axis), new Int(CG.CENTER), new Arr(models), factory);
-    }
-
-    public CGStack(Int axis, Arr models, DrawableFactory factory) {
-        this(axis, new Int(CG.CENTER), models, factory);
+        this(new Int(axis), new Arr(models), factory);
     }
 
     public CGStack(Int axis, Arr drawables) {
-        this(axis, new Int(CG.CENTER), drawables);
-    }
-
-    public CGStack(Int axis, Int alignment, Arr drawables) {
         super();
         S.println("KEK CGSTACK WILL SET DRAWABLES: " + drawables);
         
         this.subscribeToBindings();
-        
+
         axis.route(this.axis);
-        alignment.route(this.alignment);
         drawables.route(this.drawables);
     }
 
     private void subscribeToBindings() {
         Publisher.combineLatest(new Publisher[] {
+            this.drawables,
             this.alignment,
             this.axis,
             this.maxContentWidthBinding,
@@ -151,13 +143,7 @@ public class CGStack extends CGSomeDrawable {
                 relayout();
             }
         });
-
-        this.drawables.removeDuplicates().sink(new Sink() {
-            protected void onValue(Object value) {
-                relayout();
-            }
-        });
-
+        
         this.models.to(
                 new Map() {
                     public Object mapValue(Object value) {
@@ -184,7 +170,7 @@ public class CGStack extends CGSomeDrawable {
             return;
         }
 
-        S.println(this + "CGSTACK DRAW!");
+        S.println(this + " CGSTACK DRAW!");
 
         if (this.axis.getInt() == AXIS_HORIZONTAL) {
             this.hDraw(g);
@@ -243,7 +229,7 @@ public class CGStack extends CGSomeDrawable {
                 CGDrawable child = (CGDrawable) element;
                 CGFrame childFrame = child.intrinsicAwareFrame();
 
-                S.println("WILL DRAW " + child + " " + childFrame);
+//                S.println("WILL DRAW " + child + " " + childFrame);
                 CGInsets contentInsets = contentInset();
 
                 childFrame.x = nextLeft;
@@ -263,7 +249,7 @@ public class CGStack extends CGSomeDrawable {
 
                 child.origin(childFrame.x, childFrame.y);
 
-                S.println("HSTACK Will draw " + child + " " + childFrame.x + ", " + childFrame.y + "; " + childFrame.width + ", " + childFrame.height);
+//                S.println("HSTACK Will draw " + child + " " + childFrame.x + ", " + childFrame.y + "; " + childFrame.width + ", " + childFrame.height);
 
                 child.draw(graphics);
                 nextLeft += childFrame.width + spacing();
@@ -279,22 +265,27 @@ public class CGStack extends CGSomeDrawable {
 
         this.nextTop = thisFrame.y + contentInsets.top;
 
-        int alignmentInt = this.alignment.getInt();
+        int alignmentI = this.alignment.getInt();
         int contentHeight = this.contentSize.getCGSize().height;
 
-        if (CG.isBitSet(alignmentInt, CG.VCENTER)) {
+        S.println("VSTACK FIRST TOP ALIGNMENT " + alignmentI);
+
+        if (CG.isBitSet(alignmentI, CG.VCENTER)) {
+            S.println("VSTACK FIRST TOP 1");
             this.nextTop = thisFrame.y + (thisFrame.height - contentHeight) / 2 + contentInsets.deltaY();
         }
-        if (CG.isBitSet(alignmentInt, CG.TOP)) {
+        if (CG.isBitSet(alignmentI, CG.TOP)) {
+            S.println("VSTACK FIRST TOP 2");
             this.nextTop = thisFrame.y + contentInsets.deltaY();
         }
-        if (CG.isBitSet(alignmentInt, CG.BOTTOM)) {
+        if (CG.isBitSet(alignmentI, CG.BOTTOM)) {
+            S.println("VSTACK FIRST TOP 3");
             this.nextTop = thisFrame.y + thisFrame.height - contentHeight + contentInsets.deltaY();
         }
 
-        final boolean isHCenter = CG.isBitSet(alignmentInt, CG.HCENTER);
-        final boolean isLeft = CG.isBitSet(alignmentInt, CG.LEFT);
-        final boolean isRight = CG.isBitSet(alignmentInt, CG.RIGHT);
+        final boolean isHCenter = CG.isBitSet(alignmentI, CG.HCENTER);
+        final boolean isLeft = CG.isBitSet(alignmentI, CG.LEFT);
+        final boolean isRight = CG.isBitSet(alignmentI, CG.RIGHT);
 
         this.drawables.forEach(new Arr.Enumerator() {
             public void onElement(Object element) {
@@ -428,15 +419,15 @@ public class CGStack extends CGSomeDrawable {
 
         CGFrame thisFrame = frame();
 
+        S.println("moveContentByKeyPress: CON_SIZE: " + contentSize + " vs FRAME: " + thisFrame + " vs CON_OFFSET " + contentOffset);
+
         if (contentSize.height > thisFrame.height) {
-            S.println("contentSize.height > thisFrame.height");
             int extent = contentSize.height - thisFrame.height;
+            S.println("contentSize.height > thisFrame.height EXTENT: " + extent);
 
             if (keyCode == CG.KEY_UP) {//t
                 S.println("keyCode == Canvas.UP");
-                contentOffset.y = Math.max(
-                        contentOffset.y - 5,
-                        -(extent - contentInset.top));
+                contentOffset.y = Math.max( contentOffset.y - 5, -contentInset.top);
             } else if (keyCode == CG.KEY_DOWN) {//b
                 S.println("keyCode == Canvas.DOWN");
                 contentOffset.y = Math.min(
@@ -446,13 +437,15 @@ public class CGStack extends CGSomeDrawable {
         }
 
         if (contentSize.width > thisFrame.width) {
-            S.println("contentSize.width > thisFrame.width");
             int extent = contentSize.width - thisFrame.width;
+            S.println("contentSize.width > thisFrame.width EXTENT: " + extent);
+            
             if (keyCode == CG.KEY_LEFT) {//l
                 S.println("Canvas.LEFT");
                 contentOffset.x = Math.max(
-                        contentOffset.x - 5,
-                        -(extent + contentInset.left));
+                        contentOffset.x - 5, -contentInset.left
+                        );
+                
             } else if (keyCode == CG.KEY_RIGHT) { //r
                 S.println("keyCode == Canvas.RIGHT");
                 contentOffset.x = Math.min(
@@ -461,7 +454,7 @@ public class CGStack extends CGSomeDrawable {
             }
         }
 
-        S.println("\nCONTENT OFFSET NOW: " + contentOffset.x + "; " + contentOffset.y + "\n");
+        S.println("CONTENT OFFSET NOW: " + contentOffset.x + "; " + contentOffset.y + "\n");
 
         contentOffsetBinding.sendValue(contentOffset);
     }

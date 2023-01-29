@@ -48,7 +48,10 @@ public class Canvas extends UIMIDlet {
     //TODO REPAINT ТОЖЕ СИНХРОНИЗИРОВАТЬ С ТАЙМЕРОМ!
     //TODO СДЕЛАТЬ ПАБЛИШЕРЫНЙ МЕТОД REPLACE/PIPE
     private Object[] testScreens = new Object[] {
-        testPattern(),//OK
+//        testVStackScroll(),
+        testHStackScroll(),
+//        testZStackScroll(),
+//        testPattern(),//OK
 //        testLine(),//OK
 //        testArc(),//OK
 //        testVSTextTitleAndHStackContent(),//OK
@@ -58,13 +61,6 @@ public class Canvas extends UIMIDlet {
 //        testThickBorders(), //  OK но скругления дырявые
 //        testShadows(), //ОК
 //                testVSTextTitleAndRectContent(), // OK
-                
-                /*
-CGRectangle@17bec2a1 CGFrame@58b9e22a (0,20; 179,340), {x: 24...24, y: 20...20; wi: 0...INF, he: 0...INF} INTRAWARE FRAME IS CGFrame@58b9e22a (0,20; 179,340)
-CGRectangle@1ea89420 CGFrame@8a91c1ae (179,20; 156,340), {x: 203...203, y: 20...20; wi: 0...INF, he: 0...INF} WILL SAY ITS INTRAWARE FRAME!
-                 */
-//
-//
 //                testAnimationOk(),
 //                testAnimationYellowTrip(),
 //                testRectFrameAndCornerRadiusOk(),//OK
@@ -87,6 +83,60 @@ CGRectangle@1ea89420 CGFrame@8a91c1ae (179,20; 156,340), {x: 203...203, y: 20...
 //                testRectFillsCanvasWhenNoDimensionsSet(), //OK
 //                testRectFillsCanvasWhenSmallMinsSet(), //OK
     };
+
+    private CGDrawable testZStackScroll() {
+        CGPattern pattern = new CGPattern() {
+            public void drawTile(Graphics g, CGFrame frame) {
+                g.setColor(CGColor.WHITE);
+                g.fillRect(frame.x, frame.y, frame.width, frame.height);
+
+                int h = frame.height / 2;
+
+                g.setColor(CGColor.BLACK);
+                g.fillRect(frame.x, frame.y, h, h);
+                g.fillRect(frame.x + h, frame.y + h, h, h);
+            }
+        };
+
+        return CG.ZStack(
+                pattern
+                    .tileSize(new CGSize(32, 32))
+                    .width(300).height(300)
+                );
+    }
+
+    private CGDrawable testHStackScroll() {
+        return CG.HStack(
+                CG.Rect().backgroundColor(CGColor.RED)
+                         .width(100).height(100),
+                CG.Rect().backgroundColor(CGColor.GREEN)
+                         .width(100).height(100),
+                CG.Rect().backgroundColor(CGColor.BLUE)
+                         .width(100).height(100)
+                )
+                .spacing(10)
+                .alignment(CG.VCENTER | CG.LEFT)
+                .borderColor(CGColor.LIME_GREEN).borderWidth(3)
+                .height(120).width(120)
+                .contentInset(10, 10, 10, 10)
+                .backgroundColor(CGColor.WHITE);
+    }
+
+    private CGDrawable testVStackScroll() {
+        return CG.VStack(
+                CG.Rect().backgroundColor(CGColor.RED)
+                         .width(100).height(100),
+                CG.Rect().backgroundColor(CGColor.GREEN)
+                         .width(100).height(100),
+                CG.Rect().backgroundColor(CGColor.BLUE)
+                         .width(100).height(100)
+                )
+                .spacing(10)
+                .borderColor(CGColor.BLACK).borderWidth(2)
+                .height(120).width(120)
+                .contentInset(10, 0, 10, 0)
+                .backgroundColor(CGColor.WHITE);
+    }
 
     private int testArcAngle = 0;
     int i = 0;

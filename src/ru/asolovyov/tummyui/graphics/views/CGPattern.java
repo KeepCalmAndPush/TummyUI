@@ -70,7 +70,7 @@ public abstract class CGPattern extends CGRectangle {
 //                }
 
                 drawTile(g, tileFrame);
-                S.println("DRAW TILE " + tileFrame);
+//                S.println("DRAW TILE " + tileFrame);
             }
         }
     }
