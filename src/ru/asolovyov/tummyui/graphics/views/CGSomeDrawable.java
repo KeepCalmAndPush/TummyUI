@@ -299,7 +299,22 @@ public abstract class CGSomeDrawable implements CGDrawable {
         
         int backgroundColor = this.backgroundColor();
         int cornerRadius = cornerRadius() * 2;
-        
+
+//        int borderColor = borderColor();
+//
+//        if (backgroundColor != CG.NULL && borderColor != CG.NULL && cornerRadius > 1) {
+//            g.setColor(backgroundColor);
+//            g.fillRoundRect(
+//                    frame.x,
+//                    frame.y,
+//                    frame.width,
+//                    frame.height,
+//                    cornerRadius,
+//                    cornerRadius);
+//
+//            return;
+//        }
+
         if (backgroundColor != CG.NULL) {
             g.setColor(backgroundColor);
             g.fillRoundRect(

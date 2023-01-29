@@ -235,13 +235,13 @@ public class CGStack extends CGSomeDrawable {
                 childFrame.x = nextLeft;
 
                 if (isVCenter) {
-                    childFrame.y = thisFrame.y + (thisFrame.height - childFrame.height) / 2 + contentInsets.top;
+                    childFrame.y = thisFrame.y + (thisFrame.height - childFrame.height) / 2;
                 }
                 if (isTop) {
-                    childFrame.y = thisFrame.y + contentInsets.top;
+                    childFrame.y = thisFrame.y;
                 }
                 if (isBottom) {
-                    childFrame.y = thisFrame.y + thisFrame.height - childFrame.height + contentInsets.top;
+                    childFrame.y = thisFrame.y + thisFrame.height - childFrame.height;
                 }
 
                 childFrame.x -= contentOffset().x;
@@ -265,27 +265,27 @@ public class CGStack extends CGSomeDrawable {
 
         this.nextTop = thisFrame.y + contentInsets.top;
 
-        int alignmentI = this.alignment.getInt();
+        int alignment = this.alignment.getInt();
         int contentHeight = this.contentSize.getCGSize().height;
 
-        S.println("VSTACK FIRST TOP ALIGNMENT " + alignmentI);
+        S.println("VSTACK FIRST TOP ALIGNMENT " + alignment);
 
-        if (CG.isBitSet(alignmentI, CG.VCENTER)) {
+        if (CG.isBitSet(alignment, CG.VCENTER)) {
             S.println("VSTACK FIRST TOP 1");
             this.nextTop = thisFrame.y + (thisFrame.height - contentHeight) / 2 + contentInsets.top;
         }
-        if (CG.isBitSet(alignmentI, CG.TOP)) {
+        if (CG.isBitSet(alignment, CG.TOP)) {
             S.println("VSTACK FIRST TOP 2");
             this.nextTop = thisFrame.y + contentInsets.top;
         }
-        if (CG.isBitSet(alignmentI, CG.BOTTOM)) {
+        if (CG.isBitSet(alignment, CG.BOTTOM)) {
             S.println("VSTACK FIRST TOP 3");
             this.nextTop = thisFrame.y + thisFrame.height - contentHeight + contentInsets.top;
         }
 
-        final boolean isHCenter = CG.isBitSet(alignmentI, CG.HCENTER);
-        final boolean isLeft = CG.isBitSet(alignmentI, CG.LEFT);
-        final boolean isRight = CG.isBitSet(alignmentI, CG.RIGHT);
+        final boolean isHCenter = CG.isBitSet(alignment, CG.HCENTER);
+        final boolean isLeft = CG.isBitSet(alignment, CG.LEFT);
+        final boolean isRight = CG.isBitSet(alignment, CG.RIGHT);
 
         this.drawables.forEach(new Arr.Enumerator() {
             public void onElement(Object element) {
@@ -293,13 +293,13 @@ public class CGStack extends CGSomeDrawable {
                 CGFrame childFrame = child.intrinsicAwareFrame();
 
                 if (isHCenter) {
-                    childFrame.x = thisFrame.x + (thisFrame.width - childFrame.width) / 2 + contentInsets.left;
+                    childFrame.x = thisFrame.x + (thisFrame.width - childFrame.width) / 2;
                 }
                 if (isLeft) {
-                    childFrame.x = thisFrame.x + contentInsets.left;
+                    childFrame.x = thisFrame.x;
                 }
                 if (isRight) {
-                    childFrame.x = thisFrame.x + thisFrame.width - childFrame.width + contentInsets.left;
+                    childFrame.x = thisFrame.x + thisFrame.width - childFrame.width ;
                 }
 
                 childFrame.y = nextTop;
@@ -360,6 +360,9 @@ public class CGStack extends CGSomeDrawable {
                 if (isRight) {
                     frame.x = thisFrame.width - frame.width + contentInsets.left;
                 }
+
+                frame.x -= contentOffset().x;
+                frame.y -= contentOffset().y;
                 
                 drawable.origin(frame.x, frame.y);
 
@@ -421,36 +424,29 @@ public class CGStack extends CGSomeDrawable {
 
         S.println("moveContentByKeyPress: CON_SIZE: " + contentSize + " vs FRAME: " + thisFrame + " vs CON_OFFSET " + contentOffset);
 
+        CGPoint minOffset = this.minContentOffset();
+        CGPoint maxOffset = this.maxContentOffset();
+        
         if (contentSize.height > thisFrame.height) {
-            int extent = contentSize.height - thisFrame.height;
-            S.println("contentSize.height > thisFrame.height EXTENT: " + extent);
+            S.println("contentSize.height > thisFrame.height");
 
             if (keyCode == CG.KEY_UP) {//t
                 S.println("keyCode == Canvas.UP");
-                contentOffset.y = Math.max( contentOffset.y - 5, -contentInset.top);
+                contentOffset.y = Math.max( contentOffset.y - 5, minOffset.y);
             } else if (keyCode == CG.KEY_DOWN) {//b
                 S.println("keyCode == Canvas.DOWN");
-                contentOffset.y = Math.min(
-                        contentOffset.y + 5,
-                        extent + contentInset.bottom);
+                contentOffset.y = Math.min(contentOffset.y + 5, maxOffset.y);
             }
         }
 
         if (contentSize.width > thisFrame.width) {
-            int extent = contentSize.width - thisFrame.width;
-            S.println("contentSize.width > thisFrame.width EXTENT: " + extent);
-            
             if (keyCode == CG.KEY_LEFT) {//l
                 S.println("Canvas.LEFT");
-                contentOffset.x = Math.max(
-                        contentOffset.x - 5, -contentInset.left
-                        );
+                contentOffset.x = Math.max(contentOffset.x - 5, minOffset.x);
                 
             } else if (keyCode == CG.KEY_RIGHT) { //r
                 S.println("keyCode == Canvas.RIGHT");
-                contentOffset.x = Math.min(
-                        contentOffset.x + 5,
-                        extent + contentInset.right);
+                contentOffset.x = Math.min(contentOffset.x + 5, maxOffset.x);
             }
         }
 
@@ -473,35 +469,56 @@ public class CGStack extends CGSomeDrawable {
         boolean isLeft = CG.isBitSet(alignment, CG.LEFT);
         boolean isRight = CG.isBitSet(alignment, CG.RIGHT);
 
-        CGPoint offset = new CGPoint(-contentInset().left, -contentInset().right);
+        //я не понимаю почему 0, возможно что-то где-то лишнее приплюсовалось
+        CGPoint offset = new CGPoint(0, 0);
 
-        if (axis == AXIS_HORIZONTAL) {
-            if (isRight) {
-                offset.x -= (contentSize.width - frame.width);
-            }
-            if (isHCenter) {
-                offset.x -= ((contentSize.width - frame.width) / 2);
-            }
-        } else if (axis == AXIS_VERTICAL) {
-            if (isBottom) {
-                offset.y -= (contentSize.height - frame.height);
-            }
-            if (isVCenter) {
-                offset.y -= ((contentSize.height - frame.height) / 2);
-            }
-        } else if (axis == AXIS_Z) {
-            if (isRight) {
-                offset.x -= (contentSize.width - frame.width);
-            }
-            if (isHCenter) {
-                offset.x -= ((contentSize.width - frame.width) / 2);
-            }
-            if (isBottom) {
-                offset.y -= (contentSize.height - frame.height);
-            }
-            if (isVCenter) {
-                offset.y -= ((contentSize.height - frame.height) / 2);
-            }
+        if (isRight) {
+            offset.x -= (contentSize.width - frame.width - contentInset().horizontal());
+        }
+        else if(isHCenter) {
+            offset.x -= ((contentSize.width - frame.width) / 2 - contentInset().right);
+        }
+        
+        if(isBottom) {
+            offset.y -= (contentSize.height - frame.height - contentInset().vertical());
+        }
+        else if(isVCenter) {
+            offset.y -= ((contentSize.height - frame.height) / 2 - contentInset().top);
+        }
+
+        return offset;
+    }
+
+    private CGPoint maxContentOffset() {
+        int axis = this.axis();
+        int alignment = this.alignment.getInt();
+        CGSize contentSize = this.contentSize.getCGSize();
+        CGFrame frame = this.frame();
+
+        boolean isVCenter = CG.isBitSet(alignment, CG.VCENTER);
+        boolean isTop = CG.isBitSet(alignment, CG.TOP);
+        boolean isBottom = CG.isBitSet(alignment, CG.BOTTOM);
+
+        boolean isHCenter = CG.isBitSet(alignment, CG.HCENTER);
+        boolean isLeft = CG.isBitSet(alignment, CG.LEFT);
+        boolean isRight = CG.isBitSet(alignment, CG.RIGHT);
+
+        CGPoint offset = new CGPoint(
+                contentSize.width - frame.width,
+                contentSize.height - frame.height);
+        
+        if (isRight) {
+            offset.x -= (contentSize.width - frame.width - contentInset().horizontal());
+        }
+        else if(isHCenter) {
+            offset.x -= ((contentSize.width - frame.width) / 2  - contentInset().left);
+        }
+
+        if (isBottom) {
+            offset.y -= (contentSize.height - frame.height - contentInset().vertical());
+        }
+        else if(isVCenter) {
+            offset.y -= ((contentSize.height - frame.height) / 2 - contentInset().bottom);
         }
 
         return offset;
@@ -509,7 +526,6 @@ public class CGStack extends CGSomeDrawable {
 
     private void scheduleKeyRepeatedHandling(final Integer keyCode) {
         this.keyRepeatQueue.async(CG.FRAME_MILLIS, new Runnable() {
-
             public void run() {
                 if (repeatedKeys.contains(keyCode)) {
                     moveContentByKeyPress(keyCode.intValue());
