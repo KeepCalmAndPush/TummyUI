@@ -49,8 +49,8 @@ public class Canvas extends UIMIDlet {
     //TODO СДЕЛАТЬ ПАБЛИШЕРЫНЙ МЕТОД REPLACE/PIPE
     private Object[] testScreens = new Object[] {
 //        testVStackScroll(),
-//        testHStackScroll(),
-        testZStackScroll(),
+        testHStackScroll(),
+//        testZStackScroll(),
 //        testPattern(),//OK
 //        testLine(),//OK
 //        testArc(),//OK
@@ -101,20 +101,21 @@ public class Canvas extends UIMIDlet {
         return CG.ZStack(
                 pattern
                     .tileSize(new CGSize(32, 32))
-                    .width(150).height(150)
+                    .width(160).height(160)
                 )
-//                .alignment(CG.TOP | CG.LEFT)
-//                .alignment(CG.TOP | CG.HCENTER)
-//                  .alignment(CG.TOP | CG.RIGHT)
-                .alignment(CG.VCENTER | CG.LEFT)
-//                .alignment(CG.VCENTER | CG.HCENTER)
-//                .alignment(CG.VCENTER | CG.RIGHT)
-//                .alignment(CG.BOTTOM | CG.LEFT)
-//                .alignment(CG.BOTTOM | CG.HCENTER)
+//                .alignment(CG.TOP | CG.LEFT)//ok
+//                .alignment(CG.TOP | CG.HCENTER) //ok
+//                  .alignment(CG.TOP | CG.RIGHT)//ok
+//                .alignment(CG.VCENTER | CG.LEFT)//ok
+//                .alignment(CG.VCENTER | CG.HCENTER)//ok
+//                .alignment(CG.VCENTER | CG.RIGHT)//ok
+//                .alignment(CG.BOTTOM | CG.LEFT)//ok
+//                .alignment(CG.BOTTOM | CG.HCENTER)//ok
 //                .alignment(CG.BOTTOM | CG.RIGHT)
 //                .borderColor(CGColor.LIME_GREEN).borderWidth(3)
                 .height(120).width(120)
-                .contentInset(10, 15, 20, 25)
+//                .contentInset(5, 5, 5, 5)
+                .contentInset(5, 10, 15, 20)
                 .backgroundColor(CGColor.WHITE);
     }
 
@@ -128,10 +129,18 @@ public class Canvas extends UIMIDlet {
                          .width(100).height(100)
                 )
                 .spacing(10)
-                .alignment(CG.LEFT | CG.VCENTER)
-                .borderColor(CGColor.LIME_GREEN).borderWidth(3)
+//                .alignment(CG.TOP | CG.LEFT)//ok
+//                .alignment(CG.TOP | CG.HCENTER) //ok
+//                .alignment(CG.TOP | CG.RIGHT)//ok
+//                .alignment(CG.VCENTER | CG.LEFT)//NO! РАСПИДОРАШЕНО ВЫРАВНИВАНИЕ ПО ВЕРТИКАЛИ ЕСЛИ РАЗМЕР КОНТЕНТА СО ИНСЕТАМИ НЕ БОЛЬШЕ ВЫСОТЫ СТЕКА
+//                .alignment(CG.VCENTER | CG.HCENTER)//ok
+//                .alignment(CG.VCENTER | CG.RIGHT)//ok
+//                .alignment(CG.BOTTOM | CG.LEFT)//ok
+//                .alignment(CG.BOTTOM | CG.HCENTER)//ok
+                .alignment(CG.BOTTOM | CG.RIGHT)
+//                .borderColor(CGColor.LIME_GREEN).borderWidth(3)
                 .height(120).width(120)
-                .contentInset(10, 10, 10, 10)
+                .contentInset(5, 10, 15, 20)
                 .backgroundColor(CGColor.WHITE);
     }
 
@@ -145,10 +154,17 @@ public class Canvas extends UIMIDlet {
                          .width(100).height(100)
                 )
                 .spacing(10)
-                .alignment(CG.HCENTER | CG.BOTTOM)
-                .borderColor(CGColor.LIME_GREEN).borderWidth(3)
+                .alignment(CG.TOP | CG.LEFT)//ok
+//                .alignment(CG.TOP | CG.HCENTER) //ok
+//                  .alignment(CG.TOP | CG.RIGHT)//ok
+//                .alignment(CG.VCENTER | CG.LEFT)//ok
+//                .alignment(CG.VCENTER | CG.HCENTER)//ok
+//                .alignment(CG.VCENTER | CG.RIGHT)//ok
+//                .alignment(CG.BOTTOM | CG.LEFT)//ok
+//                .alignment(CG.BOTTOM | CG.HCENTER)//ok
+//                .alignment(CG.BOTTOM | CG.RIGHT)
                 .height(120).width(120)
-                .contentInset(10, 10, 10, 10)
+                .contentInset(5, 10, 15, 20)
                 .backgroundColor(CGColor.WHITE);
     }
 

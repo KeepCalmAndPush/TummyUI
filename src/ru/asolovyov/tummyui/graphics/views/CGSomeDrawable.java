@@ -52,7 +52,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
     protected Int backgroundColor = new Int(CG.NULL);
     protected Int borderColor = new Int(CG.NULL);
     
-    protected Int borderWidth = new Int(1);
+    protected Int borderWidth = new Int(0);
     protected Int shadowColor = new Int(CG.NULL);
     protected Point shadowOffset = new Point(1, 1);
 
@@ -372,11 +372,8 @@ public abstract class CGSomeDrawable implements CGDrawable {
         CGFrame contentFrame = frame.insetting(borderWidth(), borderWidth());
         g.clipRect(contentFrame.x, contentFrame.y, contentFrame.width, contentFrame.height);
         this.drawContent(g, contentFrame);
-
-//        g.setClip(0, 0, 180, 208);
         g.setClip(oldClip.x, oldClip.y, oldClip.width, oldClip.height);
-
-
+        
         this.drawBorder(g, frame);
     }
 

@@ -209,15 +209,12 @@ public class CGStack extends CGSomeDrawable {
 
         int alignmentInt = this.alignment.getInt();
         int contentWidth = this.contentSize().getCGSize().width;
-
+        
         if (CG.isBitSet(alignmentInt, CG.HCENTER)) {
-            this.nextLeft = thisFrame.x + (thisFrame.width - contentWidth) / 2 + contentInsets.left;
-        }
-        if (CG.isBitSet(alignmentInt, CG.LEFT)) {
-            this.nextLeft = thisFrame.x + contentInsets.left;
+            this.nextLeft += (thisFrame.width - contentWidth) / 2;
         }
         if (CG.isBitSet(alignmentInt, CG.RIGHT)) {
-            this.nextLeft = thisFrame.x + thisFrame.width - contentWidth + contentInsets.left;
+            this.nextLeft += thisFrame.width - contentWidth;
         }
 
         final boolean isVCenter = CG.isBitSet(alignmentInt, CG.VCENTER);
@@ -233,15 +230,13 @@ public class CGStack extends CGSomeDrawable {
                 CGInsets contentInsets = contentInset();
 
                 childFrame.x = nextLeft;
-
+                childFrame.y = contentInsets.top;
+                
                 if (isVCenter) {
-                    childFrame.y = thisFrame.y + (thisFrame.height - childFrame.height) / 2;
+                    childFrame.y += (thisFrame.height - childFrame.height) / 2;
                 }
-                if (isTop) {
-                    childFrame.y = thisFrame.y;
-                }
-                if (isBottom) {
-                    childFrame.y = thisFrame.y + thisFrame.height - childFrame.height;
+                else if(isBottom) {
+                    childFrame.y += thisFrame.height - childFrame.height;
                 }
 
                 childFrame.x -= contentOffset().x;
@@ -292,17 +287,15 @@ public class CGStack extends CGSomeDrawable {
                 CGDrawable child = (CGDrawable) element;
                 CGFrame childFrame = child.intrinsicAwareFrame();
 
-                if (isHCenter) {
-                    childFrame.x = thisFrame.x + (thisFrame.width - childFrame.width) / 2;
-                }
-                if (isLeft) {
-                    childFrame.x = thisFrame.x;
-                }
-                if (isRight) {
-                    childFrame.x = thisFrame.x + thisFrame.width - childFrame.width ;
-                }
-
+                childFrame.x = contentInsets.left;
                 childFrame.y = nextTop;
+
+                if (isHCenter) {
+                    childFrame.x = (thisFrame.width - childFrame.width) / 2 + contentInsets.left;
+                }
+                else if(isRight) {
+                    childFrame.x = thisFrame.width - childFrame.width + contentInsets.left;
+                }
 
                 childFrame.x -= contentOffset().x;
                 childFrame.y -= contentOffset().y;
@@ -340,25 +333,27 @@ public class CGStack extends CGSomeDrawable {
             public void onElement(Object element) {
                 CGDrawable drawable = (CGDrawable) element;
                 CGFrame frame = drawable.intrinsicAwareFrame();
+                frame.width = Math.max(frame.width, contentSize.getCGSize().width);
+                frame.height = Math.max(frame.height, contentSize.getCGSize().height);
 
-                if (isVCenter) {
-                    frame.y = (thisFrame.height - frame.height) / 2 + contentInsets.top;
-                }
-                if (isTop) {
-                    frame.y = 0 + contentInsets.top;
-                }
-                if (isBottom) {
-                    frame.y = thisFrame.height - frame.height + contentInsets.top;
-                }
-
-                if (isHCenter) {
-                    frame.x = (thisFrame.width - frame.width) / 2 + contentInsets.left;
-                }
                 if (isLeft) {
                     frame.x = contentInsets.left;
                 }
+                if (isHCenter) {
+                    frame.x = (thisFrame.width - frame.width) / 2 + contentInsets.left;
+                }
                 if (isRight) {
                     frame.x = thisFrame.width - frame.width + contentInsets.left;
+                }
+
+                if (isTop) {
+                    frame.y = contentInsets.top;
+                }
+                if (isVCenter) {
+                    frame.y = (thisFrame.height - frame.height) / 2 + contentInsets.top;
+                }
+                if (isBottom) {
+                    frame.y = thisFrame.height - frame.height + contentInsets.top;
                 }
 
                 frame.x -= contentOffset().x;
@@ -459,31 +454,30 @@ public class CGStack extends CGSomeDrawable {
         int axis = this.axis();
         int alignment = this.alignment.getInt();
         CGSize contentSize = this.contentSize.getCGSize();
+        
         CGFrame frame = this.frame();
 
         boolean isVCenter = CG.isBitSet(alignment, CG.VCENTER);
-        boolean isTop = CG.isBitSet(alignment, CG.TOP);
         boolean isBottom = CG.isBitSet(alignment, CG.BOTTOM);
 
         boolean isHCenter = CG.isBitSet(alignment, CG.HCENTER);
-        boolean isLeft = CG.isBitSet(alignment, CG.LEFT);
         boolean isRight = CG.isBitSet(alignment, CG.RIGHT);
 
-        //я не понимаю почему 0, возможно что-то где-то лишнее приплюсовалось
+        //contentInset().left и contentInset().top приплюсовываются в методах xDraw
         CGPoint offset = new CGPoint(0, 0);
 
-        if (isRight) {
-            offset.x -= (contentSize.width - frame.width - contentInset().horizontal());
+        if(isHCenter) {
+            offset.x -= ((contentSize.width - frame.width) / 2);// - contentInset().right);
+        } 
+        else if (isRight) {
+            offset.x -= (contentSize.width - frame.width);
         }
-        else if(isHCenter) {
-            offset.x -= ((contentSize.width - frame.width) / 2 - contentInset().right);
+
+        if(isVCenter) {
+            offset.y -= ((contentSize.height - frame.height) / 2);
         }
-        
-        if(isBottom) {
-            offset.y -= (contentSize.height - frame.height - contentInset().vertical());
-        }
-        else if(isVCenter) {
-            offset.y -= ((contentSize.height - frame.height) / 2 - contentInset().top);
+        else if(isBottom) {
+            offset.y -= (contentSize.height - frame.height);
         }
 
         return offset;
@@ -508,17 +502,17 @@ public class CGStack extends CGSomeDrawable {
                 contentSize.height - frame.height);
         
         if (isRight) {
-            offset.x -= (contentSize.width - frame.width - contentInset().horizontal());
+            offset.x -= (contentSize.width - frame.width);
         }
         else if(isHCenter) {
-            offset.x -= ((contentSize.width - frame.width) / 2  - contentInset().left);
+            offset.x -= ((contentSize.width - frame.width) / 2);
         }
 
         if (isBottom) {
-            offset.y -= (contentSize.height - frame.height - contentInset().vertical());
+            offset.y -= (contentSize.height - frame.height);
         }
         else if(isVCenter) {
-            offset.y -= ((contentSize.height - frame.height) / 2 - contentInset().bottom);
+            offset.y -= ((contentSize.height - frame.height) / 2);
         }
 
         return offset;
