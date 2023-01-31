@@ -7,6 +7,7 @@ package ru.asolovyov.tummyui.graphics;
 
 import ru.asolovyov.combime.common.S;
 import ru.asolovyov.combime.common.Sink;
+import ru.asolovyov.tummyui.graphics.views.CGArc;
 import ru.asolovyov.tummyui.graphics.views.CGDrawable;
 
 /**
@@ -18,7 +19,7 @@ public abstract class CGAnimation {
     public static final int LOOP = 1;
     public static final int AUTOREVERSE = 2;
 
-    private static final int PROPERTIES_COUNT = 8;
+    private static final int PROPERTIES_COUNT = 9;
 
     protected abstract void animations(CGDrawable drawable);
     protected void completion(CGAnimation animation) {  };
@@ -28,7 +29,7 @@ public abstract class CGAnimation {
 
     private int cyclesCount = 0;
     private int currentCycle = 0;
-    // [Current, Target] x8
+    // [Current, Target] * PROPERTIES_COUNT
     private int[][] values = new int[PROPERTIES_COUNT][2];
     
     public CGAnimation(int durationMillis) {
@@ -50,6 +51,11 @@ public abstract class CGAnimation {
         this.values[5][type] = drawable.color();
         this.values[6][type] = drawable.backgroundColor();
         this.values[7][type] = drawable.borderColor();
+
+        this.values[8][type] = 0;
+        if (drawable instanceof CGArc) {
+            this.values[8][type] = ((CGArc)drawable).startAngle();
+        }
     }
 
     protected void setupAndBegin() {
@@ -75,7 +81,7 @@ public abstract class CGAnimation {
             int targetValue = vector[1];
 
             int currentFrameValue = this.makeCurrentFrameValue(originalValue, targetValue);
-            if (currentFrameValue == Integer.MIN_VALUE) {
+            if (currentFrameValue == CG.NULL) {
                 continue;
             }
             
@@ -85,15 +91,20 @@ public abstract class CGAnimation {
             if (i == 3) { drawable.height(currentFrameValue); continue; }
             if (i == 4) { drawable.cornerRadius(currentFrameValue); continue; }
 
+            if (i == 8 && drawable instanceof CGArc) {
+                S.println("ARC DELTA " + currentFrameValue + " OR " + originalValue + " TGT " + targetValue + " CC " + currentCycle + " AC " + cyclesCount);
+                ((CGArc)drawable).startAngle(currentFrameValue);
+            }
+
             //COLORS
             int r = makeCurrentFrameValue(CGColor.red(originalValue), CGColor.red(targetValue));
             int g = makeCurrentFrameValue(CGColor.green(originalValue), CGColor.green(targetValue));
             int b = makeCurrentFrameValue(CGColor.blue(originalValue), CGColor.blue(targetValue));
-            currentFrameValue = (r << 16) + (g << 8) + b;
+            int currentFrameValueColor = (r << 16) + (g << 8) + b;
 
-            if (i == 5) { drawable.color(currentFrameValue); continue; }
-            if (i == 6) { drawable.backgroundColor(currentFrameValue); continue; }
-            if (i == 7) { drawable.borderColor(currentFrameValue); continue; }
+            if (i == 5) { drawable.color(currentFrameValueColor); continue; }
+            if (i == 6) { drawable.backgroundColor(currentFrameValueColor); continue; }
+            if (i == 7) { drawable.borderColor(currentFrameValueColor); continue; }
         }
         
         this.currentCycle++;
@@ -128,20 +139,20 @@ public abstract class CGAnimation {
     private int makeCurrentFrameValue(int source, int target) {
         int delta = target - source;
         if (delta == 0) {
-            return Integer.MIN_VALUE;
+            return CG.NULL;
         }
         
-        int cycleDelta = 0;
+        int cycleDelta = delta / cyclesCount;
 
         int multiplier = 1;
         while (cycleDelta == 0 && delta * multiplier <= Integer.MAX_VALUE) {
-            multiplier *= 10;
+            multiplier *= 2;
             cycleDelta = delta * multiplier / this.cyclesCount;
         }
 
         delta = (cycleDelta * this.currentCycle) / multiplier;
-        if (delta == 0) {
-            return Integer.MIN_VALUE;
+        if (Math.abs(delta) == 0) {
+            return CG.NULL;
         }
 
         int value = source + delta;

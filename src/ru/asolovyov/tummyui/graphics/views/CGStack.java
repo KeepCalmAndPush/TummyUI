@@ -17,6 +17,7 @@ import java.util.Vector;
 import ru.asolovyov.combime.operators.mapping.Map;
 import ru.asolovyov.combime.publishers.Publisher;
 import ru.asolovyov.threading.DispatchQueue;
+import ru.asolovyov.tummyui.bindings.Point;
 import ru.asolovyov.tummyui.data.List;
 import ru.asolovyov.tummyui.graphics.CG;
 import ru.asolovyov.tummyui.graphics.CGFrame;
@@ -58,6 +59,8 @@ public class CGStack extends CGSomeDrawable {
 
     private Hashtable drawablesGroupedByWidthFlexibility = new Hashtable();
     private Hashtable drawablesGroupedByHeightFlexibility = new Hashtable();
+
+    protected Point contentOffsetBinding = new Point(CGPoint.zero());
 
     public CGStack maxContentWidth(int width) {
         this.maxContentWidthBinding.setInt(width);
@@ -107,6 +110,20 @@ public class CGStack extends CGSomeDrawable {
         return contentSize;
     }
 
+    public CGPoint contentOffset() {
+        return this.contentOffsetBinding.getCGPoint();
+    }
+
+    public CGDrawable contentOffset(Point offset) {
+        offset.route(this.contentOffsetBinding);
+        return this;
+    }
+
+    public CGDrawable contentOffset(int x, int y) {
+        this.contentOffsetBinding.sendValue(new CGPoint(x, y));
+        return this;
+    }
+
     public CGStack(Int axis, Arr models, DrawableFactory factory) {
         this(axis, new Arr(new CGDrawable[]{}));
         this.factory = factory;
@@ -138,6 +155,7 @@ public class CGStack extends CGSomeDrawable {
             this.maxContentHeightBinding,
             this.spacing,
             this.contentSize,
+            this.contentOffsetBinding
         }).removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
                 relayout();
@@ -233,10 +251,10 @@ public class CGStack extends CGSomeDrawable {
                 childFrame.y = contentInsets.top;
                 
                 if (isVCenter) {
-                    childFrame.y += (thisFrame.height - childFrame.height) / 2;
+                    childFrame.y += (thisFrame.height - childFrame.height) / 2 - contentInsets.bottom;
                 }
                 else if(isBottom) {
-                    childFrame.y += thisFrame.height - childFrame.height;
+                    childFrame.y += thisFrame.height - childFrame.height - contentInsets.bottom;
                 }
 
                 childFrame.x -= contentOffset().x;
@@ -279,7 +297,6 @@ public class CGStack extends CGSomeDrawable {
         }
 
         final boolean isHCenter = CG.isBitSet(alignment, CG.HCENTER);
-        final boolean isLeft = CG.isBitSet(alignment, CG.LEFT);
         final boolean isRight = CG.isBitSet(alignment, CG.RIGHT);
 
         this.drawables.forEach(new Arr.Enumerator() {
@@ -291,10 +308,10 @@ public class CGStack extends CGSomeDrawable {
                 childFrame.y = nextTop;
 
                 if (isHCenter) {
-                    childFrame.x = (thisFrame.width - childFrame.width) / 2 + contentInsets.left;
+                    childFrame.x += (thisFrame.width - childFrame.width) / 2 - contentInsets.right;
                 }
                 else if(isRight) {
-                    childFrame.x = thisFrame.width - childFrame.width + contentInsets.left;
+                    childFrame.x += thisFrame.width - childFrame.width - contentInsets.right;
                 }
 
                 childFrame.x -= contentOffset().x;
@@ -331,37 +348,37 @@ public class CGStack extends CGSomeDrawable {
 
         this.drawables.forEach(new Arr.Enumerator() {
             public void onElement(Object element) {
-                CGDrawable drawable = (CGDrawable) element;
-                CGFrame frame = drawable.intrinsicAwareFrame();
-                frame.width = Math.max(frame.width, contentSize.getCGSize().width);
-                frame.height = Math.max(frame.height, contentSize.getCGSize().height);
+                CGDrawable child = (CGDrawable) element;
+                CGFrame childFrame = child.intrinsicAwareFrame();
+                childFrame.width = Math.max(childFrame.width, contentSize.getCGSize().width);
+                childFrame.height = Math.max(childFrame.height, contentSize.getCGSize().height);
 
                 if (isLeft) {
-                    frame.x = contentInsets.left;
+                    childFrame.x = contentInsets.left;
                 }
                 if (isHCenter) {
-                    frame.x = (thisFrame.width - frame.width) / 2 + contentInsets.left;
+                    childFrame.x = (thisFrame.width - childFrame.width) / 2 + contentInsets.left;
                 }
                 if (isRight) {
-                    frame.x = thisFrame.width - frame.width + contentInsets.left;
+                    childFrame.x = thisFrame.width - childFrame.width + contentInsets.left;
                 }
 
                 if (isTop) {
-                    frame.y = contentInsets.top;
+                    childFrame.y = contentInsets.top;
                 }
                 if (isVCenter) {
-                    frame.y = (thisFrame.height - frame.height) / 2 + contentInsets.top;
+                    childFrame.y = (thisFrame.height - childFrame.height) / 2 + contentInsets.top;
                 }
                 if (isBottom) {
-                    frame.y = thisFrame.height - frame.height + contentInsets.top;
+                    childFrame.y = thisFrame.height - childFrame.height + contentInsets.top;
                 }
 
-                frame.x -= contentOffset().x;
-                frame.y -= contentOffset().y;
+                childFrame.x -= contentOffset().x;
+                childFrame.y -= contentOffset().y;
                 
-                drawable.origin(frame.x, frame.y);
+                child.origin(childFrame.x, childFrame.y);
 
-                drawable.draw(graphics);
+                child.draw(graphics);
             }
         });
     }

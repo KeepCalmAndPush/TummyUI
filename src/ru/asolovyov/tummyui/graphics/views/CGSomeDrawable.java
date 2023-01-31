@@ -58,7 +58,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
 
     protected Int strokeStyle = new Int(Graphics.SOLID);
 
-    protected Point contentOffsetBinding = new Point(CGPoint.zero());
+    protected Point offsetBinding = new Point(CGPoint.zero());
     protected Insets contentInsetBinding = new Insets(CGInsets.zero());
     protected Int cornerRadiusBinding = new Int(0);
 
@@ -119,7 +119,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
         Publisher.combineLatest(new IPublisher[] {
                     this.shadowColor,
                     this.shadowOffset,
-                    this.contentOffsetBinding,
+                    this.offsetBinding,
                     this.contentInsetBinding,
                     this.cornerRadiusBinding,
                     this.isVisible
@@ -363,6 +363,9 @@ public abstract class CGSomeDrawable implements CGDrawable {
         if (frame == null) {
             return;
         }
+
+        frame.x += offset().x;
+        frame.y += offset().y;
 
         this.drawShadow(g, frame);
         this.drawBackground(g, frame);
@@ -729,13 +732,13 @@ public abstract class CGSomeDrawable implements CGDrawable {
         return new CGPoint(x(), y());
     }
 
-    public CGDrawable contentOffset(Point offset) {
-        offset.route(this.contentOffsetBinding);
+    public CGDrawable offset(Point offset) {
+        offset.route(this.offsetBinding);
         return this;
     }
 
-    public CGDrawable contentOffset(int x, int y) {
-        this.contentOffsetBinding.sendValue(new CGPoint(x, y));
+    public CGDrawable offset(int x, int y) {
+        this.offsetBinding.sendValue(new CGPoint(x, y));
         return this;
     }
 
@@ -750,8 +753,8 @@ public abstract class CGSomeDrawable implements CGDrawable {
         return this;
     }
 
-    public CGPoint contentOffset() {
-        return this.contentOffsetBinding.getCGPoint();
+    public CGPoint offset() {
+        return this.offsetBinding.getCGPoint();
     }
 
     public CGInsets contentInset() {

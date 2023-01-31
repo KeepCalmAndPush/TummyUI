@@ -94,9 +94,9 @@ public interface CGDrawable {
     public CGPoint origin();
     public CGDrawable origin(int x, int y);
 
-    public CGPoint contentOffset();
-    public CGDrawable contentOffset(Point offset);
-    public CGDrawable contentOffset(int x, int y);
+    public CGPoint offset();
+    public CGDrawable offset(Point offset);
+    public CGDrawable offset(int x, int y);
 
     public CGInsets contentInset();
     public CGDrawable contentInset(Insets inset);

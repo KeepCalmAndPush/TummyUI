@@ -49,7 +49,8 @@ public class CG {
     public final static int KEY_DOWN = -2;
     public final static int KEY_LEFT = -3;
     public final static int KEY_RIGHT = -4;
-
+    public final static int KEY_ACTION = -5;
+    
 
     public static int clamp(int value, int min, int max) {
         return Math.max(min, Math.min(value, max));

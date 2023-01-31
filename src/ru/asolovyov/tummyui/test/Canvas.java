@@ -48,9 +48,10 @@ public class Canvas extends UIMIDlet {
     //TODO REPAINT ТОЖЕ СИНХРОНИЗИРОВАТЬ С ТАЙМЕРОМ!
     //TODO СДЕЛАТЬ ПАБЛИШЕРЫНЙ МЕТОД REPLACE/PIPE
     private Object[] testScreens = new Object[] {
+        testArc2()
 //        testVStackScroll(),
-        testHStackScroll(),
-//        testZStackScroll(),
+//        testHStackScroll(),
+//        testZStackScroll(),//OK
 //        testPattern(),//OK
 //        testLine(),//OK
 //        testArc(),//OK
@@ -211,6 +212,30 @@ public class Canvas extends UIMIDlet {
 //                CG.Rect().backgroundColor(CGColor.WHITE),
                 arc
                 );
+    }
+
+    private CGDrawable testArc2() {
+        return CG.ZStack(
+                CG.Arc(0, 360)
+                    .strokeWidth(3)
+                    .color(CGColor.LIGHT_GREEN)
+                    .width(50).height(50)
+                    .contentInset(1, 1, 1, 1),
+
+                    CG.Arc(0, 90)
+                    .strokeWidth(5)
+                    .color(CGColor.GREEN)
+                    .width(50).height(50)
+                    .animate(new CGAnimation(1500, CGAnimation.LOOP) {
+                        protected void animations(CGDrawable drawable) {
+                            ((CGArc)drawable).startAngle(360);
+                    }
+                 }).borderWidth(2)
+                   .borderColor(CGColor.BLACK)
+               )
+                .alignment(CG.CENTER)
+                .width(100).height(100)
+                .backgroundColor(CGColor.WHITE);
     }
 
     private CGDrawable testLine() {
