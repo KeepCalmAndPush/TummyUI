@@ -144,7 +144,7 @@ public class CGArc extends CGSomeDrawable {
                         frame.width - insets.left - insets.right - width2,
                         frame.height - insets.top - insets.bottom - width2,
                         startAngleBinding.getInt() - width2,
-                        359);
+                        360);
         }
     }
 }

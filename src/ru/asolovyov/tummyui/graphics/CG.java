@@ -213,13 +213,13 @@ public class CG {
         public List lines = new List();
     }
 
+    private static char[] delimiters = new char[]{ '\n', '-', ' ', '+', '/', '*', '&', ';', '.', ',' };
+
     public static MultilineText makeMultilineText(String text, Font font, CGSize constrainedSize) {
         MultilineText instructions = new MultilineText();
 
         final int maxWidth = constrainedSize.width;
         final int maxHeight = constrainedSize.height;
-
-        char[] delimiters = new char[]{ '\n', '-', ' ', '+', '/', '*', '&', ';', '.', ',' };
 
         int lineStartIndex = 0;
         int latestDelimiterIndex = 0;
@@ -256,6 +256,13 @@ public class CG {
             if (instructions.shouldAddEllipsis) {
                 latestDelimiterIndex -= 1;
             }
+
+            if (latestDelimiterIndex == 0 || latestDelimiterIndex == -1) {
+                latestDelimiterIndex = text.length();
+            }
+
+            //вот тут был краш
+            S.println("WILL SUBSCTRING stI " + lineStartIndex + " lDI " + latestDelimiterIndex);
 
             String substringToDraw = text.substring(lineStartIndex, latestDelimiterIndex);
             instructions.height = Math.min(instructions.height + lineHeight, maxHeight);

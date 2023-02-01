@@ -8,6 +8,9 @@ package ru.asolovyov.tummyui.test;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
+import ru.asolovyov.combime.bindings.Arr;
+import ru.asolovyov.combime.bindings.Bool;
+import ru.asolovyov.combime.bindings.Int;
 import ru.asolovyov.combime.common.S;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.threading.Clock;
@@ -24,6 +27,7 @@ import ru.asolovyov.tummyui.graphics.views.CGDrawable;
 import ru.asolovyov.tummyui.graphics.views.CGCanvas;
 import ru.asolovyov.tummyui.graphics.views.CGLine;
 import ru.asolovyov.tummyui.graphics.views.CGPattern;
+import ru.asolovyov.tummyui.graphics.views.CGRectangle;
 import ru.asolovyov.tummyui.graphics.views.CGStack;
 
 /**
@@ -48,7 +52,9 @@ public class Canvas extends UIMIDlet {
     //TODO REPAINT ТОЖЕ СИНХРОНИЗИРОВАТЬ С ТАЙМЕРОМ!
     //TODO СДЕЛАТЬ ПАБЛИШЕРЫНЙ МЕТОД REPLACE/PIPE
     private Object[] testScreens = new Object[] {
-        testArc2()
+        testChatFeed()
+//        testSwitch()
+//        testArc2(),
 //        testVStackScroll(),
 //        testHStackScroll(),
 //        testZStackScroll(),//OK
@@ -84,6 +90,79 @@ public class Canvas extends UIMIDlet {
 //                testRectFillsCanvasWhenNoDimensionsSet(), //OK
 //                testRectFillsCanvasWhenSmallMinsSet(), //OK
     };
+
+//слева отступ 20, а справа вообще нет
+    private CGDrawable testChatFeed() {
+        String[] messages = new String[] {
+            "HELLO",
+            "HOW ARE YOU",
+            "FINE",
+//            "РЕСАЙЗИНГ! Контейнер больше вьюхи -> растягивание/центрирование вьюхи Контейнер меньше вьюхи -> сжатие вьюхи/выезд вьюхи за границу контейнера(центрирование) Флексибл вьюхи и тянутся и сжимаются"
+        };
+        return new CGStack(new Int(CGStack.AXIS_VERTICAL), new Arr(messages), new CGStack.DrawableFactory() {
+            public CGDrawable itemFor(Object viewModel) {
+                String string = (String)viewModel;
+                return CG.HStack(
+                        CG.Rect().height(20),
+                        
+                        CG.Text(string)
+                        .alignment(CG.CENTER)
+                        .font(Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_PLAIN, Font.SIZE_SMALL))
+                        .backgroundColor(CGColor.WHITE)
+                        .cornerRadius(4)
+                        .flexibilityWidth(CGDrawable.FLEXIBILITY_LOW)
+                        .flexibilityHeight(CGDrawable.FLEXIBILITY_LOW)
+                        .height(20)
+                        );
+            }
+        })
+          .alignment(CG.TOP | CG.RIGHT)
+          .spacing(10)
+          .contentInset(10, 10, 60, 10)
+          .backgroundColor(CGColor.SEA_GREEN)
+                ;
+    }
+
+    
+    private boolean isToggled = false;
+
+    private CGDrawable testSwitch() {
+        final Int isToggledColor = new Int(CGColor.WHITE);
+        final Int alignment = new Int(CG.LEFT | CG.VCENTER);
+        final Int fillColor = new Int(CGColor.LIME_GREEN);
+
+        return CG.HStack(
+                CG.Arc(0, 360)
+                .fillColor(fillColor)
+                .strokeWidth(3)
+                .color(CGColor.LIGHT_GRAY)
+                .borderColor(CGColor.LIGHT_GRAY)
+                .width(43).height(43)
+                )
+                .alignment(alignment)
+                .width(100).height(50)
+                .x(20).y(20)
+                .cornerRadius(25)
+                .borderWidth(3)
+                .borderColor(CGColor.LIGHT_GRAY)
+                .backgroundColor(CGColor.WHITE)
+                .contentInset(1, 4, 0, 4)
+                .backgroundColor(isToggledColor)
+                //ОБОБЩИТЬ ДЛЯ ВСЕХ КОНТРОЛОВ: СДЕЛАТЬ ПЕРЕДАЧУ РАНАБЛА КОТОРЫЙ БУДЕТ ВЫЗЫВАТЬСЯ ПО КЕЙ_ЭКШЕНУ
+                //ИЛИ СДЕЛАТЬ ВСЕ КОНТРОЛЫ АСБТРАКТНЫМИ И ПЕРЕОПРЕДЕЛЯТЬ МЕТОД ЭКШЕН()
+                .handleKeyboard(new CGDrawable.KeyboardHandler() {
+                        public void keyPressed(CGDrawable self, int keyCode) {
+                            if (keyCode == CG.KEY_ACTION) {
+                                isToggled = !isToggled;
+                                //TODO АНИМАЦИЯ ДЛЯ СТЕКОВ КАК АНИМАЦИЯ ФЛЭТ МЭПА ИХ ВЬЮХ
+//                                fillColor.sendValue(new Integer(!isToggled ? CGColor.LIME_GREEN : CGColor.WHITE));
+                                isToggledColor.sendValue(new Integer(isToggled ? CGColor.LIME_GREEN : CGColor.WHITE));
+                                alignment.sendValue(new Integer(isToggled ? CG.RIGHT | CG.VCENTER : CG.LEFT | CG.VCENTER));
+                            }
+                        }
+                })
+                ;
+    }
 
     private CGDrawable testZStackScroll() {
         CGPattern pattern = new CGPattern() {
@@ -219,6 +298,7 @@ public class Canvas extends UIMIDlet {
                 CG.Arc(0, 360)
                     .strokeWidth(3)
                     .color(CGColor.LIGHT_GREEN)
+
                     .width(50).height(50)
                     .contentInset(1, 1, 1, 1),
 

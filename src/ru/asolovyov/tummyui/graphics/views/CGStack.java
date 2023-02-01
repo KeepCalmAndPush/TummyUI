@@ -248,7 +248,7 @@ public class CGStack extends CGSomeDrawable {
                 CGInsets contentInsets = contentInset();
 
                 childFrame.x = nextLeft;
-                childFrame.y = contentInsets.top;
+                childFrame.y = thisFrame.y + contentInsets.top;
                 
                 if (isVCenter) {
                     childFrame.y += (thisFrame.height - childFrame.height) / 2 - contentInsets.bottom;
@@ -304,7 +304,7 @@ public class CGStack extends CGSomeDrawable {
                 CGDrawable child = (CGDrawable) element;
                 CGFrame childFrame = child.intrinsicAwareFrame();
 
-                childFrame.x = contentInsets.left;
+                childFrame.x = thisFrame.x + contentInsets.left;
                 childFrame.y = nextTop;
 
                 if (isHCenter) {
@@ -354,7 +354,7 @@ public class CGStack extends CGSomeDrawable {
                 childFrame.height = Math.max(childFrame.height, contentSize.getCGSize().height);
 
                 if (isLeft) {
-                    childFrame.x = contentInsets.left;
+                    childFrame.x = thisFrame.x + contentInsets.left;
                 }
                 if (isHCenter) {
                     childFrame.x = (thisFrame.width - childFrame.width) / 2 + contentInsets.left;
@@ -364,7 +364,7 @@ public class CGStack extends CGSomeDrawable {
                 }
 
                 if (isTop) {
-                    childFrame.y = contentInsets.top;
+                    childFrame.y = thisFrame.y + contentInsets.top;
                 }
                 if (isVCenter) {
                     childFrame.y = (thisFrame.height - childFrame.height) / 2 + contentInsets.top;
