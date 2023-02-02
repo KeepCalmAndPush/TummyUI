@@ -30,6 +30,10 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
     public CGText() {
         super();
 
+        text = new Str("");
+        font = new Obj(Font.getDefaultFont());
+        alignment = new Int(CG.TOP | CG.LEFT);
+
         this.updateContentInset();
         this.flexibility(new int[]{ CGDrawable.FLEXIBILITY_DEFAULT, CGDrawable.FLEXIBILITY_LOW });
 
@@ -85,6 +89,9 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
     }
 
     public String text() {
+        if (this.text == null) {
+            return "";
+        }
         return this.text.getString();
     }
 
@@ -142,11 +149,7 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
     }
 
     public CGDrawable sizeToFit() {
-        int width = this.height();
-        
-        if (this.width() != CG.NULL) {
-            width = this.getFont().getHeight();
-        }
+        int width = this.width();
 
         CGSize size = CG.stringSize(this.text.getString(), this.getFont(), new CGSize(width, Integer.MAX_VALUE));
 
@@ -183,5 +186,9 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
             S.println(this + " YEAH IT WILL UPDATE INTRINSIC! HEIGHT = " + size.height);
             intrinsicContentSizeBinding.sendValue(size);
         }
+    }
+
+    public String toString() {
+        return text() + " " + super.toString();
     }
 }

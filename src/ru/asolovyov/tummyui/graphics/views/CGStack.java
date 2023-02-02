@@ -260,8 +260,8 @@ public class CGStack extends CGSomeDrawable {
                 childFrame.x -= contentOffset().x;
                 childFrame.y -= contentOffset().y;
 
-                child.origin(childFrame.x, childFrame.y);
-
+//                child.origin(childFrame.x, childFrame.y);
+                child.frame(childFrame.x, childFrame.y, childFrame.width, childFrame.height);
 //                S.println("HSTACK Will draw " + child + " " + childFrame.x + ", " + childFrame.y + "; " + childFrame.width + ", " + childFrame.height);
 
                 child.draw(graphics);
@@ -319,7 +319,8 @@ public class CGStack extends CGSomeDrawable {
 
                 S.println("VSTACK Will draw " + child + " " + childFrame.x + ", " + childFrame.y + "; " + childFrame.width + ", " + childFrame.height);
 
-                child.origin(childFrame.x, childFrame.y);
+//                child.origin(childFrame.x, childFrame.y);
+                child.frame(childFrame.x, childFrame.y, childFrame.width, childFrame.height);
 
                 child.draw(graphics);
 
@@ -376,7 +377,8 @@ public class CGStack extends CGSomeDrawable {
                 childFrame.x -= contentOffset().x;
                 childFrame.y -= contentOffset().y;
                 
-                child.origin(childFrame.x, childFrame.y);
+//                child.origin(childFrame.x, childFrame.y);
+                child.frame(childFrame.x, childFrame.y, childFrame.width, childFrame.height);
 
                 child.draw(graphics);
             }
@@ -589,6 +591,7 @@ public class CGStack extends CGSomeDrawable {
 
             maxWidth = Math.max(maxWidth, width);
             maxHeight = Math.max(maxHeight, height);
+            
 
             if (axis == AXIS_HORIZONTAL) {
                 contentWidth += width;
@@ -671,7 +674,6 @@ public class CGStack extends CGSomeDrawable {
         return contentSize;
     }
     
-    // TODO ВОЗМОЖНО вот тут надо еще и ориджины/инсеты двигать
     private int adjustChildrenDimensions(final boolean isHeight, final int delta) {
         if (delta == 0) {
             return delta;

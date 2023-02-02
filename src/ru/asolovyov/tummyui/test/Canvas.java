@@ -97,22 +97,23 @@ public class Canvas extends UIMIDlet {
             "HELLO",
             "HOW ARE YOU",
             "FINE",
+            "Big text to surely last past the single line, maybe occupying two or three lines"
 //            "РЕСАЙЗИНГ! Контейнер больше вьюхи -> растягивание/центрирование вьюхи Контейнер меньше вьюхи -> сжатие вьюхи/выезд вьюхи за границу контейнера(центрирование) Флексибл вьюхи и тянутся и сжимаются"
         };
         return new CGStack(new Int(CGStack.AXIS_VERTICAL), new Arr(messages), new CGStack.DrawableFactory() {
             public CGDrawable itemFor(Object viewModel) {
                 String string = (String)viewModel;
                 return CG.HStack(
-                        CG.Rect().height(20),
-                        
+                        CG.Rect().backgroundColor(CGColor.YELLOW)
+                        .flexibilityWidth(CGDrawable.FLEXIBILITY_HIGH),
+//
                         CG.Text(string)
                         .alignment(CG.CENTER)
                         .font(Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_PLAIN, Font.SIZE_SMALL))
+                        .flexibilityHeight(CGDrawable.FLEXIBILITY_HIGH)
                         .backgroundColor(CGColor.WHITE)
                         .cornerRadius(4)
-                        .flexibilityWidth(CGDrawable.FLEXIBILITY_LOW)
-                        .flexibilityHeight(CGDrawable.FLEXIBILITY_LOW)
-                        .height(20)
+                        
                         );
             }
         })

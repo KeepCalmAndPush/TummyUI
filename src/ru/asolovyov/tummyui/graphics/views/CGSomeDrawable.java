@@ -485,7 +485,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
     
     public CGFrame intrinsicAwareFrame() {
         CGFrame frame = this.frame();
-//        S.println(this + " WILL SAY ITS INTRAWARE FRAME!");
+        S.println(this + " WILL SAY ITS INTRAWARE FRAME!");
 
         CGSize size = this.intrinsicContentSize();
         CGInsets insets = this.contentInset();
@@ -499,7 +499,7 @@ public abstract class CGSomeDrawable implements CGDrawable {
         frame.width = width;
         frame.height = height;
 
-//        S.println(this + " INTRAWARE FRAME IS " + frame);
+        S.println(this + " INTRAWARE FRAME IS " + frame);
 
         return frame;
     }
