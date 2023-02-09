@@ -215,7 +215,7 @@ public class CG {
 
     private static char[] delimiters = new char[]{ '\n', '-', ' ', '+', '/', '*', '&', ';', '.', ',' };
 
-    public static MultilineText makeMultilineText(String text, Font font, CGSize constrainedSize) {
+    public synchronized static MultilineText makeMultilineText(String text, Font font, CGSize constrainedSize) {
         MultilineText instructions = new MultilineText();
 
         final int maxWidth = constrainedSize.width;
@@ -226,7 +226,7 @@ public class CG {
 
         int lineHeight = font.getHeight();
 
-        S.println("makeMultilineText FROM TEXT: " + text);
+        S.println("makeMultilineText FROM TEXT: " + text + " (" + text.length() + " chrs)" + " LINE H: " + lineHeight + " maxW: " + maxWidth + " maxH: " + maxHeight);
 
         for (int characterIndex = 0; characterIndex < text.length(); characterIndex++) {
             char currentCharacter = text.charAt(characterIndex);
@@ -237,10 +237,13 @@ public class CG {
             }
 
             int length = characterIndex - lineStartIndex;
+//            S.println("makeMultilineText ci: " + characterIndex + " start: " + lineStartIndex + " length: " + length);
             int currentWidth = font.substringWidth(text, lineStartIndex, length);
 
             boolean isLastCharacter = characterIndex == text.length() - 1;
             boolean isNewLine = currentCharacter == '\n';
+
+//            S.println("makeMultilineText currentWidth: " + currentWidth + " isLastChar " + isLastCharacter + " isNewLine " + isNewLine);
 
             if (currentWidth <= maxWidth && !isLastCharacter && !isNewLine) {
                 continue;
@@ -253,16 +256,14 @@ public class CG {
             }
 
             instructions.shouldAddEllipsis = (instructions.height + 2 * lineHeight > maxHeight) && !isLastCharacter;
+            //вот тут тоже какая-то стремная хуйня, почему-то мы при нулевом делимитере вдруг кидались в конец строки
             if (instructions.shouldAddEllipsis) {
-                latestDelimiterIndex -= 1;
-            }
-
-            if (latestDelimiterIndex == 0 || latestDelimiterIndex == -1) {
-                latestDelimiterIndex = text.length();
+//                S.println("makeMultilineText SHOULD ADD ELLIPSIS AT " + characterIndex);
+                latestDelimiterIndex = Math.min(characterIndex - 1, text.length() - 1);
             }
 
             //вот тут был краш
-            S.println("WILL SUBSCTRING stI " + lineStartIndex + " lDI " + latestDelimiterIndex);
+//            S.println("makeMultilineText WILL SUBSCTRING stI " + lineStartIndex + " lDI " + latestDelimiterIndex);
 
             String substringToDraw = text.substring(lineStartIndex, latestDelimiterIndex);
             instructions.height = Math.min(instructions.height + lineHeight, maxHeight);

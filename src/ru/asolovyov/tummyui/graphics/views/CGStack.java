@@ -14,6 +14,7 @@ import java.lang.Math.*;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
+import ru.asolovyov.combime.api.IPublisher;
 import ru.asolovyov.combime.operators.mapping.Map;
 import ru.asolovyov.combime.publishers.Publisher;
 import ru.asolovyov.threading.DispatchQueue;
@@ -147,6 +148,15 @@ public class CGStack extends CGSomeDrawable {
     }
 
     private void subscribeToBindings() {
+        Publisher.combineLatest(new IPublisher[] {
+            this.widthBinding,
+            this.heightBinding
+        }).removeDuplicates().sink(new Sink() {
+            protected void onValue(Object value) {
+                limitExcessiveIntrinsicsToThisSize();
+            }
+        });
+
         Publisher.combineLatest(new Publisher[] {
             this.drawables,
             this.alignment,
@@ -241,7 +251,7 @@ public class CGStack extends CGSomeDrawable {
 
         this.drawables.forEach(new Arr.Enumerator() {
             public void onElement(Object element) {
-                CGDrawable child = (CGDrawable) element;
+                CGSomeDrawable child = (CGSomeDrawable) element;
                 CGFrame childFrame = child.intrinsicAwareFrame();
 
 //                S.println("WILL DRAW " + child + " " + childFrame);
@@ -261,8 +271,12 @@ public class CGStack extends CGSomeDrawable {
                 childFrame.y -= contentOffset().y;
 
 //                child.origin(childFrame.x, childFrame.y);
-                child.frame(childFrame.x, childFrame.y, childFrame.width, childFrame.height);
+//                child.frame(childFrame.x, childFrame.y, childFrame.width, childFrame.height);
 //                S.println("HSTACK Will draw " + child + " " + childFrame.x + ", " + childFrame.y + "; " + childFrame.width + ", " + childFrame.height);
+
+                child.xBinding.setInt(childFrame.x); child.yBinding.setInt(childFrame.y);
+                S.println("HDRAW WILL SET W:" + childFrame.width + " H: " + childFrame.height + " TO " + child);
+                child.widthBinding.setInt(childFrame.width); child.heightBinding.setInt(childFrame.height);
 
                 child.draw(graphics);
                 nextLeft += childFrame.width + spacing();
@@ -298,20 +312,23 @@ public class CGStack extends CGSomeDrawable {
 
         final boolean isHCenter = CG.isBitSet(alignment, CG.HCENTER);
         final boolean isRight = CG.isBitSet(alignment, CG.RIGHT);
+        
+        S.println("VSTACK " + this);
+        S.println("VSTACK CI " + contentInsets);
 
         this.drawables.forEach(new Arr.Enumerator() {
             public void onElement(Object element) {
-                CGDrawable child = (CGDrawable) element;
+                CGSomeDrawable child = (CGSomeDrawable) element;
                 CGFrame childFrame = child.intrinsicAwareFrame();
 
                 childFrame.x = thisFrame.x + contentInsets.left;
                 childFrame.y = nextTop;
 
                 if (isHCenter) {
-                    childFrame.x += (thisFrame.width - childFrame.width) / 2 - contentInsets.right;
+                    childFrame.x += (thisFrame.width - childFrame.width) / 2 - contentInsets.left;
                 }
                 else if(isRight) {
-                    childFrame.x += thisFrame.width - childFrame.width - contentInsets.right;
+                    childFrame.x += thisFrame.width - childFrame.width - contentInsets.horizontal();
                 }
 
                 childFrame.x -= contentOffset().x;
@@ -320,7 +337,9 @@ public class CGStack extends CGSomeDrawable {
                 S.println("VSTACK Will draw " + child + " " + childFrame.x + ", " + childFrame.y + "; " + childFrame.width + ", " + childFrame.height);
 
 //                child.origin(childFrame.x, childFrame.y);
-                child.frame(childFrame.x, childFrame.y, childFrame.width, childFrame.height);
+//                child.frame(childFrame.x, childFrame.y, childFrame.width, childFrame.height);
+                child.xBinding.setInt(childFrame.x); child.yBinding.setInt(childFrame.y);
+                child.widthBinding.setInt(childFrame.width); child.heightBinding.setInt(childFrame.height);
 
                 child.draw(graphics);
 
@@ -349,7 +368,7 @@ public class CGStack extends CGSomeDrawable {
 
         this.drawables.forEach(new Arr.Enumerator() {
             public void onElement(Object element) {
-                CGDrawable child = (CGDrawable) element;
+                CGSomeDrawable child = (CGSomeDrawable) element;
                 CGFrame childFrame = child.intrinsicAwareFrame();
                 childFrame.width = Math.max(childFrame.width, contentSize.getCGSize().width);
                 childFrame.height = Math.max(childFrame.height, contentSize.getCGSize().height);
@@ -378,7 +397,10 @@ public class CGStack extends CGSomeDrawable {
                 childFrame.y -= contentOffset().y;
                 
 //                child.origin(childFrame.x, childFrame.y);
-                child.frame(childFrame.x, childFrame.y, childFrame.width, childFrame.height);
+                //УБРАТЬ НАХУЙ ПРОСЕТЫВАНИЕ ИНТРИНСИКА И ВЫКИНУТЬ ЕГО В ТЕКСТ_ВЬЮ ТК ИЗ_ЗА НЕГО ВЕСЬ ГЕМОР
+//                child.frame(childFrame.x, childFrame.y, childFrame.width, childFrame.height);
+                child.xBinding.setInt(childFrame.x); child.yBinding.setInt(childFrame.y);
+                child.widthBinding.setInt(childFrame.width); child.heightBinding.setInt(childFrame.height);
 
                 child.draw(graphics);
             }
@@ -745,15 +767,15 @@ public class CGStack extends CGSomeDrawable {
                     value += (isExpanding ? +viewDelta : -viewDelta);
                 }
 
-                S.print("NAX WILL ADJUST " + (isHeight ? "HEIGHT" : "WIDTH") + " OF " + view + " CUR VALUE " + value + " NEW VALUE ");
+                S.println("NAX WILL ADJUST " + (isHeight ? "HEIGHT" : "WIDTH") + " OF " + view + " CUR VALUE " + value + " NEW VALUE ");
 
                 if (isHeight) {
                     if (value != view.height()) {
-                        S.print(" NAX " + value);
+                        S.println(" NAX " + value);
                         view.heightBinding.setInt(value);
                     }
                 } else if (value != view.width()) {
-                    S.print(" NAX " + value);
+                    S.println(" NAX " + value);
                     view.widthBinding.setInt(value);
                 }
 
@@ -911,6 +933,37 @@ public class CGStack extends CGSomeDrawable {
                 }
                 group.addElement(drawable);
             }
+        }
+    }
+
+    private void limitExcessiveIntrinsicsToThisSize() {
+        int maxWidth = frame().width == CG.NULL ? Integer.MAX_VALUE : frame().width;
+        int maxHeight = frame().height == CG.NULL ? Integer.MAX_VALUE : frame().height;
+
+        if (this.axis() == CGStack.AXIS_HORIZONTAL) {
+            maxWidth = Integer.MAX_VALUE;
+        } else if (this.axis() == CGStack.AXIS_VERTICAL) {
+            maxHeight = Integer.MAX_VALUE;
+        }
+
+        S.println("EXC WILL LIMIT EXCESSIVE TO w: " + maxWidth + " h: " + maxHeight);
+
+        CGDrawable[] drawables = (CGDrawable[]) this.drawables.getArray();
+        for (int i = 0; i < drawables.length; i++) {
+            CGSomeDrawable drawable = (CGSomeDrawable)drawables[i];
+                    
+            CGFrame frame = drawable.intrinsicAwareFrame();
+            frame.width = Math.min(frame.width, maxWidth);
+            frame.height = Math.min(frame.height, maxHeight);
+
+//            if (drawable.hasShrinkableWidth()) {
+                S.println("EXC w: " + frame.width);
+                drawable.widthBinding.setInt(frame.width);
+//            }
+//            if (drawable.hasShrinkableHeight()) {
+                S.println("EXC h: " + frame.height);
+                drawable.heightBinding.setInt(frame.height);
+//            }
         }
     }
     

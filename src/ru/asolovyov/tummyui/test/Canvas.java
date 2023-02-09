@@ -52,7 +52,7 @@ public class Canvas extends UIMIDlet {
     //TODO REPAINT ТОЖЕ СИНХРОНИЗИРОВАТЬ С ТАЙМЕРОМ!
     //TODO СДЕЛАТЬ ПАБЛИШЕРЫНЙ МЕТОД REPLACE/PIPE
     private Object[] testScreens = new Object[] {
-        testChatFeed()
+        testChatFeedSimple()
 //        testSwitch()
 //        testArc2(),
 //        testVStackScroll(),
@@ -91,8 +91,39 @@ public class Canvas extends UIMIDlet {
 //                testRectFillsCanvasWhenSmallMinsSet(), //OK
     };
 
+
+    private CGDrawable testChatFeedSimple() {
+        //БЕЗУМИЕ С ВЫСОТАМИ
+        String[] messages = new String[] {
+//            "HELLO",
+//            "HOW ARE YOU",
+//            "FINE",
+            "Big text to surely last past the single line, maybe occupying two or three lines"
+//            "РЕСАЙЗИНГ! Контейнер больше вьюхи -> растягивание/центрирование вьюхи Контейнер меньше вьюхи -> сжатие вьюхи/выезд вьюхи за границу контейнера(центрирование) Флексибл вьюхи и тянутся и сжимаются"
+        };
+        return new CGStack(new Int(CGStack.AXIS_VERTICAL), new Arr(messages), new CGStack.DrawableFactory() {
+            public CGDrawable itemFor(Object viewModel) {
+                String string = (String)viewModel;
+                return CG.Text(string)
+                        .alignment(CG.CENTER)
+                        .font(Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_PLAIN, Font.SIZE_SMALL))
+                        .flexibilityHeight(CGDrawable.FLEXIBILITY_HIGH)
+                        .backgroundColor(CGColor.WHITE)
+//                        .width(50)
+                        .cornerRadius(4);
+            }
+        })
+          .alignment(CG.TOP | CG.HCENTER)
+          .spacing(10)
+          .contentInset(10, 10, 60, 10)
+          .backgroundColor(CGColor.SEA_GREEN)
+          .borderWidth(2).borderColor(CGColor.PINK)
+                ;
+    }
+
 //слева отступ 20, а справа вообще нет
     private CGDrawable testChatFeed() {
+        //БЕЗУМИЕ С ВЫСОТАМИ
         String[] messages = new String[] {
             "HELLO",
             "HOW ARE YOU",

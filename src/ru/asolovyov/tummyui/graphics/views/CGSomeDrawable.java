@@ -71,6 +71,11 @@ public abstract class CGSomeDrawable implements CGDrawable {
 
     private KeyboardHandler keyboardHandler;
     private GeometryReader geometryReader;
+
+    protected boolean isXSetByUser = false;
+    protected boolean isYSetByUser = false;
+    protected boolean isWidthSetByUser = false;
+    protected boolean isHeightSetByUser = false;
     
     public CGSomeDrawable() {
         super();
@@ -162,6 +167,22 @@ public abstract class CGSomeDrawable implements CGDrawable {
         });
     }
 
+    Int xBinding() {
+        return xBinding;
+    }
+
+    Int yBinding() {
+        return yBinding;
+    }
+
+    Int widthBinding() {
+        return widthBinding;
+    }
+
+    Int heightBinding() {
+        return heightBinding;
+    }
+
     public CGDrawable width(Int width) {
         S.println(this + " KEK WILL SET WIDTH BINDING " + width);
 
@@ -174,6 +195,8 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     private void initMinMaxWidth(int value) {
+        this.isWidthSetByUser = true;
+
         if (minWidthBinding.getInt() == CG.NULL && value != CG.NULL) {
             minWidth(value);
         }
@@ -198,6 +221,8 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     private void initMinMaxHeight(int value) {
+        this.isHeightSetByUser = true;
+        
         if (minHeightBinding.getInt() == CG.NULL && value != CG.NULL) {
             S.println("WILL INIT MIN HEIGHT " + value);
             minHeight(value);
@@ -243,6 +268,8 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     private void initMinMaxX(int value) {
+        this.isXSetByUser = true;
+
         if (minXBinding.getInt() == CG.NULL && value != CG.NULL) {
             minX(value);
         }
@@ -265,6 +292,8 @@ public abstract class CGSomeDrawable implements CGDrawable {
     }
 
     private void initMinMaxY(int value) {
+        this.isYSetByUser = true;
+
         if (minYBinding.getInt()== CG.NULL && value != CG.NULL) {
             minY(value);
         }
@@ -490,8 +519,8 @@ public abstract class CGSomeDrawable implements CGDrawable {
         CGSize size = this.intrinsicContentSize();
         CGInsets insets = this.contentInset();
 
-        int width = size.width + insets.left + insets.right;
-        int height = size.height + insets.top + insets.bottom;
+        int width = size.width;// + insets.left + insets.right;
+        int height = size.height;// + insets.top + insets.bottom;
 
         width = Math.max(width, Math.max(frame.width, minWidth()));
         height = Math.max(height, Math.max(frame.height, minHeight()));

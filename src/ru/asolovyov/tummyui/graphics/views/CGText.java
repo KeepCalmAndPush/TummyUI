@@ -109,27 +109,32 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
         Font font = this.getFont();
         int anchor = this.alignment();
 
+        frame.width -= contentInset.horizontal();
+        frame.height -= contentInset.vertical();
+
         MultilineText multilineText = CG.makeMultilineText(text, font, frame.getCGSize());
         
         int lineHeight = font.getHeight();
         for (int i = 0; i < multilineText.lines.size(); i++) {
             String line = (String) multilineText.lines.elementAt(i);
             int lineWidth = font.stringWidth(line);
-            int textY = frame.y + i * lineHeight;
+            int textY = frame.y + i * lineHeight + contentInset.top;
             int textX = frame.x + contentInset.left;
 
             if (CG.isBitSet(anchor, CG.VCENTER)) {
-                textY += (frame.height - multilineText.height) / 2 + contentInset.top - contentInset.bottom;
+                textY += (frame.height - multilineText.height) / 2;
             } else if (CG.isBitSet(anchor, CG.BOTTOM)) {
                 textY += (frame.height - multilineText.height);
             }
 
             if (CG.isBitSet(anchor, CG.HCENTER)) {
-                textX += (frame.width - lineWidth) / 2 - contentInset.right;
+                textX += (frame.width - lineWidth) / 2;
             } else if (CG.isBitSet(anchor, CG.RIGHT)) {
                 textX += (frame.width - lineWidth);
             }
-            
+
+            S.println("CGTEXT: " + this.frame() + "; ContentInset " + contentInset);
+            S.println("CGTEXT WILL DRAW TEXT LINE: " + line + " AT x: " + textX + ", y: " + textY);
             g.drawString(line, textX, textY, 0);
         }
     }
@@ -151,14 +156,19 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
     public CGDrawable sizeToFit() {
         int width = this.width();
 
-        CGSize size = CG.stringSize(this.text.getString(), this.getFont(), new CGSize(width, Integer.MAX_VALUE));
+        CGSize size = CG.stringSize(
+                this.text.getString(),
+                this.getFont(),
+                new CGSize(width, Integer.MAX_VALUE)
+                );
 
         CGInsets insets = this.contentInset();
 
-        int widthValue = size.width + insets.horizontal();
+        S.println(this + " " + text() + " WILL SIZE TO FIT!");
+        int widthValue = size.width + contentInset().horizontal();
         this.widthBinding.setInt(widthValue);
         
-        int heightValue = size.height + insets.vertical();
+        int heightValue = size.height + contentInset().vertical();
         this.heightBinding.setInt(heightValue);
         
         return this;
@@ -167,19 +177,25 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
     protected void updateIntrinsicContentSize() {
         S.println(this + " WILL UPDATE INTRINSIC! FONT HEIGHT = " + getFont().getHeight());
         super.updateIntrinsicContentSize();
+        
         String text = this.text.getString();
         
         CGSize size = frame().getCGSize();
         size.width -= contentInset().horizontal();
-        size.height -= contentInset().vertical();
-
+        
         Font font = getFont();
 
         if (size.width <= 0) {
             size.height = font.getHeight();
-            size.width = font.stringWidth(text);
+            size.width = font.stringWidth(text) + contentInset().horizontal();
         } else {
-            size.height = CG.stringSize(text, font, new CGSize(size.width, this.maxHeight())).height;
+            size.height = CG.stringSize(
+                    text,
+                    font,
+                    new CGSize(
+                        size.width,
+                        this.maxHeight()
+                    )).height;
         }
 
         if (!size.equals(this.intrinsicContentSize())) {

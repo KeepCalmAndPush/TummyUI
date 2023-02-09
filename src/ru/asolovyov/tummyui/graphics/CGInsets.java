@@ -5,6 +5,8 @@
 
 package ru.asolovyov.tummyui.graphics;
 
+import ru.asolovyov.combime.common.S;
+
 /**
  *
  * @author Администратор
@@ -68,5 +70,9 @@ public class CGInsets {
 
     public int hashCode() {
         return ("" + top + left + bottom + right).hashCode();
+    }
+
+    public String toString() {
+        return S.stripPackageName(super.toString()) + " t: " + top + ", l: " + left + ", b: " + bottom + ", r: " + right;
     }
 }
