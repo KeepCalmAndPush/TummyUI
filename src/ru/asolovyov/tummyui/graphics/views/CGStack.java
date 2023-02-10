@@ -707,6 +707,7 @@ public class CGStack extends CGSomeDrawable {
         final boolean isExpanding = delta > 0;
 
         Hashtable groupedAdjustables = isHeight ? this.drawablesGroupedByHeightFlexibility : this.drawablesGroupedByWidthFlexibility;
+        S.println("GROUPED ADJUSTABLES " + groupedAdjustables);
         
         if (false == isAxisDimension) {
             S.println("NAX DELTA: " + delta + " IS EXPANDING: " + isExpanding + " IS HEIGHT: " + isHeight + "\n" + (isAxisDimension ? "!!!AXIS" : "!!!NOT AXIS"));
@@ -922,7 +923,7 @@ public class CGStack extends CGSomeDrawable {
                     continue;
                 }
                 int f = drawable.flexibility()[j];
-                if (f == 0) {
+                if (f == CGDrawable.FLEXIBILITY_NONE) {
                     continue;
                 }
                 Integer flexibility = new Integer(f);

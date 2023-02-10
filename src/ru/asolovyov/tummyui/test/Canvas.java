@@ -97,25 +97,25 @@ public class Canvas extends UIMIDlet {
         String[] messages = new String[] {
 //            "HELLO",
 //            "HOW ARE YOU",
-//            "FINE",
-            "Big text to surely last past the single line, maybe occupying two or three lines"
-//            "РЕСАЙЗИНГ! Контейнер больше вьюхи -> растягивание/центрирование вьюхи Контейнер меньше вьюхи -> сжатие вьюхи/выезд вьюхи за границу контейнера(центрирование) Флексибл вьюхи и тянутся и сжимаются"
+            "FINE",
+            "Big text to surely last past the single line, maybe occupying two or three lines, ",
+            "Нажмите кнопку Контакты, находящуюся под списком Папки и выберите Создать оперативный контакт. По окончании работы мастера созданные контакты будут отображаться в разделе Контакты.",
+            "РЕСАЙЗИНГ! Контейнер больше вьюхи -> растягивание/центрирование вьюхи Контейнер меньше вьюхи -> сжатие вьюхи/выезд вьюхи за границу контейнера(центрирование) Флексибл вьюхи и тянутся и сжимаются"
         };
         return new CGStack(new Int(CGStack.AXIS_VERTICAL), new Arr(messages), new CGStack.DrawableFactory() {
             public CGDrawable itemFor(Object viewModel) {
                 String string = (String)viewModel;
                 return CG.Text(string)
-                        .alignment(CG.CENTER)
+                        .alignment(CG.LEFT)
                         .font(Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_PLAIN, Font.SIZE_SMALL))
-                        .flexibilityHeight(CGDrawable.FLEXIBILITY_HIGH)
                         .backgroundColor(CGColor.WHITE)
-//                        .width(50)
+//                        .flexibilityWidth(CGDrawable.FLEXIBILITY_NONE)
                         .cornerRadius(4);
             }
         })
-          .alignment(CG.TOP | CG.HCENTER)
+          .alignment(CG.TOP | CG.RIGHT)
           .spacing(10)
-          .contentInset(10, 10, 60, 10)
+          .contentInset(10, 20, 40, 10)
           .backgroundColor(CGColor.SEA_GREEN)
           .borderWidth(2).borderColor(CGColor.PINK)
                 ;
