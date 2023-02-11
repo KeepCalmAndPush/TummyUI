@@ -23,21 +23,21 @@ import ru.asolovyov.tummyui.graphics.CGSize;
  * @author Администратор
  */
 public class CGText extends CGSomeDrawable implements CGFontSupporting {
-    private Str text = new Str("");
+    private Str textBinding = new Str("");
     private Obj font = new Obj(Font.getDefaultFont());
     private Int alignment = new Int(CG.TOP | CG.LEFT);
 
     public CGText() {
         super();
 
-        text = new Str("");
+        textBinding = new Str("");
         font = new Obj(Font.getDefaultFont());
         alignment = new Int(CG.TOP | CG.LEFT);
 
         this.updateContentInset();
         this.flexibility(new int[]{ CGDrawable.FLEXIBILITY_DEFAULT, CGDrawable.FLEXIBILITY_NONE });
 
-        this.text.removeDuplicates().sink(new Sink() {
+        this.textBinding.removeDuplicates().sink(new Sink() {
             protected void onValue(Object value) {
                 S.println("CGTEXT TEXT: " + value);
                 relayout();
@@ -57,15 +57,19 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
             }
         });
     }
+
+    public Str textBinding() {
+        return this.textBinding;
+    }
     
     public CGText text(Str text) {
-        text.route(this.text);
+        text.route(this.textBinding);
         return this;
     }
 
     public CGText text(String text) {
         S.println("CGTEXT SET TEXT: " + text);
-        this.text.setString(text);
+        this.textBinding.setString(text);
         return this;
     }
 
@@ -89,10 +93,10 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
     }
 
     public String text() {
-        if (this.text == null) {
+        if (this.textBinding == null) {
             return "";
         }
-        return this.text.getString();
+        return this.textBinding.getString();
     }
 
     protected void drawContent(Graphics g, CGFrame frame) {
@@ -105,7 +109,7 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
 
         CGInsets contentInset = contentInset();
 
-        String text = this.text.getString();
+        String text = this.textBinding.getString();
         Font font = this.getFont();
         int anchor = this.alignment();
 
@@ -157,7 +161,7 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
         int width = this.width();
 
         CGSize size = CG.stringSize(
-                this.text.getString(),
+                this.textBinding.getString(),
                 this.getFont(),
                 new CGSize(width, Integer.MAX_VALUE)
                 );
@@ -178,7 +182,7 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
         S.println(this + " WILL UPDATE INTRINSIC! FONT HEIGHT = " + getFont().getHeight());
         super.updateIntrinsicContentSize();
         
-        String text = this.text.getString();
+        String text = this.textBinding.getString();
         
         CGSize size = frame().getCGSize();
         size.width -= contentInset().horizontal();
@@ -197,7 +201,7 @@ public class CGText extends CGSomeDrawable implements CGFontSupporting {
                         this.maxHeight()
                     )).height;
         }
-
+        
         size.width += contentInset().horizontal();
         size.height += contentInset().vertical();
 //

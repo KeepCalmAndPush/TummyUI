@@ -50,6 +50,23 @@ public class CG {
     public final static int KEY_LEFT = -3;
     public final static int KEY_RIGHT = -4;
     public final static int KEY_ACTION = -5;
+
+    public final static int KEY_1 = 49;
+    public final static int KEY_2 = 50;
+    public final static int KEY_3 = 51;
+
+    public final static int KEY_4 = 52;
+    public final static int KEY_5 = 53;
+    public final static int KEY_6 = 54;
+
+    public final static int KEY_7 = 55;
+    public final static int KEY_8 = 56;
+    public final static int KEY_9 = 57;
+
+    public final static int KEY_STAR = 42;
+    public final static int KEY_0 = 48;
+    public final static int KEY_HASH = 35;
+    
     
 
     public static int clamp(int value, int min, int max) {
@@ -206,6 +223,10 @@ public class CG {
     public static CGStack ZStack(CGDrawable d1, CGDrawable d2, CGDrawable d3, CGDrawable d4, CGDrawable d5) {
         return new CGStack(new Int(CGStack.AXIS_Z), new Arr(new CGDrawable[] {d1, d2, d3, d4, d5}));
     }
+
+//    public static CGDrawable Switch() {
+//
+//    }
 
     public static class MultilineText {
         public int width, height;

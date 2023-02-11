@@ -93,7 +93,6 @@ public class Canvas extends UIMIDlet {
 
 
     private CGDrawable testChatFeedSimple() {
-        //БЕЗУМИЕ С ВЫСОТАМИ
         String[] messages = new String[] {
 //            "HELLO",
 //            "HOW ARE YOU",
