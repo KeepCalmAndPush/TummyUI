@@ -5,16 +5,21 @@
 
 package ru.asolovyov.tummyui.test;
 
+import javax.microedition.lcdui.Command;
+import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import ru.asolovyov.combime.bindings.Arr;
 import ru.asolovyov.combime.bindings.Bool;
 import ru.asolovyov.combime.bindings.Int;
+import ru.asolovyov.combime.bindings.Str;
 import ru.asolovyov.combime.common.S;
 import ru.asolovyov.combime.common.Sink;
 import ru.asolovyov.threading.Clock;
+import ru.asolovyov.tummyui.forms.UICommand;
 import ru.asolovyov.tummyui.forms.UIMIDlet;
+import ru.asolovyov.tummyui.forms.UITextBox;
 import ru.asolovyov.tummyui.graphics.CG;
 import ru.asolovyov.tummyui.graphics.CGAnimation;
 import ru.asolovyov.tummyui.graphics.CGColor;
@@ -52,7 +57,8 @@ public class Canvas extends UIMIDlet {
     //TODO REPAINT ТОЖЕ СИНХРОНИЗИРОВАТЬ С ТАЙМЕРОМ!
     //TODO СДЕЛАТЬ ПАБЛИШЕРЫНЙ МЕТОД REPLACE/PIPE
     private Object[] testScreens = new Object[] {
-        testChatFeedSimple()
+        testTextBox(),
+//        testChatFeedSimple(),
 //        testSwitch()
 //        testArc2(),
 //        testVStackScroll(),
@@ -91,6 +97,36 @@ public class Canvas extends UIMIDlet {
 //                testRectFillsCanvasWhenSmallMinsSet(), //OK
     };
 
+    private Str textBoxText;
+    private Displayable originalContent;
+
+    private CGDrawable testTextBox() {
+        textBoxText = new Str("GOTO TEXT BOX");
+        
+        final UITextBox textBox = new UITextBox(new Str("Заголовок"), textBoxText);
+        textBox.backCommand(new UICommand("Назад", Command.BACK, new UICommand.Handler() {
+            public void handle() {
+                Display dispay = Canvas.this.getDisplay();
+                dispay.setCurrent(originalContent);
+            }
+        }));
+
+        return CG.Text(textBoxText)
+                .alignment(CG.CENTER)
+                .font(Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_BOLD, Font.SIZE_LARGE))
+                .color(CGColor.LIGHT_BLUE)
+                .backgroundColor(CGColor.ROSY_BROWN).handleKeyboard(new CGDrawable.KeyboardHandler() {
+                        public void keyPressed(CGDrawable self, int keyCode) {
+                            if (keyCode != CG.KEY_ACTION) {
+                                return;
+                            }
+
+                            Display dispay = Canvas.this.getDisplay();
+                            originalContent = Canvas.this.content();
+                            dispay.setCurrent(textBox);
+                        }
+                });
+    }
 
     private CGDrawable testChatFeedSimple() {
         String[] messages = new String[] {
