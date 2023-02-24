@@ -33,9 +33,9 @@ public class CGCanvas extends Canvas {
         this.needsRepaint.setBool(true);
     }
 
-    private Int keyPressed = (Int) new Int(null).drop(1);
-    private Int keyReleased = (Int) new Int(null).drop(1);
-    private Int keyRepeated = (Int) new Int(null).drop(1);
+    private Int keyPressed = (Int) new Int(0).next();
+    private Int keyReleased = (Int) new Int(0).next();
+    private Int keyRepeated = (Int) new Int(0).next();
 
     private KeyboardHandler keyboardHandler = null;
 
