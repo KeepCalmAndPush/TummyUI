@@ -63,6 +63,8 @@ public class CGStack extends CGSomeDrawable {
 
     protected Point contentOffsetBinding = new Point(CGPoint.zero());
 
+    private int scrollStep = 5;
+
     public CGStack maxContentWidth(int width) {
         this.maxContentWidthBinding.setInt(width);
         return this;
@@ -468,21 +470,21 @@ public class CGStack extends CGSomeDrawable {
 
             if (keyCode == CG.KEY_UP) {//t
                 S.println("keyCode == Canvas.UP");
-                contentOffset.y = Math.max( contentOffset.y - 5, minOffset.y);
+                contentOffset.y = Math.max( contentOffset.y - this.scrollStep, minOffset.y);
             } else if (keyCode == CG.KEY_DOWN) {//b
                 S.println("keyCode == Canvas.DOWN");
-                contentOffset.y = Math.min(contentOffset.y + 5, maxOffset.y);
+                contentOffset.y = Math.min(contentOffset.y + this.scrollStep, maxOffset.y);
             }
         }
 
         if (contentSize.width > thisFrame.width) {
             if (keyCode == CG.KEY_LEFT) {//l
                 S.println("Canvas.LEFT");
-                contentOffset.x = Math.max(contentOffset.x - 5, minOffset.x);
+                contentOffset.x = Math.max(contentOffset.x - this.scrollStep, minOffset.x);
                 
             } else if (keyCode == CG.KEY_RIGHT) { //r
                 S.println("keyCode == Canvas.RIGHT");
-                contentOffset.x = Math.min(contentOffset.x + 5, maxOffset.x);
+                contentOffset.x = Math.min(contentOffset.x + this.scrollStep, maxOffset.x);
             }
         }
 
@@ -983,5 +985,13 @@ public class CGStack extends CGSomeDrawable {
 
         this.intrinsicContentSizeBinding.sendValue(size);
         S.println("DID SEND NEW SIZE TO INTRINSIC OK");
+    }
+
+    public int getScrollStep() {
+        return scrollStep;
+    }
+
+    public void setScrollStep(int scrollStep) {
+        this.scrollStep = scrollStep;
     }
 }

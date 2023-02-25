@@ -67,8 +67,7 @@ public class CG {
     public final static int KEY_0 = 48;
     public final static int KEY_HASH = 35;
     
-    
-
+  
     public static int clamp(int value, int min, int max) {
         return Math.max(min, Math.min(value, max));
     }

@@ -61,6 +61,10 @@ public interface CGDrawable {
 
     public CGDrawable sizeToFit();
 
+    public CGDrawable viewForFocusDirection(int direction);
+    public void acceptFocus();
+    public void resignFocus();
+
     public int color();
     public CGDrawable color(int backgroundColorHex);
     public CGDrawable color(Int backgroundColorHex);

@@ -890,4 +890,18 @@ public abstract class CGSomeDrawable implements CGDrawable {
     private String orMax(int value) {
         return value == Integer.MAX_VALUE ? "INF" : "" + value;
     }
+
+    private CGDrawable focusedView = null;
+
+    public CGDrawable viewForFocusDirection(int direction) {
+        return null;
+    }
+    
+    public void acceptFocus() {
+        this.focusedView = this;
+    }
+
+    public void resignFocus() {
+        this.focusedView = null;
+    }
 }
