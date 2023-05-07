@@ -10,7 +10,9 @@ The purpose of the project is to make a proof of concept that declarative layout
 
 ## UI Part (Forms)
 The UI-part is split between two packages: `ru.asolovyov.tummyui.forms` (core infrastructural classes) and `ru.asolovyov.tummyui.forms.views` (UI components themselves).
+
 ![Снимок экрана 2023-05-07 в 12 44 49](https://user-images.githubusercontent.com/13520824/236673109-ce71da0a-a27d-4e61-acf8-1e5c92db64d9.png)
+
 ### Core
 The entry point for all the TummyUI is the `UIMIDlet` class. Abstract descendant of `javax.microedition.midlet.MIDlet`, it requires to implement a single method: `protected abstract Displayable content();` which must return the first screen of your app. Also `UIMIDlet` notifies its listeners of MIDlet lifecycle events (start, pause, destroy) by virtue of CombiME's `PassthroughSubjects`. 
 
