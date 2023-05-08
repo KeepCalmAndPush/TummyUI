@@ -3,7 +3,7 @@ Declarative UI framework for Java ME powered phones. Inspired by Apple's SwiftUI
 
 Uses [CombiME](https://github.com/KeepCalmAndPush/CombiME) - reactive programming framework for JavaME phones, inspired by Apple's Combine.
 
-Due to limitations of the MIDP 1.0, TummyUI is split into two parts: UI-part (forms), to build user interface with standard components only, and CG-part (graphics), providing custom drawing and animating capabilities for your own layouts and controls.
+Due to limitations of the MIDP 1.0, TummyUI is split into two parts: UI-part (forms), to build user interface with standard components only, and CG-part (graphics), providing custom drawing and animating capabilities for your own layouts and controls. Important, that you can freely navigate from CG screens to UI and vice-versa, but not have them on one `Displayable`.
 
 ## Note
 The purpose of the project is to make a proof of concept that declarative layout is achievable even on older devices, when there was no trend of declarative reactive programming in mobile. This is not a strict implementation of all the possibilities of SwiftUI, rather than a syntactical imitation, aiming to feel classic mobile development as modern as possible. The title of the project derives from SwiftUI through J2MEUI ('ʤeɪ tuː miː ui') to TummyUI.
