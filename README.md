@@ -3,7 +3,7 @@ Declarative UI framework for Java ME powered phones. Inspired by Apple's SwiftUI
 
 Uses [CombiME](https://github.com/KeepCalmAndPush/CombiME) - reactive programming framework for JavaME phones, inspired by Apple's Combine.
 
-Due to limitations of the MIDP 1.0, TummyUI is split into two parts: UI-part (forms), to build user interface with standard components only, and CG-part (graphics), providing custom drawing capabilities for your own layouts and controls.
+Due to limitations of the MIDP 1.0, TummyUI is split into two parts: UI-part (forms), to build user interface with standard components only, and CG-part (graphics), providing custom drawing and animating capabilities for your own layouts and controls.
 
 ## Note
 The purpose of the project is to make a proof of concept that declarative layout is achievable even on older devices, when there was no trend of declarative reactive programming in mobile. This is not a strict implementation of all the possibilities of SwiftUI, rather than a syntactical imitation, aiming to feel classic mobile development as modern as possible. The title of the project derives from SwiftUI through J2MEUI ('ʤeɪ tuː miː ui') to TummyUI.
@@ -108,6 +108,37 @@ public class FormsTest extends UIMIDlet {
     }
 }
 ```
-
-
 https://user-images.githubusercontent.com/13520824/236685997-0310aa6f-f8b3-4023-9623-8fffcb0d24fd.mov
+
+## CG Part (Graphics)
+CG Part of TummyUI provides some basic infrastructure in `ru.asolovyov.tummyui.graphics`, convenient bindings in `ru.asolovyov.tummyui.graphics.bindings` and the assortment of views and primitives in `ru.asolovyov.tummyui.graphics.views`.
+
+### Core
+The infrastructure consists of `CG` class with static methods (like `UI`) to eye-candify creation of CG-views omitting the `new` keyword. `CGColor` lists 100+ named colors as `int` constants, `CGFrame`, `CGInsets`, `CGPoint` and `CGSize` mimick eponymous data structures in iOS. Due to lack of Generics in JavaME, there are respective bindings for that structures: 
+
+`CGDisplayLink` - is a timer, claiming each frame of animation (TummyUI runs at 30 fps by default) and providing a capability to submit your own animations. 
+
+Animations are implemented by subclassing the `CGAnimation` class. The actual animation happens in overriden method `protected abstract void animations(CGDrawable drawable);`. Set the final animatable values of your views inside this method. Currently only 9 properties of a `CGView` are animatable: `x` / `y` / `width` / `height`,  `cornerRadius`, colors: `color`, `backgroundColor`, `borderColor`, angle of CGArcs: `startAngle`. Animation may be one of three types: `SIMPLE` (runs once), `LOOP` (runs to the end, then hops into the beginning and runs again, indefinetly), `AUTOREVERSE` (runs to the end, then animatedly reverses to the initial state, runs indefinetly). You may restart abort animation with respective methods. Also you may provide a completion run after each run of animation by overriding the `protected void completion(CGAnimation animation)`. Here is an animation moving a square, meanwhile making it round a changing its color:
+
+```java
+private CGDrawable testAnimationOk() {
+        CGDrawable rect = CG.Rect()
+                .backgroundColor(CGColor.YELLOW)
+                .frame(10, 10, 50, 50)
+                .animate(new CGAnimation(3000, CGAnimation.AUTOREVERSE) {
+                    protected void animations(CGDrawable drawable) {
+                        drawable
+                                .x(80).y(88).width(100).height(100)
+                                .cornerRadius(50)
+                                .backgroundColor(CGColor.BLUE);
+                }})
+                ;
+
+        return rect;
+    }
+```
+
+https://user-images.githubusercontent.com/13520824/236754400-25ed379a-f1d9-4a47-9628-75b1b9909ac1.mov
+
+
+
