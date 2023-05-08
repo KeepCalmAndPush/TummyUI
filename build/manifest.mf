@@ -1,0 +1,8 @@
+MIDlet-3: FormsTest,,ru.asolovyov.tummyui.test.FormsTest
+MIDlet-2: Forms,,ru.asolovyov.tummyui.test.Forms
+MIDlet-1: Canvas,,ru.asolovyov.tummyui.test.Canvas
+MIDlet-Vendor: Vendor
+MIDlet-Name: TummyUI
+MIDlet-Version: 1.0
+MicroEdition-Configuration: CLDC-1.0
+MicroEdition-Profile: MIDP-1.0

@@ -20,13 +20,12 @@ import ru.asolovyov.combime.bindings.Str;
 import ru.asolovyov.combime.operators.combining.CombineLatest;
 import ru.asolovyov.combime.operators.mapping.Map;
 import ru.asolovyov.tummyui.data.ListItem;
-import ru.asolovyov.tummyui.forms.Environment;
+import ru.asolovyov.tummyui.forms.UIEnvironment;
 import ru.asolovyov.tummyui.forms.UI;
-import ru.asolovyov.tummyui.forms.UIForEach;
-import ru.asolovyov.tummyui.forms.UIItem;
-import ru.asolovyov.tummyui.forms.UIList;
+import ru.asolovyov.tummyui.forms.views.UIForEach;
+import ru.asolovyov.tummyui.forms.views.UIItem;
+import ru.asolovyov.tummyui.forms.views.UIList;
 import ru.asolovyov.tummyui.forms.UIMIDlet;
-import ru.asolovyov.tummyui.forms.UITextBox;
 
 /**
  * @author Администратор
@@ -123,19 +122,19 @@ public class Forms extends UIMIDlet {
 
     protected Displayable content() {
         return UI.Form("TummyUI",
-                UI.StringItem(Environment.put("STRING", "Строка из энвайронмента"))
+                UI.StringItem(UIEnvironment.put("STRING", "Строка из энвайронмента"))
                 )
 
                 // Переделать на билдер
                 //.navigationCommand(displayable).title(title).linktitle(link)
-           .navigationCommand(new Str("TEXT BOX"), (new UITextBox(new Str("текст бокс"), Environment.string("STRING"))))
-           .navigationCommand(new Str("Лист"), UI.List(new Str("Hello"), UIList.IMPLICIT, this.choiceItems))
-           .navigationCommand(new Str("Э1"), new Str("ЭНВ 1"),
-                UI.Form("Э111", UI.TextField(Environment.string("STRING")))
-                .navigationCommand(new Str("Э2"), UI.Form("Э222", UI.StringItem(Environment.string("STRING"))))
+           .navigationCommand("TEXT BOX", UI.TextBox(new Str("текст бокс"), UIEnvironment.string("STRING")))
+           .navigationCommand("Лист", UI.List(new Str("Hello"), UIList.IMPLICIT, this.choiceItems))
+           .navigationCommand("Э1", "ЭНВ 1",
+                UI.Form("Э111", UI.TextField(UIEnvironment.string("STRING")))
+                .navigationCommand(new Str("Э2"), UI.Form("Э222", UI.StringItem(UIEnvironment.string("STRING"))))
            )
-           .navigationCommand(new Str("Navi"), new Str("ЖЦ ТРЕКЕР"), lcTracker)
-           .navigationCommand(new Str("Канвас"), UI.Navigatable(canvas))//
+           .navigationCommand("Navi", "ЖЦ ТРЕКЕР", lcTracker)
+           .navigationCommand("Канвас", UI.Navigatable(canvas))//
                 ;
 
     }
@@ -148,8 +147,8 @@ public class Forms extends UIMIDlet {
         })), true, 10, gaugeBinding),
                 UI.TextField(textBoxText.to(new CombineLatest(labelBinding)).to(new Map() {
             public Object mapValue(Object value) {
-                String text = (String) (((Object[]) value)[0]);
-                String label = (String) (((Object[]) value)[1]);
+                String text = null;//(String) (((Object[]) value)[0]);
+                String label = null;//(String) (((Object[]) value)[1]);
                 if (text == null || label == null) {
                     return "";
                 }
@@ -172,19 +171,6 @@ public class Forms extends UIMIDlet {
             }
         }),
                 UI.ImageItem(null, "res/1.png", ImageItem.LAYOUT_CENTER, null).isVisible(visiblity)
-//                ).alert(alertVisible, UI.Alert("Hello", "World", UI.Image("res/1.png"), AlertType.ALARM))
-//                .command(UI.Command("CAT", new UICommand.Handler() {
-//
-//            public void handle() {
-//                S.println("CAT");
-//                isCat.setBool(!isCat.getBoolean());
-//            }
-//        })).command(UI.Command("VIS", new UICommand.Handler() {
-//            public void handle() {
-//                S.println("VIS");
-//                alertVisible.setBool(!alertVisible.getBoolean());
-//            }
-//        })
             );
 
     private class Pair {
