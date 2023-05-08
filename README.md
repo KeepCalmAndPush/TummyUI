@@ -180,6 +180,7 @@ private CGDrawable testLine() {
 * `CGImage` accepts a `javax.microedition.lcdui.Image` or `Obj` binding of said images to display an image.
 * `CGRectangle` is the simplest concrete descendant of `CGSomeDrawable`, consider it as iOS `UIView`. Here is a filled rectangle, with thick rounded borders and a shadow:
 ![image](https://user-images.githubusercontent.com/13520824/236768089-83401e6f-84b6-4264-89c8-850bbe2b6ec3.png)
+
 (Note that due to lack of native antialiasing and floating point calculations in JavaME, there are some non-painted dots 'looking through').
 
 ```
@@ -353,7 +354,9 @@ private CGDrawable textStylesIteratingHorizontalStackOfLabels() {
 6. Also you may construct complex layouts like chat feeds and custom controls like loaders and switchers with TummyUI:
 
 https://user-images.githubusercontent.com/13520824/236788429-c0b051f1-e723-4487-b144-eee80a650cac.mov
+
 https://user-images.githubusercontent.com/13520824/236788520-04d7b192-2a09-4ed9-bc8c-40f4b38d8c7b.mov
+
 https://user-images.githubusercontent.com/13520824/236788576-2b5412e7-4dcf-4a75-b837-b3a88df0e6c7.mov
 
 
