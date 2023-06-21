@@ -3,7 +3,7 @@ Declarative UI framework for Java ME powered phones. Inspired by Apple's SwiftUI
 
 Uses [CombiME](https://github.com/KeepCalmAndPush/CombiME) - reactive programming framework for JavaME phones, inspired by Apple's Combine.
 
-Due to limitations of the MIDP 1.0, TummyUI is split into two parts: UI-part (forms), to build user interface with standard components only, and CG-part (graphics), providing custom drawing and animating capabilities for your own layouts and controls.
+Due to limitations of the MIDP 1.0, TummyUI is split into two parts: UI-part (forms), to build user interface with standard components only, and CG-part (graphics), providing custom drawing and animating capabilities for your own layouts and controls. Important, that you can freely navigate from CG screens to UI and vice-versa, but not have them on one `Displayable`.
 
 ## Note
 The purpose of the project is to make a proof of concept that declarative layout is achievable even on older devices, when there was no trend of declarative reactive programming in mobile. This is not a strict implementation of all the possibilities of SwiftUI, rather than a syntactical imitation, aiming to feel classic mobile development as modern as possible. The title of the project derives from SwiftUI through J2MEUI ('ʤeɪ tuː miː ui') to TummyUI.
@@ -125,10 +125,10 @@ private CGDrawable testAnimationOk() {
         CGDrawable rect = CG.Rect()
                 .backgroundColor(CGColor.YELLOW)
                 .frame(10, 10, 50, 50)
-                .animate(new CGAnimation(3000, CGAnimation.AUTOREVERSE) {
+                .animate(new CGAnimation(700, CGAnimation.AUTOREVERSE) {
                     protected void animations(CGDrawable drawable) {
                         drawable
-                                .x(80).y(88).width(100).height(100)
+                                .x(80).y(80).width(100).height(100)
                                 .cornerRadius(50)
                                 .backgroundColor(CGColor.BLUE);
                 }})
@@ -138,7 +138,8 @@ private CGDrawable testAnimationOk() {
     }
 ```
 
-https://user-images.githubusercontent.com/13520824/236754400-25ed379a-f1d9-4a47-9628-75b1b9909ac1.mov
+https://github.com/KeepCalmAndPush/TummyUI/assets/13520824/5842c145-cfa9-424c-8e34-e998f832f615
+
 
 ### Views
 Drawing in CG part is done via `CGCanvas`. It is a descendant of `javax.microedition.lcdui.Canvas`, so it is a `Displayable` and may be returned as `content` of `UIMIDlet`. Canvas instantiates with one or several implementors of `CGDrawable`, a protocol defining a view in CG part or TummyUI. Canvas takes all the screen space and positions its views inside. 
