@@ -76,6 +76,22 @@ public class CG {
     public static boolean isBitSet(int mask, int bit) {
         return (mask & bit) == bit;
     }
+
+    public static CGSize Size(int width, int height) {
+        return new CGSize(width, height);
+    }
+
+    public static CGPoint Point(int x, int y) {
+        return new CGPoint(x, y);
+    }
+
+    public static CGInsets Insets(int top, int left, int bottom, int right) {
+        return new CGInsets(top, left, bottom, right);
+    }
+
+    public static CGFrame Frame(int x, int y, int width, int height) {
+        return new CGFrame(x, y, width, height);
+    }
     
     public static CGArc Arc(int startAngle, int arcAngle) {
         return new CGArc()

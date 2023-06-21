@@ -26,7 +26,6 @@ import ru.asolovyov.tummyui.forms.views.UIForEach;
 import ru.asolovyov.tummyui.forms.views.UIItem;
 import ru.asolovyov.tummyui.forms.views.UIList;
 import ru.asolovyov.tummyui.forms.UIMIDlet;
-import ru.asolovyov.tummyui.forms.views.UITextBox;
 
 /**
  * @author Администратор
@@ -172,19 +171,6 @@ public class Forms extends UIMIDlet {
             }
         }),
                 UI.ImageItem(null, "res/1.png", ImageItem.LAYOUT_CENTER, null).isVisible(visiblity)
-//                ).alert(alertVisible, UI.Alert("Hello", "World", UI.Image("res/1.png"), AlertType.ALARM))
-//                .command(UI.Command("CAT", new UICommand.Handler() {
-//
-//            public void handle() {
-//                S.println("CAT");
-//                isCat.setBool(!isCat.getBoolean());
-//            }
-//        })).command(UI.Command("VIS", new UICommand.Handler() {
-//            public void handle() {
-//                S.println("VIS");
-//                alertVisible.setBool(!alertVisible.getBoolean());
-//            }
-//        })
             );
 
     private class Pair {

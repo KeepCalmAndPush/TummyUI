@@ -55,43 +55,44 @@ public class Canvas extends UIMIDlet {
     private int testScreenIndex = 0;
 
     private Object[] testScreens = new Object[] {
-        testRGB(),
-        testChatFeedSimple(),
-        testVStackWithTwoViewsNonfixAndSecond60HFix(), // OK
-        testVStackWithTwoViews20HFixAndSecondNonfix(), //OK
-        testHStackWithTwoViewsNonfixAndSecond20WFix(), //OK
-        testHStackWithTwoViews20WFixAndSecondNonfix(), //OK
-        testVStackWithTwoViewsViewFillsCanvas(), //OK
-        testHStackWithTwoViewsViewFillsCanvas(), //OK
-        testVStackWithOneViewFillsCanvas(), //OK
-
-        testZStackWithTwoViewsFillsCanvasAndRespectsOrder(), //OK
-        testHStackWithOneViewFillsCanvas(), //ок
-        testFrameSetsByMaxWidthMaxHeight(), //OK
-        testRectFillsCanvasWhenNoDimensionsSet(), //OK
-        testRectFillsCanvasWhenSmallMinsSet(), //OK
-        //        testAnimationOk(),
-        //        testTextBox(),
-        //        testChatFeedSimple(),
-        //        testSwitch()
-        //        testArc2(),
-        //        testVStackScroll(),
-        //        testHStackScroll(),
-        //        testZStackScroll(),//OK
-        testPattern(),//OK
-        testLine(),//OK
-        testArc(),//OK
-        testVSTextTitleAndHStackContent(),//OK
-        testLanguageTopRightUI(),
-        testThickBordersInsideZStack(), //ok
-        //        testZSTextTitleAndRectContent(),//ok
-        testThickBorders(), //  OK но скругления дырявые
-        testShadows(), //ОК
-        testVSTextTitleAndRectContent(), // OK
-        //                testAnimationOk(),
-        //                testAnimationYellowTrip(),
-        testRectFrameAndCornerRadiusOk(),//OK
-        textStylesIteratingHorizontalStackOfLabels(), // :(
+         testAnimationOk()
+//        testRGB(),
+//        testChatFeedSimple(),
+//        testVStackWithTwoViewsNonfixAndSecond60HFix(), // OK
+//        testVStackWithTwoViews20HFixAndSecondNonfix(), //OK
+//        testHStackWithTwoViewsNonfixAndSecond20WFix(), //OK
+//        testHStackWithTwoViews20WFixAndSecondNonfix(), //OK
+//        testVStackWithTwoViewsViewFillsCanvas(), //OK
+//        testHStackWithTwoViewsViewFillsCanvas(), //OK
+//        testVStackWithOneViewFillsCanvas(), //OK
+//
+//        testZStackWithTwoViewsFillsCanvasAndRespectsOrder(), //OK
+//        testHStackWithOneViewFillsCanvas(), //ок
+//        testFrameSetsByMaxWidthMaxHeight(), //OK
+//        testRectFillsCanvasWhenNoDimensionsSet(), //OK
+//        testRectFillsCanvasWhenSmallMinsSet(), //OK
+//        //        testAnimationOk(),
+//        //        testTextBox(),
+//        //        testChatFeedSimple(),
+//        //        testSwitch()
+//        //        testArc2(),
+//        //        testVStackScroll(),
+//        //        testHStackScroll(),
+//        //        testZStackScroll(),//OK
+//        testPattern(),//OK
+//        testLine(),//OK
+//        testArc(),//OK
+//        testVSTextTitleAndHStackContent(),//OK
+//        testLanguageTopRightUI(),
+//        testThickBordersInsideZStack(), //ok
+//        //        testZSTextTitleAndRectContent(),//ok
+//        testThickBorders(), //  OK но скругления дырявые
+//        testShadows(), //ОК
+//        testVSTextTitleAndRectContent(), // OK
+//        //                testAnimationOk(),
+//        //                testAnimationYellowTrip(),
+//        testRectFrameAndCornerRadiusOk(),//OK
+//        textStylesIteratingHorizontalStackOfLabels(), // :(
     };
 
     private Str textBoxText;
@@ -238,7 +239,7 @@ public class Canvas extends UIMIDlet {
 
         return CG.ZStack(
                 pattern
-                    .tileSize(new CGSize(32, 32))
+                    .tileSize(CG.Size(32, 32))
                     .width(160).height(160)
                 )
 //                .alignment(CG.TOP | CG.LEFT)//ok
@@ -325,7 +326,7 @@ public class Canvas extends UIMIDlet {
 
         return CG.ZStack(
                 pattern
-                    .tileSize(new CGSize(32, 32))
+                    .tileSize(CG.Size(32, 32))
                 );
     }
 
@@ -675,12 +676,12 @@ public class Canvas extends UIMIDlet {
         CGDrawable rect =  CG.Rect()
                 .backgroundColor(CGColor.YELLOW)
                 .frame(10, 10, 50, 50)
-                .animate(new CGAnimation(1000, CGAnimation.AUTOREVERSE) {
+                .animate(new CGAnimation(700, CGAnimation.AUTOREVERSE) {
                     protected void animations(CGDrawable drawable) {
                         drawable
                                 .x(80).y(80).width(100).height(100)
                                 .cornerRadius(50)
-                                .backgroundColor(CGColor.GREEN);
+                                .backgroundColor(CGColor.BLUE);
                 }})
                 ;
 
